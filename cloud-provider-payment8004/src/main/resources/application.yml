@@ -1,0 +1,22 @@
+#8004表示注册到zookeeper服务器的支付服务提供者端口号
+server:
+  port: 8004
+
+#服务别名----注册zookeeper到注册中心名称
+spring:
+  application:
+    name: cloud-provider-payment
+  cloud:
+    zookeeper:
+      connect-string: 1.1.1.1:2181
+
+#日志
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    java.sql.Connection: DEBUG
+    java.sql.Statement: DEBUG
+    java.sql.PreparedStatement: DEBUG
+    org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+        
+  
