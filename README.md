@@ -39,6 +39,7 @@ consul agent -dev
 #### 6.eureka、zookeeper、sonsul异同点
 
 | 组件名 | 语言 | CAP | 服务健康检查 | 对外暴露接口 | Spring Cloud集成 |
+| --- | --- | --- | --- | --- | --- |
 | Eureka | Java | AP | 可配支持 | HTTP | 已集成 |
 | Consul | GO | CP | 支持 | HTTP/DNS | 已集成 |
 | Zookeeper | Hava | CP | 支持 | 客户端 | 已集成 |
