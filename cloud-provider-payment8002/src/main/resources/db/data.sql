@@ -1,1 +1,0 @@
-insert into payment values(1,'abc');
