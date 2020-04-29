@@ -9,9 +9,11 @@ spring:
       discovery:
         server-addr: localhost:8848 #Nacos服务注册中心地址
     sentinel:
+      #filter:
+      #  enabled: false  #关闭sentinel的CommonFilter实例化，主要是针对spring-cloud-alibaba v2.1.1.RELEASE及前无法使用链路的问题。
       transport:
         dashboard: localhost:8080 #配置Sentinel dashboard地址
-        port: 8719
+        port: 8719  #默认8719端口，加入被占用会自动从8719开始依次+1扫描，直至找到未占用的端口
       datasource:
         ds1:
           nacos:
@@ -20,7 +22,7 @@ spring:
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: flow
-
+            
 management:
   endpoints:
     web:
