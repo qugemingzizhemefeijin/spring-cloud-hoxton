@@ -1,9 +1,11 @@
 package com.atguigu.springcloud.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +51,13 @@ public class PaymentController {
 	}
 
 	@GetMapping(value = "/payment/get/{id}")
-	public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id) {
+	public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id, HttpServletRequest request) {
 		Payment payment = paymentService.getPaymentById(id);
-		LOGGER.info("查询数据===="+"2020年4月2");
+		
+		for(Map.Entry<String,String[]> me : request.getParameterMap().entrySet()) {
+			LOGGER.info(me.getKey()+"="+me.getValue()[0]);
+		}
+		
 		if (payment != null) {
 			return new CommonResult(200, "查询成功,serverPort:  " + serverPort, payment);
 		} else {
@@ -90,6 +96,11 @@ public class PaymentController {
 			e.printStackTrace();
 		}
 		return serverPort;
+	}
+	
+	@GetMapping("/payment/zipkin")
+	public String paymentZipkin() {
+		return "HI, I'M payment zipkin server , welcome to atguigu,^_^";
 	}
 
 }
