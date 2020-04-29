@@ -38,11 +38,12 @@ consul agent -dev
 
 #### 6.eureka、zookeeper、sonsul异同点
 
-| 组件名 | 语言 | CAP | 服务健康检查 | 对外暴露接口 | Spring Cloud集成 |
-| --- | --- | --- | --- | --- | --- |
-| Eureka | Java | AP | 可配支持 | HTTP | 已集成 |
-| Consul | GO | CP | 支持 | HTTP/DNS | 已集成 |
-| Zookeeper | Hava | CP | 支持 | 客户端 | 已集成 |
+| 组件名 | 语言 | CAP | 服务健康检查 | 对外暴露接口 | Spring Cloud集成 | 控制台管理 | 社区活跃度 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Eureka | Java | AP | 可配支持 | HTTP | 已集成 | 支持 | 低(2.0版本闭源) |
+| Consul | GO | CP | 支持 | HTTP/DNS | 已集成 | 支持 | 高 |
+| Zookeeper | Java | CP | 支持 | 客户端 | 已集成 | 不支持 | 红 |
+| Nacos | Java | AP/CP | 支持 | HTTP | 已集成 | 支持 | 高
 
 最多只能同时较好的满足两个。
 CAP理论的核心是：一个分布式系统不可能同时很好的满足一致性、可用性和分区容错性三个需求，因此，根据CAP原理将NoSQL数据库分成了满足CA原则，满足CP原则和满足AP原则三大类：
@@ -204,6 +205,188 @@ zipkin是链路跟踪Dashboard，[下载地址点击](https://dl.bintray.com/ope
 ##### 17.Nacos相关
 
 [1.1.4版本下载地址](https://github.com/alibaba/nacos/releases/download/1.1.4/nacos-server-1.1.4.zip)，完成后，直接解压，执行bin目录下的startup.cmd，成功后访问[http://localhost:8848/nacos](http://localhost:8848/nacos)，用户名和密码均为nacos。
+
+spring.cloud.nacos.discovery.server-addr=localhost:8848即可将服务注册到nacos。
+
+| | Nacos | Eureka | Consul | CoreDNS | Zookeeper |
+| --- | --- | --- | --- | --- | --- |
+| 一致性协议 | CP/AP | AP | CP | - | CP |
+| 健康检查 | TCP/HTTP/MySQL/Client Beat | Client Beat | TCP/HTTP/gRPC/Cmd | - | Client Beat |
+| 负载均衡 | 权重/DSL/metadata/CMDB | Ribbon | Fabio | RR | - |
+| 雪崩保护 | 支持 | 支持 | 不支持 | 不支持 | 不支持 |
+| 自动注销实例 | 支持 | 支持 | 不支持 | 不支持 | 支持 |
+| 访问协议 | HTTP/DNS/UDP | HTTP | HTTP/DNS | DNS | TCP |
+| 监听支持 | 支持 | 支持 | 支持 | 不支持 | 支持 |
+| 多数据中心 | 支持 | 支持 | 支持 | 不支持 | 不支持 |
+| 跨注册中心 | 支持 | 不支持 | 支持 | 不支持 | 不支持 |
+| SpringCloud集成 | 支持 | 支持 | 支持 | 不支持 | 不支持 |
+| Dubbo集成 | 支持 | 不支持 | 不支持 | 不支持 | 支持 |
+| K8S集成 | 支持 | 不支持 | 支持 | 支持 | 不支持 |
+
+如果不需要存储服务级别的信息且服务实例是通过nacos-client注册，并能够保持心跳上报，阿么就可以选择AP模式。当前主流的服务如Spring Cloud和Dubbo服务，都适用于AP模式，AP模式为了服务的可用性而减弱了一致性，因此AP模式下只支持注册临时实例。
+
+如果需要在服务级别编辑或者存在存储配置信息，那么CP是必须的，K8S服务和DNS服务则适用于CP模式。CP模式下则支持注册持久化实例，此时则是以Raft协议为集群运行模式，该模式下注册实例之前必须先注册服务如果服务不存在，则会返回错误。
+
+Nacos的AP和CP切换：curl -X POST "$NACOS_SERVER:8848/nacos/v1/ns/operator/switches?entry=serverMode&value=CP"
+
+在 Nacos Spring Cloud 中，dataId 的完整格式如下：
+```
+${prefix}-${spring.profile.active}.${file-extension}
+```
+
+>- `prefix`默认为`spring.application.name`的值，也可以通过配置项`spring.cloud.nacos.config.prefix`来配置。
+>- `spring.profile.active`即为当前环境对应的`profile`，详情可以参考[Spring Boot文档](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html#boot-features-profiles)。注意：当`spring.profile.active`为空时，对应的连接符`-`也将不存在，`dataId`的拼接格式变成`${prefix}.${file-extension}`。
+>- `file-exetension`为配置内容的数据格式，可以通过配置项`spring.cloud.nacos.config.file-extension`来配置。目前只支持`properties`和`yaml`类型。
+
+最外层Namespace(命名空间)是可以用于区分部署环境，Group和DataID逻辑上区分两个目标对象。默认情况Namespace=public,Group=DEFAULT_GROUP,默认Cluster是DEFAULT。<br>
+比方说我们现在有三个环境，开发、测试、生产环境，我们可以创建三个Namespace，不同的Namespace之间是隔离的。<br>
+Group默认是DEFAUTL_GROUP，Group可以把不同的微服务划分到同一个分组里面去<br>
+Service就是微服务，一个Service而已包含多个Cluster(集群)，Nacos默认Cluster是DEFAULT，Cluster是对指定微服务的一个虚拟划分。<br>
+比方说为了容灾，见Service微服务分别部署在杭州机房和广州机房，这时就可以给杭州机房的Service微服务起一个集群名称(HZ)，给广州机房的Service微服务起一个集群名称(GZ)，还可以尽量让同一个机房的微服务互相调用，以提升性能。
+
+最后是Instance，就是微服务的实例。
+
+##### 18.Nacos安装
+
+安装Mysql，下载[nacos-server-1.1.4.tar.gz](https://github.com/alibaba/nacos/releases/download/1.1.4/nacos-server-1.1.4.tar.gz)包
+
+1.设置mysql
+
+```
+create database nacos_test DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+GRANT USAGE,CREATE,SELECT,SHOW VIEW,CREATE TEMPORARY TABLES,DELETE,INSERT,UPDATE,DROP,INDEX,ALTER ON `nacos_test`.* TO 'nacos'@'127.0.0.1' IDENTIFIED BY 'nacos#^12A34';
+```
+
+2.解压nacos安装包
+
+```
+tar -zxvf nacos-server-1.1.4.tar.gz
+mv nacos /usr/local/
+cd /usr/local/nacos/conf
+mysql -u root -p nacos_test < nacos-mysql.sql #导入数据
+```
+
+3.修改配置文件
+
+vi /usr/local/nacos/conf/application.properties 新增如下内容：
+
+```
+#*************** Config Module Related Configurations ***************#
+### If user MySQL as datasource:
+spring.datasource.platform=mysql
+
+### Count of DB:
+db.num=1
+
+### Connect URL of DB:
+db.url.0=jdbc:mysql://127.0.0.1:3306/nacos_test?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+db.user=nacos
+db.password=nacos#^12A34
+```
+
+4.修改nginx配置(直接使用gitlab的nginx)
+
+vi /var/opt/gitlab/nginx/conf/file/http/http.conf
+
+```
+upstream nacos{
+        server  127.0.0.1:8848;
+        server  127.0.0.1:8849;
+        server  127.0.0.1:8850;
+}
+
+server {
+        listen 80;
+        server_name
+                nacos.xxxx.cn
+        ;
+
+        client_max_body_size 200m;
+        access_log /var/log/gitlab/nginx/nacos_access.log newdata;
+        error_log /var/log/gitlab/nginx/nacos_error.log ;
+
+        location / {
+                proxy_pass      http://nacos;
+                proxy_set_header    Host    $http_host;
+                proxy_set_header    X-Real-IP   $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+}
+```
+
+5.修改start.sh文件(因为是在一台机器)
+
+主要是为了让nacos支持-p命令，省得拷贝出N个nacos来做测试
+
+vi /usr/local/nacos/bin/startup.sh
+
+```
+//57行配置如下
+
+while getopts ":m:f:s:p:" opt
+do
+    case $opt in
+        m)  
+            MODE=$OPTARG;;
+        f)  
+            FUNCTION_MODE=$OPTARG;;
+        s)  
+            SERVER=$OPTARG;;
+        p)  
+            PORT=$OPTARG;;
+        ?)  
+        echo "Unknown parameter"
+        exit 1;; 
+    esac
+done
+
+//最后三行替换
+echo "$JAVA -Dserver.port=${PORT} ${JAVA_OPT}" > ${BASE_DIR}/logs/start.out 2>&1 &
+nohup $JAVA -Dserver.port=${PORT} ${JAVA_OPT} nacos.nacos >> ${BASE_DIR}/logs/start.out 2>&1 &
+echo "nacos is starting，you can check the ${BASE_DIR}/logs/start.out"
+```
+
+mkdir /usr/local/nacos/logs	#创建日志目录
+
+6.设置cluster.conf
+
+```
+cp /usr/local/nacos/conf/cluster.conf.example /usr/local/nacos/conf/cluster.conf
+cat>/usr/local/nacos/conf/cluster.conf<<EOF
+172.17.0.14:8848
+172.17.0.14:8849
+172.17.0.14:8850
+EOF
+```
+
+此处主要，填写自己的局域网的IP，不要填写127.0.0.1
+
+7.启动集群
+
+```
+/usr/local/nacos/bin/startup.sh -p 8848
+/usr/local/nacos/bin/startup.sh -p 8849
+/usr/local/nacos/bin/startup.sh -p 8850
+```
+
+##### 18.Sentinel介绍
+
+[中文文档](https://github.com/alibaba/sentinel/wiki/%E4%BB%8B%E7%BB%8D)
+
+Sentinel 具有以下特征:
+>- 丰富的应用场景：Sentinel 承接了阿里巴巴近 10 年的双十一大促流量的核心场景，例如秒杀（即突发流量控制在系统容量可以承受的范围）、消息削峰填谷、集群流量控制、实时熔断下游不可用应用等。
+>- 完备的实时监控：Sentinel 同时提供实时的监控功能。您可以在控制台中看到接入应用的单台机器秒级数据，甚至 500 台以下规模的集群的汇总运行情况。
+>- 广泛的开源生态：Sentinel 提供开箱即用的与其它开源框架/库的整合模块，例如与 Spring Cloud、Dubbo、gRPC 的整合。您只需要引入相应的依赖并进行简单的配置即可快速地接入 Sentinel。
+>- 完善的SPI扩展点：Sentinel 提供简单易用、完善的 SPI 扩展接口。您可以通过实现扩展接口来快速地定制逻辑。例如定制规则管理、适配动态数据源等。
+
+[下载地址点击](https://github.com/alibaba/Sentinel/releases/download/1.7.0/sentinel-dashboard-1.7.0.jar)
+
+启动命令:java -jar sentinel-dashboard-1.7.0.jar
+
+默认用户名和密码都是sentinel
+
+
+
 
 
 
