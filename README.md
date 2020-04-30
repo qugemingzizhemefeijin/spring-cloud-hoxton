@@ -1,9 +1,6 @@
 ### SpringClound2020
 
-尚硅谷阳哥springcloud第二季视频代码资料
-
 Hoxton.SR1 + Springboot 2.2.2.RELEASE + Nacos等等
-
 
 ##### 1.要使用DiscoveryClient需要注意的
 
