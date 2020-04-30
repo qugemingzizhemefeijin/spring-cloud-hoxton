@@ -59,12 +59,15 @@ public class FlowLimitController {
 
 	@GetMapping("/testD")
 	public String testD() {
-		// try { TimeUnit.SECONDS.sleep(1); } catch (InterruptedException e) {
-		// e.printStackTrace(); }
-		// log.info("testD 测试RT");
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		LOGGER.info("testD 测试RT");
 
-		LOGGER.info("testD 异常比例");
-		int age = 10 / 0;
+		//LOGGER.info("testD 异常比例");
+		//int age = 10 / 0;
 		return "------testD";
 	}
 
@@ -77,9 +80,8 @@ public class FlowLimitController {
 
 	@GetMapping("/testHotKey")
 	@SentinelResource(value = "testHotKey", blockHandler = "deal_testHotKey")
-	public String testHotKey(@RequestParam(value = "p1", required = false) String p1,
-			@RequestParam(value = "p2", required = false) String p2) {
-		// int age = 10/0;
+	public String testHotKey(@RequestParam(value = "p1", required = false) String p1, @RequestParam(value = "p2", required = false) String p2) {
+		int age = 10/0;
 		return "------testHotKey";
 	}
 

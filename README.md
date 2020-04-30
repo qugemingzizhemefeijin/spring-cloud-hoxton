@@ -152,11 +152,11 @@ gateway过滤器分为
 
 主启动类上需要添加@EnableConfigServer
 
-如果访问的是http://config-3344.com:3344/master/config-dev.yml，并且git下有search-paths，会首先去请求search-paths/config-dev.yml下的yml文件，如果根目录下有application.yml，则会将两个文件合并。
+如果访问的是 http://config-3344.com:3344/master/config-dev.yml ，并且git下有search-paths，会首先去请求search-paths/config-dev.yml下的yml文件，如果根目录下有application.yml，则会将两个文件合并。
 
 application.yml是用户级的资源配置，bootstrap.yml是系统级的，优先级最高。所以我们在用ConfigServer的时候，得把配置写到bootstrap.yml中，让其先加载ConfigServer等配置信息，再从git上获取配置中心的信息。
 
-想让配置生效，手动更新必须通过 curl -X POST http://localhost:3355/actuator/refresh来操作
+想让配置生效，手动更新必须通过 curl -X POST http://localhost:3355/actuator/refresh 来操作
 
 cloud bus暂时只支持rabbitmq和kafka，使用cloud bus则需要将refresh接口操作config server，而不用的话则需要操作某个config client来传播刷新。
 
@@ -166,7 +166,7 @@ rabbit mq 默认登录地址 http://localhost:15672/ 用户名guest，密码gues
 
 curl -X POST http://localhost:3344/actuator/bus-refresh 刷新config server配置并传播到所有的config client服务上。
 
-如果要指定某一个实例生效而不是全部，使用http://localhost:3344/actuator/bus-refresh/{destination}，如http://localhost:3344/actuator/bus-refresh/config-client:3355
+如果要指定某一个实例生效而不是全部，使用 http://localhost:3344/actuator/bus-refresh/{destination} ，如 http://localhost:3344/actuator/bus-refresh/config-client:3355
 
 ##### 14.Stream相关知识
 
@@ -371,7 +371,7 @@ EOF
 
 ##### 18.Sentinel介绍
 
-[中文文档](https://github.com/alibaba/sentinel/wiki/%E4%BB%8B%E7%BB%8D)
+[中文介绍文档](https://github.com/alibaba/sentinel/wiki/%E4%BB%8B%E7%BB%8D)，[中文使用文档](https://github.com/alibaba/Sentinel/wiki/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8)
 
 Sentinel 具有以下特征:
 >- 丰富的应用场景：Sentinel 承接了阿里巴巴近 10 年的双十一大促流量的核心场景，例如秒杀（即突发流量控制在系统容量可以承受的范围）、消息削峰填谷、集群流量控制、实时熔断下游不可用应用等。
@@ -379,15 +379,23 @@ Sentinel 具有以下特征:
 >- 广泛的开源生态：Sentinel 提供开箱即用的与其它开源框架/库的整合模块，例如与 Spring Cloud、Dubbo、gRPC 的整合。您只需要引入相应的依赖并进行简单的配置即可快速地接入 Sentinel。
 >- 完善的SPI扩展点：Sentinel 提供简单易用、完善的 SPI 扩展接口。您可以通过实现扩展接口来快速地定制逻辑。例如定制规则管理、适配动态数据源等。
 
+Hystrix痛点：
+>- 需要程序员自己手工搭建监控平台，监控平台对中文不友好。
+>- 没有一套web界面可以给我们进行更加细粒度化的配置、流控、速率控制、服务熔断、服务降级...
+
+Sentinel优点：
+>- 单独一个组件，可以独立出来（其实Hystrix也可以单独出来）
+>- 直接界面化的细粒度统一配置
+
 [下载地址点击](https://github.com/alibaba/Sentinel/releases/download/1.7.0/sentinel-dashboard-1.7.0.jar)
 
 启动命令:java -jar sentinel-dashboard-1.7.0.jar
 
 默认用户名和密码都是sentinel
 
-项目在集成了sentinel后，没有在http://localhost:8080/#/dashboard/home中看到项目信息，是因为使用的是懒加载机制，只要执行依次访问就可以看到了。
+项目在集成了sentinel后，没有在 http://localhost:8080/#/dashboard/home 中看到项目信息，是因为使用的是懒加载机制，只要执行依次访问就可以看到了。
 
-流控规则介绍：
+***流控规则介绍：***
 * 资源名：唯一名称，默认请求路径
 * 针对来源：Sentinel可以针对调用者进行限流，填写微服务名，默认defautl（不区分来源）
 * 阈值类型/单机阈值：
@@ -403,10 +411,99 @@ Sentinel 具有以下特征:
 	* Warm UP：根据codeFactor（冷加载因子，默认3）的值，从阈值/codeFactor，经过预热时长，才达到设置的QPS阈值
 	* 排队等待：匀速排队，让请求以匀速的速度通过，阈值类型必须设置为QPS，否则无效
 
-这里有个问题，使用链路限流好像不起作用。[查看此issues](https://github.com/alibaba/Sentinel/issues/1213)
+这里有个问题，使用链路限流好像不起作用。[查看此issues](https://github.com/alibaba/Sentinel/issues/1213)，我这边使用了`spring-cloud-alibaba 2.1.0.RELEASE`和`spring-cloud-alibaba 2.1.2.RELEASE`都没有测试成功，`spring-cloud-alibaba 2.1.1.RELEASE`是可以按照内容测试成功了。
+
+WarmUp配置相关信息：
+
+默认coldFactor为3，即请求QPS从(threshold / 3)开始，经多少预热时长才逐渐升至设定的QPS阈值。如，阈值为10并且预热时长设置为5秒，系统初始化的阈值为10/3约等于3，即阈值刚开始为3；然后过了5秒偶阈值才慢慢升高恢复到10。可以查看此类`com.alibaba.csp.sentinel.slots.block.flow.controller.WarmUpController`
 
 
+***降级规则介绍：***
+* RT(平均响应时间，秒级)
+	* 平均响应时间 超出阈值 且 在时间窗口内通过的请求>=5，两个条件同时满足后出发降级
+	* 窗口期过后关闭断路器
+	* RT最大4900（更大的需要通过 -Dcsp.sentinel.statistic.max.rt=N才能生效）
+* 异常比例(秒级)
+	* QPS >= 5 且异常比例(秒级统计)超过阈值时，触发降级；时间窗口结束后，关闭降级。
+* 异常数(分钟级)
+	异常数(分钟统计)超过阈值时，触发降级；时间窗口结束后，关闭降级。时间窗口一定要大于等于60秒。
+	
+Sentinel熔断降级会在调用链路中某个资源出现不稳定状态时（例如调用超时或异常比例升高），对这个资源的调用进行限制，让请求快速失败，避免影响到其它的资源而导致级联错误。
 
+当资源被降级后，在接下来的降级时间窗口之内，对该资源的调用都自动熔断（默认行为是抛出DegradeException）。Sentinel的熔断器是没有半开状态的。
+
+热点参数限流规则在限流方法上`@SentinelResource(value = "testHotKey", blockHandler = "deal_testHotKey")`，请务必添加blockHandler，否则在访问方法到达限流的时候将抛出Exception异常并显示/error界面。
+
+@SentinelResource 处理的是Sentinel控制台配置的违规情况，有blockHandler方法配置的兜底处理；<br>
+RuntimeException int age=10/0，这个是java运行时报出的运行时异常RunTimeException，@SentinelResource不管。<br>
+@SentinelResource主管配置出错，运行出错该走异常走异常。
+
+系统保护规则是从应用级别的入口流量进行控制，从单台机器的load、CPU使用率、平均RT、入口QPS和并发线程数等几个维度监控应用指标，让系统尽可能跑到最大吞吐量的同时保证系统整体的稳定性。
+
+系统保护规则是应用整体维度的，而不是资源维度的，并且仅对入口流量生效。入口流量指的是进入应用的流量（EntryType.IN），比如Web服务或Dubbo服务端接收的请求，都属于入口流量。
+
+系统规则支持以下的模式：
+* Load自适应（仅对Linux/Unix机器生效）：系统的load1作为启发指标，进行自适应系统保护。当系统load1超过设定的启发值，且系统当前的并发线程数超过估算的系统容量时才会触发系统保护（BBR阶段）。系统容量由系统的`maxOPS`*`minRT`估算得出。设定参考值一般是`CPU CORES * 2.5`。
+* CPU USAG(1.5.0+版本)：当系统CPU使用率超过阈值即触发系统保护（取值范围0.0-1.0），比较灵敏。
+* 平均RT：当单台机器上所有入口流量的平均RT达到阈值即触发系统保护，单位是毫秒。
+* 并发线程数：当单台机器上所有入口流量的并发线程数达到阈值即触发系统保护。
+* 入口QPS：当单台机器上所有入口流量的QPS达到阈值即触发系统保护。
+
+| | Sentinel | Hystrix | resilience4j |
+| --- | --- | --- | --- |
+| 隔离策略 | 信号量隔离(并发线程数限流) | 线程池隔离/信号量隔离 | 信号量隔离 |
+| 熔断降级策略 | 基于响应时间、异常比率、异常数 | 基于异常比率 | 基于异常比率、响应时间 |
+| 实时统计实现 | 滑动窗口(LeapArray) | 滑动窗口(基于RxJava) | Ring Bit Buffer |
+| 动态规则配置 | 支持多种数据源 | 支持多种数据源 | 有限支持 |
+| 扩展性 | 多个扩展点 | 插件的形式 | 接口的形式 |
+| 基于注解的支持 | 支持 | 支持 | 支持 |
+| 限流 | 基于QPS、支持基于调用关系的限流 | 有限的支持 | Rate Limiter |
+| 流量整形 | 支持预热模式、匀速器模式、预热排队模式 | 不支持 | 简单的Rate Limiter模式 |
+| 系统自适应保护 | 支持 | 不支持 | 不支持 |
+| 控制台 | 提供开箱即用的控制台、可配置规则、查看秒级监控、机器发现等 | 简单的监控查看 | 不提供控制台，可对接其它监控系统 |
+
+Sentinel的规则持久化到nacos中需要添加如下信息：
+
+```
+//pom文件新增
+<dependency>
+    <groupId>com.alibaba.csp</groupId>
+    <artifactId>sentinel-datasource-nacos</artifactId>
+</dependency>
+
+//application.yml增加如下配置
+spring: 
+  cloud: 
+    sentinel: 
+      datasource: # 将sentinel流控规则持久化到nacos中
+        ds1:
+          nacos:
+            server-addr: localhost:8848
+            dataId: cloudalibaba-sentinel-service
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+            
+//去nacos配置中心的配置列表添加+号,DataId:cloudalibaba-sentinel-service,配置格式JSON,配置内容如下：
+[
+    {
+        "resource": "/rateLimit/byUrl", 
+        "limitApp": "default", 
+        "grade": 1, 
+        "count": 1, 
+        "strategy": 0, 
+        "controlBehavior": 0, 
+        "clusterMode": false
+    }
+]
+//resource:资源名称
+//limitApp:来源应用
+//grade:阈值类型，0表示线程数，1表示QPS
+//count:单机阈值
+//strategy:流控模式，0表示直接，1表示关联，2表示链路
+//controlBehavior:流控效果，0表示快速失败，1表示Warm UP，2表示排队等待
+//clusterMode:是否集群
+```
 
 
 
