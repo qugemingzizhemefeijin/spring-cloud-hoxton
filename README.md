@@ -505,6 +505,196 @@ spring:
 //clusterMode:是否集群
 ```
 
+##### 19.Seata相关知识
+
+Seata是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。[中文官方网站](http://seata.io/zh-cn/)
+
+分布式事务处理过程为TXID + 三组件模型：
+>- TXID (Transaction ID XID)，全局唯一的事务ID。
+>- TC (Transaction Coordinator) - 事务协调者，维护全局和分支事务的状态，驱动全局事务提交或回滚。
+>- TM (Transaction Manager) - 事务管理器，定义全局事务的范围：开始全局事务、提交或回滚全局事务。
+>- RM (Resource Manager) - 资源管理器，管理分支事务处理的资源，与TC交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。
+
+Seata处理过程：
+>- 1. TM向TC申请开启一个全局事务，全局事务创建成功并生成一个全局唯一的XID；
+>- 2. XID在微服务调用链路的上下文中传播；
+>- 3. RM向TC注册分支事务，将其纳入XID对应全局事务的管辖；
+>- 4. TM向TC发起针对XID的全局提交或回滚决议；
+>- 5. TC调度XID下管辖的全部分支事务完成提交或回滚。
+
+分布式事务执行流程：
+>- 1. TM开启分布式事务（TM向TC注册全局事务记录）；
+>- 2. 按业务场景，编排数据库、服务等事务内资源（RM向TC汇报资源准备状态）；
+>- 3. TM结束分布式事务，事务一阶段结束（TM通知TC提交/回滚分布式事务）；
+>- 4. TC汇总事务信息，决定分布式事务是提交还是回滚；
+>- 5. TC通知所有RM提交/回滚资源，事务二阶段结束。
+
+安装流程如下：
+
+1.下载
+
+从[https://github.com/seata/seata/releases](https://github.com/seata/seata/releases)下载相关版本，我这里下载的是v0.9.0.zip。
+
+2.安装
+
+下载后解压到指定目录并修改conf目录下的file.conf配置文件，先备份原文件。主要修改内容：自定义事务组名称+事务日志存储模式为DB+数据库连接信息
+
+```
+service {
+  #vgroup->rgroup
+  vgroup_mapping.cg_tx_group = "default"	//此处需要修改一下名称
+  #only support single node
+  default.grouplist = "127.0.0.1:8091"
+  #degrade current not support
+  enableDegrade = false
+  #disable
+  disable = false
+  #unit ms,s,m,h,d represents milliseconds, seconds, minutes, hours, days, default permanent
+  max.commit.retry.timeout = "-1"
+  max.rollback.retry.timeout = "-1"
+}
+
+store {
+  ## store mode: file、db
+  mode = "db"	//此处改成db
+  ...
+  
+  //这里修改数据库连接
+  db {
+    ## the implement of javax.sql.DataSource, such as DruidDataSource(druid)/BasicDataSource(dbcp) etc.
+    datasource = "dbcp"
+    ## mysql/oracle/h2/oceanbase etc.
+    db-type = "mysql"
+    driver-class-name = "com.mysql.jdbc.Driver"
+    url = "jdbc:mysql://127.0.0.1:3306/seata"	//这里记得更改连接，用户名和密码
+    user = "root"
+    password = "abcd1234"
+    min-conn = 1
+    max-conn = 3
+    global.table = "global_table"
+    branch.table = "branch_table"
+    lock-table = "lock_table"
+    query-limit = 100
+  } 
+}
+```
+
+下面创建数据库信息
+```
+create database seata default charset utf8mb4 collate utf8mb4_general_ci;
+```
+
+导入db_store.sql数据文件到seata数据库中。执行`mysql -u root -p seata < db_store.sql`即可
+
+备份conf目录下的registry.conf文件，修改此文件的内容：
+```
+registry {
+  # file 、nacos 、eureka、redis、zk、consul、etcd3、sofa
+  type = "nacos"	//将file修改成nacos
+
+  nacos {
+    serverAddr = "localhost:8848"	//此处地址修改
+    namespace = ""
+    cluster = "default"
+  }
+  ...
+}
+```
+
+3.启动seata
+
+先启动nacos服务，再启动seata服务
+
+##### 20.测试seata分布式事务
+
+建表语句如下：
+```
+create database seata_order default charset utf8mb4 collate utf8mb4_general_ci;	//存储订单的数据库
+create database seata_storage default charset utf8mb4 collate utf8mb4_general_ci; //存储库存的数据库
+create database seata_account default charset utf8mb4 collate utf8mb4_general_ci; //存储账户信息的数据库
+
+use seata_order;
+create table `t_order`(
+`id` BIGINT(11) not null auto_increment primary key,
+`user_id` bigint(11) comment '用户ID',
+`product_id` bigint(11) comment '产品ID',
+`count` int(10) comment '数量',
+`money` decimal(11,0) comment '金额',
+`status` int(1) comment '订单状态:0创建中,1已完成'
+) engine=innodb default charset utf8mb4 collate utf8mb4_general_ci comment '订单表';
+
+use seata_storage;
+create table t_storage(
+`id` BIGINT(11) not null auto_increment primary key,
+`product_id` bigint(11) comment '产品ID',
+`total` int(10) comment '总库存',
+`used` int(10) comment '已用库存',
+`residue` int(10) comment '剩余库存'
+) engine=innodb default charset utf8mb4 collate utf8mb4_general_ci comment '库存表';
+
+insert into t_storage values(1,1,100,0,100);
+
+use seata_account;
+create table t_account(
+`id` BIGINT(11) not null auto_increment primary key,
+`user_id` bigint(11) comment '用户ID',
+`total` decimal(10,0) comment '总额度',
+`used` decimal(10,0) comment '已用额度',
+`residue` decimal(10,0) comment '剩余额度'
+) engine=innodb default charset utf8mb4 collate utf8mb4_general_ci comment '账户表';
+
+insert into t_account values(1,1,1000,0,1000);
+```
+
+订单-库存-账户3个库下都需要创建各自的回滚日志表，在seata的conf目录的db_undo_log.sql，直接执行即可。
+
+```
+use seata_order;
+CREATE TABLE `undo_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `branch_id` bigint(20) NOT NULL,
+  `xid` varchar(100) NOT NULL,
+  `context` varchar(128) NOT NULL,
+  `rollback_info` longblob NOT NULL,
+  `log_status` int(11) NOT NULL,
+  `log_created` datetime NOT NULL,
+  `log_modified` datetime NOT NULL,
+  `ext` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+use seata_storage;
+CREATE TABLE `undo_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `branch_id` bigint(20) NOT NULL,
+  `xid` varchar(100) NOT NULL,
+  `context` varchar(128) NOT NULL,
+  `rollback_info` longblob NOT NULL,
+  `log_status` int(11) NOT NULL,
+  `log_created` datetime NOT NULL,
+  `log_modified` datetime NOT NULL,
+  `ext` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+use seata_account;
+CREATE TABLE `undo_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `branch_id` bigint(20) NOT NULL,
+  `xid` varchar(100) NOT NULL,
+  `context` varchar(128) NOT NULL,
+  `rollback_info` longblob NOT NULL,
+  `log_status` int(11) NOT NULL,
+  `log_created` datetime NOT NULL,
+  `log_modified` datetime NOT NULL,
+  `ext` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+```
+
 
 
 
