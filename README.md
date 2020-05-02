@@ -33,7 +33,7 @@ eureka.instance.lease-expiration-duration-in-seconds	Eureka服务端在收到最
 
 consul agent -dev
 
-#### 6.eureka、zookeeper、sonsul异同点
+#### 6.eureka、zookeeper、sonsul、Nacos异同点
 
 | 组件名 | 语言 | CAP | 服务健康检查 | 对外暴露接口 | Spring Cloud集成 | 控制台管理 | 社区活跃度 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
