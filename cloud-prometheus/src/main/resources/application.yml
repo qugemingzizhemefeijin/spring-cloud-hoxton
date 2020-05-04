@@ -1,0 +1,24 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: cloud-prometheus
+
+#日志
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    java.sql.Connection: DEBUG
+    java.sql.Statement: DEBUG
+    java.sql.PreparedStatement: DEBUG
+    org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+        
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
