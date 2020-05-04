@@ -43,6 +43,7 @@
 		<module>seata-order-service2001</module>
 		<module>seata-storage-service2002</module>
 		<module>cloud-prometheus</module>
+		<module>cloud-jwt-service</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
