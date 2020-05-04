@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: cloud-prometheus
+    
+jasypt:
+  encryptor:
+    password: cgzz
+    
+aa: 
+  cc: 'ENC(7wxRR36Cwd/5TM39MkRQcRax3YnOGakDgJCLNnggK6dOZPd+cFReEBETocAQMvXU)'
 
 #日志
 logging:
