@@ -1,0 +1,10 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: spring-import-selector
+
+#日志
+logging:
+  config: classpath:logback-spring.xml

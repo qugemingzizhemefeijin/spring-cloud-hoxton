@@ -47,6 +47,7 @@
 		<module>seata-storage-service2002</module>
 		<module>cloud-prometheus</module>
 		<module>cloud-jwt-service</module>
+		<module>spring-import-selector</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
