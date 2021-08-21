@@ -1,0 +1,25 @@
+server:
+  port: 8603
+
+spring:
+  application:
+    name: cloud-stream-consumer
+  rabbitmq:
+    host: 1.1.1.1
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  client: # 客户端进行Eureka注册的配置
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 2 # 设置心跳的时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 5 # 如果现在超过了5秒的间隔（默认是90秒）
+    instance-id: receive-8803.com  # 在信息列表时显示主机名称
+    prefer-ip-address: true     # 访问的路径变为IP地址
+
+
+
+
