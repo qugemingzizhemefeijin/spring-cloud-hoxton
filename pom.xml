@@ -48,6 +48,7 @@
 		<module>cloud-prometheus</module>
 		<module>cloud-jwt-service</module>
 		<module>spring-import-selector</module>
+		<module>spring-mouzt-bizlog</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
