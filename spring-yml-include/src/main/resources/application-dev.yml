@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    include:
+      - devDb
+      - devRedis
+# 也可以采用 逗号分隔元素列表的方式，如：
+# spring.profiles.include: 子项1,子项2,子项3
