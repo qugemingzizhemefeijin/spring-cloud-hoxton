@@ -50,6 +50,7 @@
 		<module>spring-import-selector</module>
 		<module>spring-mouzt-bizlog</module>
 		<module>spring-yml-include</module>
+		<module>spring-redisson</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->

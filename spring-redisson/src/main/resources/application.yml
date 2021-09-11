@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: spring-redisson
+  profiles:
+    active: dev
+  redis:
+    host: 192.168.86.18
+    port: 6379
+    password: A362bJa18#45
+    database: 0
+    jedis:
+      pool:
+        max‐active: 10
+        max‐idle: 2
+        min‐idle: 2
