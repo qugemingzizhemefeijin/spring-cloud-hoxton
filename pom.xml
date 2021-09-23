@@ -64,7 +64,7 @@
         <log4j.version>1.2.17</log4j.version>
         <mysql.version>5.1.47</mysql.version>
         <druid.version>1.1.16</druid.version>
-		<guava.version>28.2-jre</guava.version>
+		<guava.version>29.0-jre</guava.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
