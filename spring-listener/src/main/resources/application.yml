@@ -1,0 +1,41 @@
+server:
+  tomcat:
+    accept-count: 1000  #当所有可能的请求处理线程都在使用时，传入连接请求的最大队列长度
+    connection-timeout: 20000 #连接超时时间
+    min-spare-threads: 5  #最小工作线程数
+    max-threads: 100  #最大工作线程数
+    uri-encoding: UTF-8
+  port: 8080
+  max-http-header-size: 20480
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types:
+      - text/html
+      - text/xml
+      - text/javascript
+      - text/css
+      - text/plain
+  servlet:
+    context-path: /
+    session:
+      timeout: 7200
+      cookie:
+        name: JSESSION
+        path: /
+        http-only: true
+
+spring:
+  application:
+    name: spring-listener
+  profiles:
+    active: dev
+  thymeleaf:
+    #模板的模式，支持 HTML, XML TEXT JAVASCRIPT
+    mode: HTML
+    #编码 可不用配置
+    encoding: UTF-8
+    #开发配置为false,避免修改模板还要重启服务器
+    cache: false
+    #配置模板路径，默认是templates，可以不用配置
+    prefix: classpath:/templates/
