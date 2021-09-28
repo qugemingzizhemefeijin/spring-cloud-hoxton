@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.atguigu.springcloud.event.CustomEvent;
 import com.atguigu.springcloud.event.SmartEvent;
 import com.atguigu.springcloud.service.EventFireService;
+import com.atguigu.springcloud.service.TestService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +16,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 public class IndexController {
 
     @Autowired
     private EventFireService eventFireService;
+
+    @Autowired
+    private TestService testService;
+
+    @GetMapping("/test")
+    public @ResponseBody JSONObject test() {
+        log.info("test invoke start");
+        testService.a();
+
+        JSONObject json = new JSONObject();
+        json.put("success", 0);
+        json.put("msg", "成功");
+        return json;
+    }
 
     @RequestMapping({"/", "/index"})
     public String indexModel(Model model) {
