@@ -49,6 +49,7 @@
 		<module>cloud-jwt-service</module>
 		<module>spring-import-selector</module>
 		<module>spring-mouzt-bizlog</module>
+		<module>spring-mouzt-bizlog-source</module>
 		<module>spring-yml-include</module>
 		<module>spring-redisson</module>
 		<module>spring-listener</module>
