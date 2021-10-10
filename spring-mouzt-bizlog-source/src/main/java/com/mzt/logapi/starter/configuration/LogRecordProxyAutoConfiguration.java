@@ -1,8 +1,10 @@
 package com.mzt.logapi.starter.configuration;
 
+import com.mzt.logapi.starter.annotation.EnableLogRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
@@ -14,9 +16,16 @@ import org.springframework.core.type.AnnotationMetadata;
 @Configuration
 public class LogRecordProxyAutoConfiguration implements ImportAware {
 
+    private AnnotationAttributes enableLogRecord;
+
     @Override
     public void setImportMetadata(AnnotationMetadata importMetadata) {
-
+        // classValuesAsString 是否将类引用转换为String 在返回的 Map 中作为值暴露的类名，而不是 Class 可能需要先加载的引用
+        this.enableLogRecord = AnnotationAttributes.fromMap(
+                importMetadata.getAnnotationAttributes(EnableLogRecord.class.getName(), false));
+        if (this.enableLogRecord == null) {
+            log.info("@EnableCaching is not present on importing class");
+        }
     }
 
 }
