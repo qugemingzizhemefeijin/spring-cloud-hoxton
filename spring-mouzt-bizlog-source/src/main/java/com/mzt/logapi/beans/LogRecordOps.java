@@ -3,6 +3,9 @@ package com.mzt.logapi.beans;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * 映射的是 LogRecordAnnotation 注解信息
+ */
 @Data
 @Builder
 public class LogRecordOps {

@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.Date;
 
+/**
+ * 日志打印最终解析出来的结果对象
+ */
 @Setter
 @Getter
 @Builder
