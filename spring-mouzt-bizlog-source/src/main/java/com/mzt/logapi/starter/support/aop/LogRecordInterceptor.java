@@ -67,7 +67,7 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
         LogRecordContext.putEmptySpan();
         // 用于存储 LogRecordAnnotation 的注解转换成 LogRecordOps 的信息（使用集合是可以让方法支持多个 LogRecordAnnotation 的注解）
         Collection<LogRecordOps> operations = new ArrayList<>();
-        // 这个是用于存储前缀函数计算的返回值
+        // 这个是用于存储前置函数计算的返回值
         Map<String, String> functionNameAndReturnMap = new HashMap<>();
         try {
             // 解析方法上的 LogRecordAnnotation 注解并且将信息存储到 Collection<LogRecordOps> 集合中
@@ -80,21 +80,26 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
             log.error("log record parse before function exception", e);
         }
         try {
+            // 执行被拦截的方法调用
             ret = invoker.proceed();
         } catch (Exception e) {
+            // 记录异常信息
             methodExecuteResult = new MethodExecuteResult(false, e, e.getMessage());
         }
         try {
+            // 如果方法有 LogRecordAnnotation 注解，则执行日志模版解析以及处理（包括日志打印、存储等操作）
             if (!CollectionUtils.isEmpty(operations)) {
                 recordExecute(ret, method, args, operations, targetClass,
                         methodExecuteResult.isSuccess(), methodExecuteResult.getErrorMsg(), functionNameAndReturnMap);
             }
         } catch (Exception t) {
-            //记录日志错误不要影响业务
+            // 记录日志错误不要影响业务
             log.error("log record parse exception", t);
         } finally {
+            // 销毁维持的参数变量或者销毁本次调用需要的信息
             LogRecordContext.clear();
         }
+        // 如果本次调用抛出了一场，则直接调用throw抛出
         if (methodExecuteResult.getThrowable() != null) {
             throw methodExecuteResult.getThrowable();
         }
@@ -118,21 +123,38 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
         return spElTemplates;
     }
 
+    /**
+     * 对拦截的方法进行日志模版的解析，包括已经获取到了方法执行后的返回值，前置函数执行结果等都传入进行替换等操作。
+     * @param ret                      被拦截的执行后的返回值
+     * @param method                   被拦截的方法
+     * @param args                     方法传入的参数
+     * @param operations               LogRecordAnnotation 的注解转换成 LogRecordOps 的集合信息
+     * @param targetClass              真正方法的目标Class
+     * @param success                  方法是否执行成功
+     * @param errorMsg                 方法的异常信息描述
+     * @param functionNameAndReturnMap 存储前置函数计算的返回值
+     */
     private void recordExecute(Object ret, Method method, Object[] args, Collection<LogRecordOps> operations,
                                Class<?> targetClass, boolean success, String errorMsg, Map<String, String> functionNameAndReturnMap) {
+        // 循环解析 LogRecordAnnotation 注解模版信息
         for (LogRecordOps operation : operations) {
             try {
+                // 获取需要执行的日志模版
                 String action = getActionContent(success, operation);
                 if (StringUtils.isEmpty(action)) {
                     //没有日志内容则忽略
                     continue;
                 }
-                //获取需要解析的表达式
+                // 获取需要解析的表达式
                 List<String> spElTemplates = getSpElTemplates(operation, action);
+                // 这里获取操作人ID（如果在 LogRecordAnnotation 注解中配置了 operator 则为此值，否则是从 IOperatorGetService 接口实现类中获取）
                 String operatorIdFromService = getOperatorIdFromServiceAndPutTemplate(operation, spElTemplates);
 
+                // 解析模版并返回模版替换后的值
                 Map<String, String> expressionValues = processTemplate(spElTemplates, ret, targetClass, method, args, errorMsg, functionNameAndReturnMap);
+                // 计算是否符合记录日志的条件
                 if (logConditionPassed(operation.getCondition(), expressionValues)) {
+                    // 通过解析表达式后生成的记录日志的对象
                     LogRecord logRecord = LogRecord.builder()
                             .bizKey(expressionValues.get(operation.getBizKey()))
                             .bizNo(expressionValues.get(operation.getBizNo()))
@@ -149,6 +171,7 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
                     }
                     //save log 需要新开事务，失败日志不能因为事务回滚而丢失
                     Preconditions.checkNotNull(bizLogService, "bizLogService not init!!");
+                    // 日志记录操作，可以是存储数据库/只是打印等
                     bizLogService.record(logRecord);
                 }
             } catch (Exception t) {
@@ -157,22 +180,49 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
         }
     }
 
+    /**
+     * 获取一个日志注解需要进行模板表达式解析的信息
+     * @param operation 日志注解对象
+     * @param action    成功/失败日志模板
+     * @return List<String> 所有的模板集合
+     */
     private List<String> getSpElTemplates(LogRecordOps operation, String action) {
+        // 将需要进行模版解析的封装到List中
         List<String> spElTemplates = Lists.newArrayList(operation.getBizKey(), operation.getBizNo(), action, operation.getDetail());
+        // 如果有条件的话，也将入到模版中
         if (!StringUtils.isEmpty(operation.getCondition())) {
             spElTemplates.add(operation.getCondition());
         }
         return spElTemplates;
     }
 
+    /**
+     * 判断日志记录的条件表达式是否为真
+     * @param condition        条件的模版
+     * @param expressionValues 完成计算的表达式值和value映射关系
+     * @return boolean
+     */
     private boolean logConditionPassed(String condition, Map<String, String> expressionValues) {
         return StringUtils.isEmpty(condition) || StringUtils.endsWithIgnoreCase(expressionValues.get(condition), "true");
     }
 
+    /**
+     * 获取操作人ID信息
+     * @param operation             LogRecordOps
+     * @param operatorIdFromService 是从 IOperatorGetService 接口实现类中获取，可能是空
+     * @param expressionValues      被模版解析过的操作人ID
+     * @return String
+     */
     private String getRealOperatorId(LogRecordOps operation, String operatorIdFromService, Map<String, String> expressionValues) {
         return !StringUtils.isEmpty(operatorIdFromService) ? operatorIdFromService : expressionValues.get(operation.getOperatorId());
     }
 
+    /**
+     * 如果注解中操作人为空，则从服务中 IOperatorGetService 的实现类中获取操作人ID，否则将操作人ID存放到模版中
+     * @param operation     LogRecordOps
+     * @param spElTemplates 存储的待解析的模版
+     * @return String
+     */
     private String getOperatorIdFromServiceAndPutTemplate(LogRecordOps operation, List<String> spElTemplates) {
         String realOperatorId = "";
         if (StringUtils.isEmpty(operation.getOperatorId())) {
@@ -186,6 +236,12 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
         return realOperatorId;
     }
 
+    /**
+     * 根据方法执行的结果获取需要解析的模版
+     * @param success   方法是否被执行成功
+     * @param operation LogRecordOps
+     * @return String
+     */
     private String getActionContent(boolean success, LogRecordOps operation) {
         String action = "";
         if (success) {
@@ -212,14 +268,26 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Initia
         return AopProxyUtils.ultimateTargetClass(target);
     }
 
+    /**
+     * 主动设置操作人获取服务
+     * @param operatorGetService IOperatorGetService
+     */
     public void setOperatorGetService(IOperatorGetService operatorGetService) {
         this.operatorGetService = operatorGetService;
     }
 
+    /**
+     * 主动设置日志记录服务
+     * @param bizLogService ILogRecordService
+     */
     public void setLogRecordService(ILogRecordService bizLogService) {
         this.bizLogService = bizLogService;
     }
 
+    /**
+     * 主动设置注解 LogRecordAnnotation 的解析
+     * @param logRecordOperationSource LogRecordOperationSource
+     */
     public void setLogRecordOperationSource(LogRecordOperationSource logRecordOperationSource) {
         this.logRecordOperationSource = logRecordOperationSource;
     }
