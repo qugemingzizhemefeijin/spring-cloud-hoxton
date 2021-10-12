@@ -2,6 +2,9 @@ package com.mzt.logapi.service;
 
 import com.mzt.logapi.beans.Operator;
 
+/**
+ * 获取用户的信息，业务代码
+ */
 public interface IOperatorGetService {
 
     /**

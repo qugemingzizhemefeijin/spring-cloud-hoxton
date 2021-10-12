@@ -38,11 +38,12 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    @LogRecordAnnotation(success = "更新了订单{ORDER{#order.orderId}},更新内容为...",
+    @LogRecordAnnotation(success = "更新了订单{ORDER{#order.orderId}},更新前内容为：{B_ORDER{#order.productName}}，更新后内容为{ORDER{#order.productName}}，bean内容{{@userQueryService.getDesc()}}",
             prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
             detail = "{{#order.toString()}}")
     public boolean update(Long orderId, Order order) {
         order.setOrderId(10000L);
+        order.setProductName("超值优惠鸡腿饭套餐");
         return false;
     }
 

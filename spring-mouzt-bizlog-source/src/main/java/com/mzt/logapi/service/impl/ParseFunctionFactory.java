@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 维护了所有的自定义函数的工厂类
+ */
 public class ParseFunctionFactory {
 
     private Map<String, IParseFunction> allFunctionMap;

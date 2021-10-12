@@ -8,4 +8,6 @@ public interface UserQueryService {
 
     List<User> getUserList(List<String> userIds);
 
+    String getDesc();
+
 }

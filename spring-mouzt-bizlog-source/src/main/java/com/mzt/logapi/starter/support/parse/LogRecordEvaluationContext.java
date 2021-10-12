@@ -15,6 +15,7 @@ public class LogRecordEvaluationContext extends MethodBasedEvaluationContext {
     public LogRecordEvaluationContext(Object rootObject, Method method, Object[] arguments,
                                       ParameterNameDiscoverer parameterNameDiscoverer, Object ret, String errorMsg) {
         super(rootObject, method, arguments, parameterNameDiscoverer);
+        // 这里是将上下文存储的变量也搞到表达式存储的变量中
         Map<String, Object> variables = LogRecordContext.getVariables();
         if (variables != null && variables.size() > 0) {
             for (Map.Entry<String, Object> entry : variables.entrySet()) {

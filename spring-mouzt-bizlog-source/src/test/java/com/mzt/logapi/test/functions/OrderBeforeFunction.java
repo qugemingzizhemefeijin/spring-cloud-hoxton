@@ -5,12 +5,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
-public class OrderParseFunction implements IParseFunction {
+public class OrderBeforeFunction implements IParseFunction {
+
+    @Override
+    public boolean executeBefore() {
+        return true;
+    }
 
     @Override
     public String functionName() {
-        //  函数名称为 ORDER
-        return "ORDER";
+        return "B_ORDER";
     }
 
     @Override
@@ -18,7 +22,7 @@ public class OrderParseFunction implements IParseFunction {
         if(StringUtils.isEmpty(value)){
             return value;
         }
-        return "我记录的是新值：" + value;
+        return "我记录的是原始值：" + value;
     }
 
 }

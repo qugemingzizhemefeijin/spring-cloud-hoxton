@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("userQueryService")
 public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
@@ -17,6 +17,11 @@ public class UserQueryServiceImpl implements UserQueryService {
     public List<User> getUserList(List<String> userIds) {
         LogRecordContext.putVariable("user", "mzt");
         return null;
+    }
+
+    @Override
+    public String getDesc() {
+        return "UserQuery";
     }
 
 }

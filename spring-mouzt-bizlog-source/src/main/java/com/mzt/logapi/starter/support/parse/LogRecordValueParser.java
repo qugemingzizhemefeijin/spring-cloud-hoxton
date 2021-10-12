@@ -64,8 +64,17 @@ public class LogRecordValueParser implements BeanFactoryAware {
         return functionReturnValue;
     }
 
+    /**
+     * 传入所有的模板，并对需要进行方法调用前计算的函数进行求值
+     * @param templates   模板集合（都是成功的模板，失败模板不可能会被前置计算）
+     * @param targetClass 注解方法所属目标对象的Class
+     * @param method      注解方法
+     * @param args        注解方法传入的参数信息
+     * @return Map<String, String> key=函数名，value=计算结果
+     */
     public Map<String, String> processBeforeExecuteFunctionTemplate(Collection<String> templates, Class<?> targetClass, Method method, Object[] args) {
         Map<String, String> functionNameAndReturnValueMap = new HashMap<>();
+        // 创建一个模板表达式变量保持的上下文对象
         EvaluationContext evaluationContext = expressionEvaluator.createEvaluationContext(method, args, targetClass, null, null, beanFactory);
 
         for (String expressionTemplate : templates) {

@@ -4,6 +4,9 @@ import com.mzt.logapi.beans.LogRecord;
 
 import java.util.List;
 
+/**
+ * 记录或者查询日志所用的服务
+ */
 public interface ILogRecordService {
 
     /**
