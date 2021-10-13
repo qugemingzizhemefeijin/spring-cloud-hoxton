@@ -1,6 +1,7 @@
 package com.mzt.logapi.starter.support.aop;
 
 import org.springframework.aop.ClassFilter;
+import org.springframework.lang.NonNull;
 
 /**
  *
@@ -18,7 +19,7 @@ public class LogRecordClassFilter implements ClassFilter {
     private String[] basePackages;
 
     @Override
-    public boolean matches(Class<?> clazz) {
+    public boolean matches(@NonNull Class<?> clazz) {
         String[] bs = this.basePackages;
         if(bs == null || bs.length == 0) {
             return true;
