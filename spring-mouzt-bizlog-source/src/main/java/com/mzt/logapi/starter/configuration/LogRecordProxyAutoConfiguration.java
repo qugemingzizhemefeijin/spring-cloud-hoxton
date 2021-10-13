@@ -7,6 +7,7 @@ import com.mzt.logapi.service.IParseFunction;
 import com.mzt.logapi.service.impl.*;
 import com.mzt.logapi.starter.annotation.EnableLogRecord;
 import com.mzt.logapi.starter.support.aop.BeanFactoryLogRecordAdvisor;
+import com.mzt.logapi.starter.support.aop.LogRecordClassFilter;
 import com.mzt.logapi.starter.support.aop.LogRecordInterceptor;
 import com.mzt.logapi.starter.support.aop.LogRecordOperationSource;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,18 @@ public class LogRecordProxyAutoConfiguration implements ImportAware {
         BeanFactoryLogRecordAdvisor advisor = new BeanFactoryLogRecordAdvisor();
         advisor.setLogRecordOperationSource(logRecordOperationSource());
         advisor.setAdvice(logRecordInterceptor(functionService));
+        advisor.setClassFilter(logRecordClassFilter());
         return advisor;
+    }
+
+    @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public LogRecordClassFilter logRecordClassFilter() {
+        LogRecordClassFilter filter = new LogRecordClassFilter();
+        if(enableLogRecord != null) {
+            filter.setBasePackages(enableLogRecord.getStringArray("value"));
+        }
+        return filter;
     }
 
     @Bean
