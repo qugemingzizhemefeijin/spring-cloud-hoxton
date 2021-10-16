@@ -35,6 +35,7 @@ import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
  *
  * <a href="https://blog.csdn.net/f641385712/article/details/89178421">https://blog.csdn.net/f641385712/article/details/89178421</a><br>
  * <a href="https://cloud.tencent.com/developer/article/1497782">https://cloud.tencent.com/developer/article/1497782</a>
+ *
  */
 public class BeanFactoryLogRecordAdvisor extends AbstractBeanFactoryPointcutAdvisor {
 

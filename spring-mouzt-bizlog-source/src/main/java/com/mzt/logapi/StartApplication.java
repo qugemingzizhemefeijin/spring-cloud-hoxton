@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @Slf4j
 @Import({InfrastructureAdvisorAutoProxyCreator.class})
-@EnableLogRecord
+@EnableLogRecord({"com.mzt.logapi.test"})
 public class StartApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
