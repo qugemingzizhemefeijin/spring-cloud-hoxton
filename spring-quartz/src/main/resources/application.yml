@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: spring-quartz
+  profiles:
+    active: dev
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://localhost:3306/db2019?serverTimezone=GMT%2B8&tinyInt1isBit=false&useUnicode=true&characterEncoding=utf8&connectTimeout=5000&socketTimeout=60000&autoReconnect=true&failOverReadOnly=false&useSSL=false
+    username: root
+    password: abcd1234
+  quartz:
+    #持久化到数据库方式
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: MY_SCHEDULER
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadExecutor:
+            class: org.quartz.impl.DefaultThreadExecutor
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true

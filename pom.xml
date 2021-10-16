@@ -53,6 +53,7 @@
 		<module>spring-yml-include</module>
 		<module>spring-redisson</module>
 		<module>spring-listener</module>
+		<module>spring-quartz</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
