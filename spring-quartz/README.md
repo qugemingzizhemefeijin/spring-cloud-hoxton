@@ -1,5 +1,7 @@
 [quartz源码分析——执行引擎和线程模型](https://www.cnblogs.com/liuroy/p/7517777.html)
 
+[Spring定时任务Quartz执行全过程源码解读](https://my.oschina.net/itstack/blog/4409556)
+
 - SimpleThreadPool——quartz里的工头儿
 - WorkerThread——quartz里的工人
 - QuartzSchedulerThread——Quartz里面的老板
