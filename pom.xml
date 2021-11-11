@@ -69,7 +69,7 @@
         <mysql.version>5.1.47</mysql.version>
         <druid.version>1.1.16</druid.version>
 		<guava.version>31.0.1-jre</guava.version>
-        <commons.beanutils.version>1.9.3</commons.beanutils.version>
+        <commons.beanutils.version>1.9.4</commons.beanutils.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
