@@ -1,0 +1,12 @@
+package rules
+
+import com.atguigu.springcloud.vo.ReqAndResult;
+
+rule "Hello-World"
+  when
+    //eval(true);
+    $ret : ReqAndResult();
+  then
+    $ret.addResult("perfect");
+    System.out.println("req = " + $ret.getReq());
+end
