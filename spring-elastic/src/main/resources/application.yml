@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: spring-elastic
+  profiles:
+    active: dev
+  # 这个在高版本中已经废弃，官方建议我们使用：High Level REST Client
+  #data:
+  #  elasticsearch:
+  #    cluster-name: my-application
+  #    cluster-nodes: 127.0.0.1:9300
