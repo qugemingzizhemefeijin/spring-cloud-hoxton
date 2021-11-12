@@ -56,6 +56,7 @@
 		<module>spring-quartz</module>
 		<module>spring-drools</module>
 		<module>spring-elastic</module>
+		<module>spring-websocket</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -70,6 +71,7 @@
         <druid.version>1.1.16</druid.version>
 		<guava.version>31.0.1-jre</guava.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
+        <fastjson.version>1.2.75</fastjson.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -128,6 +130,11 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commons.beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
