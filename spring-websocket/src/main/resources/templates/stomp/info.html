@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Info Page</title>
+<script src="/static/js/sockjs-0.3.4.min.js"></script>
+<script src="/static/js/stomp.js"></script>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div id="main-content" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>System Notice</th>
+                </tr>
+                </thead>
+                <tbody id="greetings">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function showGreeting(message) {
+    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+}
+var noticeSocket = function () {
+    var s = new SockJS('/socket');
+    var stompClient = Stomp.over(s);
+    stompClient.connect({}, function () {
+        console.log('notice socket connected!');
+        stompClient.subscribe('/topic/notice', function (msg) {
+            showGreeting("系统消息: " + msg.body)
+        });
+    });
+};
+noticeSocket();
+</script>
+</body>
+</html>

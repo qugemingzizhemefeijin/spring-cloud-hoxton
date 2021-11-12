@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @Slf4j
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+// 显式配置了 @EnableWebMvc，spring boot访问静态资源会失败
+// @EnableWebMvc
 public class WebSocketMain8080 implements CommandLineRunner {
 
 	@Value("${spring.profiles.active}")

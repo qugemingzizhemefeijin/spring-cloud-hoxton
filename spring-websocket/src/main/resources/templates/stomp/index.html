@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutorial for WebSocket!</title>
+    <script src="/static/js/sockjs-0.3.4.min.js"></script>
+    <script src="/static/js/stomp.js"></script>
+</head>
+<body>
+
+<div>
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+    </div>
+    <div id="conversationDiv">
+        <p>
+            <label>填写通知内容?</label>
+        </p>
+        <p>
+            <textarea id="msg" rows="5"></textarea>
+        </p>
+        <button id="sendName" onclick="sendName();">Send</button>
+        <p id="response"></p>
+    </div>
+</div>
+
+<script>
+    var stompClient = null;
+    function setConnected(connected) {
+        document.getElementById('connect').disabled = connected;
+        document.getElementById('disconnect').disabled = !connected;
+        document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+        document.getElementById('response').innerHTML = '';
+    }
+    // 开启socket连接
+    function connect() {
+        var socket = new SockJS('/socket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+        });
+    }
+    // 断开socket连接
+    function disconnect() {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
+    // 向‘/app/change-notice’服务端发送消息
+    function sendName() {
+        var value = document.getElementById('msg').value;
+        stompClient.send("/app/change-notice", {}, value);
+        document.getElementById('msg').value = '';
+    }
+    // connect();
+</script>
+
+</body>
+</html>

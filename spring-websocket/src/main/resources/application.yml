@@ -6,3 +6,8 @@ spring:
     name: spring-websocket
   profiles:
     active: dev
+  mvc:
+    view:
+      prefix: classpath:/templates/
+      suffix: .html
+    static-path-pattern: /static/**
