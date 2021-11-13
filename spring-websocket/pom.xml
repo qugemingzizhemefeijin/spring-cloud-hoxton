@@ -15,6 +15,7 @@
         <lombok.version>1.18.16</lombok.version>
         <tio.websocket.version>3.6.0.v20200315-RELEASE</tio.websocket.version>
         <socketio.version>1.7.19</socketio.version>
+        <netty.websocket.version>0.12.0</netty.websocket.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,11 @@
             <groupId>com.corundumstudio.socketio</groupId>
             <artifactId>netty-socketio</artifactId>
             <version>${socketio.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yeauty</groupId>
+            <artifactId>netty-websocket-spring-boot-starter</artifactId>
+            <version>${netty.websocket.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

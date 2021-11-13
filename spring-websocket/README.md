@@ -168,3 +168,25 @@ public class ServerRunner implements CommandLineRunner {
 
 所有用户发送消息：http://localhost:8080/socketio/send/notice
 
+#### 5.netty-websocket-spring-boot-starter(第一节的扩展)
+
+`spring-boot-starter-websocket`（或`spring-websocket`）。它可以让我们使用注解，很简单的进行`websocket`开发，让我们更多的关注业务逻辑。
+
+它底层使用的是`tomcat`，且不说把整个`tomcat`放进一个`webSocket`服务中是否会太重，但在大数据量高并发的场景下，它的表现并不是非常理想。
+
+`netty`一款高性能的NIO网络编程框架，在推送量激增时，表现依然出色。这得益于Netty的并发高、传输快、封装好等特点。但是，要在`springboot`项目中整合`netty`来开发`websocket`不是一件舒服的事，这会让你过多的关注非业务逻辑的实现。
+
+`netty-websocket-spring-boot-starter`可以像`spring-boot-starter-websocket`一样使用注解进行开发，只需关注需要的事件(如`OnMessage`)。并且底层是使用`netty`,当需要调参的时候只需要修改配置参数即可，无需过多的关心`handler`的设置。
+
+```
+<dependency>
+    <groupId>org.yeauty</groupId>
+    <artifactId>netty-websocket-spring-boot-starter</artifactId>
+    <version>0.12.0</version>
+</dependency>
+```
+
+然后使用的方法基本与第一节一样（类路径不一样），配置信息都在`@ServerEndpoint`注解中配置，包括端口，地址等。
+
+访问地址：http://localhost:8080/netty/websocket/index
+
