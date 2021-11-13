@@ -13,6 +13,8 @@
 
     <properties>
         <lombok.version>1.18.16</lombok.version>
+        <tio.websocket.version>3.6.0.v20200315-RELEASE</tio.websocket.version>
+        <socketio.version>1.7.19</socketio.version>
     </properties>
 
     <dependencies>
@@ -32,6 +34,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.t-io</groupId>
+            <artifactId>tio-websocket-spring-boot-starter</artifactId>
+            <version>${tio.websocket.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.corundumstudio.socketio</groupId>
+            <artifactId>netty-socketio</artifactId>
+            <version>${socketio.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

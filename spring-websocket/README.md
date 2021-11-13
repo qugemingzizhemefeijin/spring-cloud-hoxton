@@ -77,5 +77,94 @@ http://localhost:8080/stomp/socket/msg/user2
 
 通过实现`WebSocketConfigurer`类并覆盖相应的方法进行`websocket`的配置。我们主要覆盖`registerWebSocketHandlers`这个方法。通过向`WebSocketHandlerRegistry`设置不同参数来进行配置。其中`addHandler`方法添加我们上面的写的`ws`的`handler`处理类，第二个参数是你暴露出的`ws`路径。`addInterceptors`添加我们写的握手过滤器。`setAllowedOrigins("*")`这个是关闭跨域校验，方便本地调试，**线上推荐打开**。
 
+#### 4.tio
 
+```
+<dependency>
+    <groupId>org.t-io</groupId>
+    <artifactId>tio-websocket-spring-boot-starter</artifactId>
+    <version>3.6.0.v20200315-RELEASE</version>
+</dependency>
+```
+
+需要实现`IWsMsgHandler`接口，并重写一些方法：
+- `handshake`在握手的时候触发；
+- `onAfterHandshaked`在握手成功后触发；
+- `onBytes`客户端发送二进制消息触发；
+- `onClose`客户端关闭连接时触发；
+- `onText`客户端发送文本消息触发；
+
+同时在启动类上需要添加`@EnableTioWebSocketServer`注解。
+
+```
+@Slf4j
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@EnableTioWebSocketServer
+public class WebSocketMain8080 implements CommandLineRunner {
+
+	@Value("${spring.profiles.active}")
+	private String profileActive;
+
+	public static void main(String[] args) {
+		SpringApplication.run(WebSocketMain8080.class, args);
+	}
+	
+	@Override
+	public void run(String... args) {
+		log.info("web socket 启动完毕，当前环境：{}", profileActive);
+	}
+
+}
+```
+
+#### 5.socketio
+
+[netty-socketio](https://github.com/mrniko/netty-socketio/) 是一个开源的Socket.io服务器端的一个java的实现，它基于Netty框架，可用于服务端推送消息给客户端。
+
+```
+<dependency>
+    <groupId>com.corundumstudio.socketio</groupId>
+    <artifactId>netty-socketio</artifactId>
+    <version>1.7.19</version>
+</dependency>
+```
+
+注册Bean：
+```
+@Bean
+public SocketIOServer socketIOServer() {
+    com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
+    config.setHostname(socketioProperties.getHost());
+    config.setPort(socketioProperties.getPort());
+    return new SocketIOServer(config);
+}
+```
+
+项目启动后开启服务：
+```
+@Component
+@Order(1)
+@Slf4j
+public class ServerRunner implements CommandLineRunner {
+
+    private final SocketIOServer server;
+
+    public ServerRunner(SocketIOServer server) {
+        this.server = server;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        server.start();
+        log.info("socket.io启动成功！");
+    }
+
+}
+```
+
+访问地址：http://localhost:8080/socketio/index
+
+指定用户发送：http://localhost:8080/socketio/aaskskiwkks
+
+所有用户发送消息：http://localhost:8080/socketio/send/notice
 

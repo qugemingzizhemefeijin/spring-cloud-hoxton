@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>websocket-java-socketio</title>
+<link href="/static/css/bootstrap.css" rel="stylesheet" />
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/socket.io.js"></script>
+<script src="/static/js/moment.min.js"></script>
+<style>
+body {
+    padding:20px;
+}
+</style>
+</head>
+
+<body>
+<h1>Socket.io Test</h1>
+<div><p id="status">Waiting for input</p></div>
+<div><p id="message" style="min-height: 26px;background: burlywood;"></div>
+<button id="connect" onClick='connect()'/>Connect</button>
+<button id="disconnect" onClick='disconnect()'>Disconnect</button>
+<input type="file" name="file" id="file-field" />
+<button id="send" onClick='send()'/>Send Message</button>
+<ul id="img-list"></ul>
+</body>
+<script type="text/javascript">
+/**
+ * 前端js的 socket.emit("事件名","参数数据")方法，是触发后端自定义消息事件的时候使用的,
+ * 前端js的 socket.on("事件名",匿名函数(服务器向客户端发送的数据))为监听服务器端的事件
+ *
+ * socketIo连接的服务器信息，就是我们后端配置的信息
+ *
+ *
+ **/
+let opts = {
+    query: 'token=aaskskiwkks',
+    // 在启动了socketIo服务端的情况下，请求vue页面即可触发connect方法完成连接并监听，但是实际场景vue客户端会一直连接socketIo服务端，找了好久没定位到问题。
+    // 最后发现很可能是因为socket.io的握手机制导致的。socket.io在进行握手的时候默认采用的是polling轮询机制进行的，当失败时会持续发送握手请求。
+    transports:['websocket']
+};
+let socket = io.connect("http://localhost:9092?", opts);
+let firstconnect = true;
+
+function connect() {
+    if(firstconnect) {
+        //socket.on('reconnect', function(){ status_update("Reconnected to Server"); });
+        //socket.on('reconnecting', function( nextRetry ){ status_update("Reconnecting in "
+        //+ nextRetry + " seconds"); });
+        //socket.on('reconnect_failed', function(){ message("Reconnect Failed"); });
+        //firstconnect = false;
+    } else {
+        socket.reconnect();
+    }
+}
+
+//监听服务器连接事件
+socket.on('connect', function(){ status_update("Connected to Server"); });
+//监听服务器关闭服务事件
+socket.on('disconnect', function(){ status_update("Disconnected from Server"); });
+//监听服务器端发送消息事件
+socket.on('messageevent', function(data) {
+    message('Server', data);
+    //console.log("服务器发送的消息是："+data);
+});
+
+socket.on('msg', function(file) {
+    var arrayBuffer = new Uint8Array(file).buffer;
+    var blob        = new Blob([arrayBuffer]);
+
+    var imgList = $('ul#img-list');
+
+    var li = $('<li/>').appendTo(imgList);
+    $('<div/>').text(file.name).appendTo(li);
+    var img = $('<img/>').appendTo(li);
+
+    var reader = new FileReader();
+    reader.onload = (function(aImg) {
+        return function(e) {
+            aImg.attr('src', e.target.result);
+            aImg.attr('width', 150);
+        };
+    })(img);
+
+    reader.readAsDataURL(blob);
+
+    message('Server', "接收到一张图片");
+});
+
+//断开连接
+function disconnect() {
+    socket.disconnect();
+}
+
+function message(owner, data) {
+    $('#message').append('<p>'+owner+' says: ' + data + '</p>');
+}
+
+function status_update(txt){
+    document.getElementById('status').innerHTML = txt;
+}
+
+function esc(msg){
+    return msg.replace(/</g, '<').replace(/>/g, '>');
+}
+//点击发送消息触发
+function send() {
+    //console.log("点击了发送消息，开始向服务器发送消息")
+    let msg = "我很好的,是的．";
+    message('Me', msg);
+    socket.emit('messageevent', {msgContent: msg});
+}
+
+$('#file-field').bind({
+    change: function() {
+        displayFiles(this.files);
+    }
+});
+
+function displayFiles(files) {
+    $.each(files, function(i, file) {
+        if (!file.type.match(/image.*/)) {
+            return true;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            socket.emit('msg', e.target.result);
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+}
+</script>
+</html>
