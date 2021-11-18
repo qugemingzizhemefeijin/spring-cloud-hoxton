@@ -4,7 +4,7 @@ import com.lmax.disruptor.RingBuffer;
 
 public class MyEventProducer {
 
-    private RingBuffer<MyEventModel> ringBuffer;
+    private final RingBuffer<MyEventModel> ringBuffer;
 
     public MyEventProducer(RingBuffer<MyEventModel> ringBuffer) {
         this.ringBuffer = ringBuffer;
