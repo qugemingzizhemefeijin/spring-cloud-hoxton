@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-@Service
+//@Service
 public class LogsExceptionTest implements InitializingBean {
 
     private final AtomicInteger counter = new AtomicInteger();

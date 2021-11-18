@@ -1,5 +1,6 @@
 package com.atguigu.springcloud;
 
+import com.atguigu.springcloud.disruptor.MyEventTest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -27,6 +28,8 @@ public class Log4j2Main8080 implements CommandLineRunner {
 		log.info("log4j2 启动完毕，当前环境：{}", profileActive);
 
 		Thread t = new Thread(() -> {
+			MyEventTest.init();
+
 			while(true) {
 				IntStream.range(0, 2).mapToObj(String::valueOf).forEach(log::info);
 				try {
