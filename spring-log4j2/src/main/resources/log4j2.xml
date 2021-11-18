@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="180" packages="" xmlns:xi="http://www.w3.org/2001/XInclude" name="XIncludeDemo">
+    <properties>
+        <!--property name="PATTERN">[%level] %date{YYYY-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] [%file:%line:%method] %msg%n%throwable</property-->
+        <property name="PATTERN">[%level] %date{YYYY-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] [%file:%line:%method] %msg%n%cusEx{filters(java.util,com.atguigu.springcloud)}</property>
+    </properties>
+    <!--appenders-->
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout charset="UTF-8" pattern="${PATTERN}"/>
+        </Console>
+
+        <!-- 在初始化链接SMTP服务器的时候会造成日志卡顿，所以得想办法走其他逻辑，而不是直接走SMTPAppender -->
+        <!-- 邮件发送期间，也会造成日志消费线程暂停 -->
+        <!--SMTP name="MailAppender" subject="Error Log" to="tttt@aa.com" from="ffff@aa.com"
+              smtpProtocol="smtp"
+              smtpHost="smtp.exmail.qq.com"
+              smtpUsername="ffff@aa.com"
+              smtpPassword="1qazxsw2"
+              smtpPort="465"
+              bufferSize="512">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <HtmlLayout title="Log4j Log ERROR Messages" contentType="text/html" fontSize="MEDIUM" locationInfo="true" fontName="arial,sans-serif" />
+        </SMTP-->
+        <!-- SSL加密邮件 区别是这个：smtps -->
+        <SMTP name="MailAppender" subject="Error Log" to="tttt@aa.com" from="ffff@aa.com"
+              smtpProtocol="smtps"
+              smtpHost="smtp.exmail.qq.com"
+              smtpUsername="ffff@aa.com"
+              smtpPassword="1qazxsw2"
+              smtpPort="465"
+              bufferSize="512">
+            <!--ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" /-->
+            <OOMThresholdFilter level="ERROR" exceptionClass="java.lang.OutOfMemoryError" onMatch="ACCEPT" onMismatch="DENY" />
+            <HtmlLayout title="Log4j Log ERROR Messages" contentType="text/html" fontSize="MEDIUM" locationInfo="true" fontName="arial,sans-serif" />
+        </SMTP>
+    </Appenders>
+    <!--loggers-->
+    <Loggers>
+        <AsyncLogger name="com.atguigu.springcloud.logs.LogsTest" includeLocation="true" level="TRACE" additivity="false">
+            <AppenderRef ref="Console"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="com.atguigu.springcloud.logs.LogsExceptionTest" includeLocation="true" level="ERROR" additivity="true">
+            <AppenderRef ref="MailAppender"/>
+        </AsyncLogger>
+
+        <Asyncroot level="INFO" includeLocation="true">
+            <AppenderRef ref="Console"/>
+        </Asyncroot>
+    </Loggers>
+</Configuration>

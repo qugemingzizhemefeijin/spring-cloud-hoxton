@@ -57,6 +57,7 @@
 		<module>spring-drools</module>
 		<module>spring-elastic</module>
 		<module>spring-websocket</module>
+		<module>spring-log4j2</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->

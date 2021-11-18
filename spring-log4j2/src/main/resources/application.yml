@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: spring-log4j2
+  profiles:
+    active: dev
+#日志
+logging:
+  config: classpath:log4j2.xml
