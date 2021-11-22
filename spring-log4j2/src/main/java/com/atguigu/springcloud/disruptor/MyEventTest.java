@@ -27,7 +27,7 @@ public class MyEventTest {
 
         // 添加消费者监听 把MyEventConsumer绑定到disruptor
         //disruptor.handleEventsWith(new MyEventConsumer(System.out::println));
-        
+
         // 调用handleEventsWithWorkerPool，表示创建的多个消费者以共同消费的模式消费
         disruptor.handleEventsWithWorkerPool(
                 new MyWorkHandler(System.out::println, 1),
