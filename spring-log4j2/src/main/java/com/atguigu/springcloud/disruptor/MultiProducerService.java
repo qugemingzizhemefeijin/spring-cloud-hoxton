@@ -15,13 +15,15 @@ public class MultiProducerService {
 
     private final AtomicInteger consumer = new AtomicInteger();
 
+    private volatile boolean turnOff = false;
+
     public MultiProducerService() {
         // 实例化disruptor（过期了是因为不建议传入线程池，而是传入ThreadFactory来让Disruptor底层来创建线程，防止线程创建失败）
         disruptor = new Disruptor<>(
-                MyEventModel::new,                   // 消息工厂
-                16,                    // ringBuffer容器最大容量长度
-                Executors.newCachedThreadPool(),                            // 线程池，最好自定义一个
-                ProducerType.MULTI,                 // 多生产者模式
+                MyEventModel::new,                    // 消息工厂
+                128,                     // ringBuffer容器最大容量长度
+                Executors.newCachedThreadPool(),     // 线程池，最好自定义一个
+                ProducerType.MULTI,                  // 多生产者模式
                 new BlockingWaitStrategy()           // 等待策略
         );
     }
@@ -41,7 +43,15 @@ public class MultiProducerService {
     }
 
     public int consumerCounter() {
-        return consumer.incrementAndGet();
+        if(turnOff) {
+            return consumer.get();
+        } else {
+            return consumer.incrementAndGet();
+        }
+    }
+
+    public void turnOff() {
+        this.turnOff = true;
     }
 
     public int getConsumer() {

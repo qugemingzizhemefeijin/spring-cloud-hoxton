@@ -4,6 +4,7 @@ import com.lmax.disruptor.EventHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -13,19 +14,20 @@ import java.util.function.Consumer;
 public class MyEventConsumer implements EventHandler<MyEventModel> {
 
     // 外部可以传入Consumer实现类，每处理一条消息的时候，consumer的accept方法就会被执行一次
-    private Consumer<MyEventModel> consumer;
+    private final Consumer<MyEventModel> consumer;
 
-    public MyEventConsumer() {
+    private final String name;
 
-    }
+    private final AtomicInteger counter = new AtomicInteger();
 
-    public MyEventConsumer(Consumer<MyEventModel> consumer) {
+    public MyEventConsumer(String name, Consumer<MyEventModel> consumer) {
+        this.name = name;
         this.consumer = consumer;
     }
 
     @Override
     public void onEvent(MyEventModel event, long sequence, boolean endOfBatch) throws Exception {
-        log.info("我处理了一条数据：{}, sequence [{}], endOfBatch [{}]", event.getData(),  sequence, endOfBatch);
+        log.info("{} 处理了第{}条数据：{}, sequence [{}], endOfBatch [{}]", name, counter.incrementAndGet(), event.getData(),  sequence, endOfBatch);
 
         // 这里延时10ms，模拟消费事件的逻辑的耗时
         TimeUnit.MILLISECONDS.sleep(10);

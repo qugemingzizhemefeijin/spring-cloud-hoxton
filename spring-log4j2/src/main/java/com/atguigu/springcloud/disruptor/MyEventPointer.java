@@ -33,6 +33,8 @@ public class MyEventPointer implements Consumer<MyEventModel> {
              * 这样测试主线程就可以结束等待了
              */
             if (null != countDownLatch && consumerCount >= countDownLatchGate) {
+                // 关闭计数器
+                multiProducerService.turnOff();
                 countDownLatch.countDown();
             }
         }
