@@ -2,11 +2,7 @@ package com.atguigu.springcloud.logs;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -17,7 +13,7 @@ public class LogsExceptionTest implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        new Thread(() -> {
+        /*new Thread(() -> {
             List<String> testList = new ArrayList<>();
             while(true) {
                 log.info("Exception Log4j2 {}", counter.incrementAndGet());
@@ -31,7 +27,7 @@ public class LogsExceptionTest implements InitializingBean {
                     testList.clear();
                 }
             }
-        }).start();
+        }).start();*/
     }
 
 }

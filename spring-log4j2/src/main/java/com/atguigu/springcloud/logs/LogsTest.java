@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -15,7 +14,7 @@ public class LogsTest implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        new Thread(() -> {
+        /*new Thread(() -> {
             while(true) {
                 log.info("Hello Log4j2 {}", counter.incrementAndGet());
                 try {
@@ -24,7 +23,7 @@ public class LogsTest implements InitializingBean {
                     log.error(e.getMessage(), e);
                 }
             }
-        }).start();
+        }).start();*/
     }
 
 }

@@ -15,6 +15,10 @@ public class MyEventConsumer implements EventHandler<MyEventModel> {
     // 外部可以传入Consumer实现类，每处理一条消息的时候，consumer的accept方法就会被执行一次
     private Consumer<MyEventModel> consumer;
 
+    public MyEventConsumer() {
+
+    }
+
     public MyEventConsumer(Consumer<MyEventModel> consumer) {
         this.consumer = consumer;
     }

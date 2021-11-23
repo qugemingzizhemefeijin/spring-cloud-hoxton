@@ -10,4 +10,5 @@ Disruptor的原理分析：
 - 使用CPU缓存行填充的方式来避免极端情况下的数据争用导致的性能下降；
 - 多线程编程中尽量避免锁争用的编码技巧。
 
+[《disruptor笔记》系列链接](https://blog.csdn.net/boling_cavalry/article/details/117636483)
 

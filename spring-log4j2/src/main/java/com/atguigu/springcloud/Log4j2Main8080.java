@@ -1,15 +1,11 @@
 package com.atguigu.springcloud;
 
-import com.atguigu.springcloud.disruptor.MyEventTest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 // 模拟OOM -Xmx30m，这里有个坑就是发邮件是同步的，会卡。得想办法怎么替换成异步的。
 @Slf4j
@@ -27,7 +23,7 @@ public class Log4j2Main8080 implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		log.info("log4j2 启动完毕，当前环境：{}", profileActive);
 
-		Thread t = new Thread(() -> {
+		/*Thread t = new Thread(() -> {
 			MyEventTest.init();
 
 			while(true) {
@@ -40,7 +36,7 @@ public class Log4j2Main8080 implements CommandLineRunner {
 			}
 		});
 		t.setDaemon(true);
-		t.start();
+		t.start();*/
 	}
 
 }
