@@ -112,4 +112,156 @@ public class MultiProducerServiceTest extends BaseMultiProducerServiceTest {
         log.info("end 两个生产者，C1独立消费，C2和C3也独立消费，但依赖C1，C4依赖C2和C3");
     }
 
+    // C1和C2独立消费，C3和C4也是独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4
+    @Test
+    public void testMultiProducerService4() throws Exception {
+        log.info("start 两个生产者，C1和C2独立消费，C3和C4也是独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+
+        // 两个生产者，每个生产100个事件，一共生产两百个事件
+        // C1和C2独立消费，C3和C4也是独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4，因此一共消费1000个事件
+        int expectEventCount = EVENT_COUNT*10;
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        MyEventPointer pointer = new MyEventPointer(expectEventCount, multiProducerService, countDownLatch);
+
+        this.start(countDownLatch, disruptor -> {
+            // 一号消费者
+            MyEventConsumer c1 = new MyEventConsumer("c1" ,pointer);
+            // 二号消费者
+            MyEventConsumer c2 = new MyEventConsumer("c2" ,pointer);
+            // 三号消费者
+            MyEventConsumer c3 = new MyEventConsumer("c3" ,pointer);
+            // 四号消费者
+            MyEventConsumer c4 = new MyEventConsumer("c4" ,pointer);
+            // 五号消费者
+            MyEventConsumer c5 = new MyEventConsumer("c5" ,pointer);
+
+            // C1、C2独立消费
+            disruptor.handleEventsWith(c1, c2)
+                    // C3和C4也是独立消费，但C3和C4都依赖C1和C2
+                    .then(c3, c4)
+                    // 然后C5依赖C3和C4
+                    .then(c5);
+        });
+
+        // 消费的事件总数应该等于发布的事件数
+        assertEquals(expectEventCount, multiProducerService.getConsumer());
+
+        log.info("end C1和C2独立消费，C3和C4也是独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+    }
+
+    // C1和C2共同消费，C3和C4也是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4
+    @Test
+    public void testMultiProducerService5() throws Exception {
+        log.info("start 两个生产者，C1和C2共同消费，C3和C4也是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+
+        // 两个生产者，每个生产100个事件，一共生产两百个事件
+        // C1和C2共同消费，C3和C4也是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4，因此一共消费600个事件
+        int expectEventCount = EVENT_COUNT*6;
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        MyEventPointer pointer = new MyEventPointer(expectEventCount, multiProducerService, countDownLatch);
+
+        this.start(countDownLatch, disruptor -> {
+            // 一号消费者
+            MyEventConsumer c1 = new MyEventConsumer("c1" ,pointer);
+            // 二号消费者
+            MyEventConsumer c2 = new MyEventConsumer("c2" ,pointer);
+            // 三号消费者
+            MyEventConsumer c3 = new MyEventConsumer("c3" ,pointer);
+            // 四号消费者
+            MyEventConsumer c4 = new MyEventConsumer("c4" ,pointer);
+            // 五号消费者
+            MyEventConsumer c5 = new MyEventConsumer("c5" ,pointer);
+
+            // C1和C2共同消费
+            disruptor.handleEventsWithWorkerPool(c1, c2)
+                    // C3和C4也是共同消费，但C3和C4都依赖C1和C2
+                    .thenHandleEventsWithWorkerPool(c3, c4)
+                    // 然后C5依赖C3和C4
+                    .thenHandleEventsWithWorkerPool(c5);
+        });
+
+        // 消费的事件总数应该等于发布的事件数
+        assertEquals(expectEventCount, multiProducerService.getConsumer());
+
+        log.info("end C1和C2共同消费，C3和C4也是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+    }
+
+    // C1和C2共同消费，C3和C4独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4
+    @Test
+    public void testMultiProducerService6() throws Exception {
+        log.info("start 两个生产者，C1和C2共同消费，C3和C4独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+
+        // 两个生产者，每个生产100个事件，一共生产两百个事件
+        // C1和C2共同消费，C3和C4也是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4，因此一共消费800个事件
+        int expectEventCount = EVENT_COUNT*8;
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        MyEventPointer pointer = new MyEventPointer(expectEventCount, multiProducerService, countDownLatch);
+
+        this.start(countDownLatch, disruptor -> {
+            // 一号消费者
+            MyEventConsumer c1 = new MyEventConsumer("c1" ,pointer);
+            // 二号消费者
+            MyEventConsumer c2 = new MyEventConsumer("c2" ,pointer);
+            // 三号消费者
+            MyEventConsumer c3 = new MyEventConsumer("c3" ,pointer);
+            // 四号消费者
+            MyEventConsumer c4 = new MyEventConsumer("c4" ,pointer);
+            // 五号消费者
+            MyEventConsumer c5 = new MyEventConsumer("c5" ,pointer);
+
+            // C1和C2共同消费
+            disruptor.handleEventsWithWorkerPool(c1, c2)
+                    // C3和C4独立消费，但C3和C4都依赖C1和C2
+                    .then(c3, c4)
+                    // 然后C5依赖C3和C4
+                    .then(c5);
+        });
+
+        // 消费的事件总数应该等于发布的事件数
+        assertEquals(expectEventCount, multiProducerService.getConsumer());
+
+        log.info("end C1和C2共同消费，C3和C4独立消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+    }
+
+    // C1和C2独立消费，C3和C4是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4
+    @Test
+    public void testMultiProducerService7() throws Exception {
+        log.info("start 两个生产者，C1和C2独立消费，C3和C4是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+
+        // 两个生产者，每个生产100个事件，一共生产两百个事件
+        // C1和C2独立消费，C3和C4是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4，因此一共消费800个事件
+        int expectEventCount = EVENT_COUNT*8;
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        MyEventPointer pointer = new MyEventPointer(expectEventCount, multiProducerService, countDownLatch);
+
+        this.start(countDownLatch, disruptor -> {
+            // 一号消费者
+            MyEventConsumer c1 = new MyEventConsumer("c1" ,pointer);
+            // 二号消费者
+            MyEventConsumer c2 = new MyEventConsumer("c2" ,pointer);
+            // 三号消费者
+            MyEventConsumer c3 = new MyEventConsumer("c3" ,pointer);
+            // 四号消费者
+            MyEventConsumer c4 = new MyEventConsumer("c4" ,pointer);
+            // 五号消费者
+            MyEventConsumer c5 = new MyEventConsumer("c5" ,pointer);
+
+            // C1和C2独立消费
+            disruptor.handleEventsWith(c1, c2)
+                    // C3和C4是共同消费，但C3和C4都依赖C1和C2
+                    .thenHandleEventsWithWorkerPool(c3, c4)
+                    // 然后C5依赖C3和C4
+                    .then(c5);
+        });
+
+        // 消费的事件总数应该等于发布的事件数
+        assertEquals(expectEventCount, multiProducerService.getConsumer());
+
+        log.info("end C1和C2独立消费，C3和C4是共同消费，但C3和C4都依赖C1和C2，然后C5依赖C3和C4");
+    }
+
 }
