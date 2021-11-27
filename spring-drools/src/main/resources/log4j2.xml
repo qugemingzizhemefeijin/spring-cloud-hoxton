@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="180" packages="" xmlns:xi="http://www.w3.org/2001/XInclude" name="XIncludeDemo">
+    <properties>
+        <property name="PATTERN">[%level] %date{YYYY-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] [%file:%line:%method] %msg%n%throwable</property>
+    </properties>
+    <!--appenders-->
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout charset="UTF-8" pattern="${PATTERN}"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Asyncroot level="INFO" includeLocation="true">
+            <AppenderRef ref="Console"/>
+        </Asyncroot>
+    </Loggers>
+</Configuration>
