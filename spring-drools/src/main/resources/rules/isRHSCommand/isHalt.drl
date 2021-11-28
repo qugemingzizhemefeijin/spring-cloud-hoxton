@@ -1,0 +1,21 @@
+package rules.isRHSCommand
+
+import com.atguigu.drools.pojo.Person;
+
+rule "测试drools.halt()1"
+no-loop true // 防止死循环
+salience 20 // 规则提被执行的顺序
+    when
+    then
+       System.out.println("输出测试drools.halt()1");
+       drools.halt();
+end
+
+rule "测试drools.halt()2"
+no-loop true
+salience 10
+    when
+    then
+    System.out.println("输出测试drools.halt()2");
+    drools.halt();
+end

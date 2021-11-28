@@ -19,4 +19,12 @@ public class School {
     private Set classNameSet;
     private Map classNameMap;
 
+    public School() {
+
+    }
+
+    public School(String className) {
+        this.className = className;
+    }
+
 }

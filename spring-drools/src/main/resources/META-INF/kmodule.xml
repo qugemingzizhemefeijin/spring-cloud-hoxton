@@ -4,5 +4,48 @@
     <kbase name="testhelloworld1" packages="rules.rulesHello">
         <ksession name="testhelloworld"/>
     </kbase>
+    <kbase name="isFunction1" packages="rules.isFunction">
+        <ksession name="isFunction"/>
+    </kbase>
+    <kbase name="isIn1" packages="rules.isIn">
+        <ksession name="isIn"/>
+    </kbase>
+    <kbase name="isNot1" packages="rules.isNot">
+        <ksession name="isNot"/>
+    </kbase>
+    <kbase name="isExists1" packages="rules.isExists">
+        <ksession name="isExists"/>
+    </kbase>
+    <kbase name="isForall1" packages="rules.isForall">
+        <ksession name="isForall"/>
+    </kbase>
+    <kbase name="isFrom1" packages="rules.isFrom">
+        <ksession name="isFrom"/>
+    </kbase>
+    <kbase name="isCollect1" packages="rules.isCollect">
+        <ksession name="isCollect"/>
+    </kbase>
+    <kbase name="isAccumulate1" packages="rules.isAccumulate">
+        <ksession name="isAccumulate"/>
+    </kbase>
+    <kbase name="customize1" packages="rules.isAccumulate.customize">
+        <ksession name="customize"/>
+    </kbase>
+    <kbase name="isExtends1" packages="rules.isExtends">
+        <ksession name="isExtends"/>
+    </kbase>
+    <kbase name="isDoThen1" packages="rules.isDoThen">
+        <ksession name="isDoThen"/>
+    </kbase>
+    <kbase name="isModify1" packages="rules.isModify">
+        <ksession name="isModify"/>
+    </kbase>
+    <kbase name="isRHSCommand1" packages="rules.isRHSCommand">
+        <ksession name="isRHSCommand"/>
+    </kbase>
+
+    <kbase name="isRuleName1" packages="rulesTwo.isRuleName">
+        <ksession name="isRuleName"/>
+    </kbase>
 
 </kmodule>
