@@ -79,7 +79,9 @@ statelessKieSession.execute(command);
 
 #### 五、kmodule属性说明
 
-KieBase属性说明：
+KieContainer：KieContainer就是一个KieBase的容器；
+
+KieBase：KieBase就是一个知识库，包含了若干的规则、流程、方法等，在Drools中主要就是规则和方法，KieBase本身并不包含运行时的数据，如果需要执行KieBase中的规则，就需要根据KieBase创建KieSession。
 
 | 属性名称 | 是否必填 | 值 | 说明 |
 | --- | --- | --- | --- |
@@ -91,7 +93,7 @@ KieBase属性说明：
 | eventProcessingMode | 否 | Cloud/Stream | 当以云模式编译时，KieBase将事件视为正常，而在云模式下可以对其进行时间推理。多在Workbench中使用 |
 | declarativeAgenda | 否 | Disabled/enable | 定义声明议程是否启用 |
 
-KieSession属性说明：
+KieSession：KieSession就是一个与Drools引擎打交道的回话，其基于KieBase创建，它包含运行时的数据，包含“事实Fact对象”，并对运行时的数据进行规则运算。通过KieContainer创建KieSession是一种较为方便的做法，其本质就是从KieBase中创建出来的。KieSession就是应用程序与规则引擎进行交互的会话通道。创建KieBase是一个成本非常高的事情，它会建立知识（规则、流程）仓库，而创建KieSession则是一个成本非常低的事情，所以KieBase会建立缓存，而KieSession则并不是必须要缓存的。
 
 | 属性名称 | 是否必填 | 值 | 说明 |
 | --- | --- | --- | --- |
