@@ -47,5 +47,8 @@
     <kbase name="isRuleName1" packages="rulesTwo.isRuleName">
         <ksession name="isRuleName"/>
     </kbase>
+    <kbase name="isString1" packages="rulesTwo.isString">
+        <ksession name="isString"/>
+    </kbase>
 
 </kmodule>

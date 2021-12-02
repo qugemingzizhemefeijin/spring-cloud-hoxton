@@ -14,19 +14,35 @@
     <properties>
         <lombok.version>1.18.16</lombok.version>
         <drools.version>6.4.0.Final</drools.version>
+        <fast.drools.version>8.0.7</fast.drools.version>
         <kie.version>6.4.0.Final</kie.version>
         <disruptor.version>3.4.2</disruptor.version>
+        <antlr.st4.version>4.0.8</antlr.st4.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-configuration-processor</artifactId>
         	<optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -45,8 +61,17 @@
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
             <version>${drools.version}</version>
-            <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-spring</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+        <!--dependency>
+            <groupId>com.github.hongwen1993</groupId>
+            <artifactId>fast-drools-spring-boot-starter</artifactId>
+            <version>${fast.drools.version}</version>
+        </dependency-->
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-ci</artifactId>
@@ -57,6 +82,11 @@
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
             <version>${disruptor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>ST4</artifactId>
+            <version>${antlr.st4.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -101,3 +101,10 @@ KieSession属性说明：
 | clockType | 否 | realtime/seudo | 定义事件时间戳是由系统时钟还是由应用程序控制的seudo时钟确定。该时钟对于单元测试时间规则特别有用 |
 | beliefSystem | 否 | simple/tms/defeasible | 定义KieSession使用的belief System的类型 |
 
+#### 六、insert、update、modify、delete函数
+
+insert：函数`insert`的作用与外面在Java类调用KieSession对象的insert方法的作用相同，都是用来将一个Fact对象插入到当前的`Working Memory`当中。
+
+update/modify更新：`update/modify`用来实现对当前`Working Memory`当中的Fact进行更新，update宏函数的作用与StatefulSession对象的update方法的作用基本相同，用来告诉当前`Working Memory`该Fact对象已经发生了变化。
+
+delete/retract删除：和KieSession的`retract/delete`方法一样，宏函数`retract/delete`也是用来将`Working Memory`当中某个Fact对象从`Working Memory`当中删除。
