@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width"/>
+<title>Turf测试</title>
+<script src="/static/js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/js/turf/turf.6.5.0.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+<div id="neirong">
+
+</div>
+<script>
+//取两个多边形并找到它们的交点。如果它们共享一个边界，返回边界;如果它们不相交，返回
+let poly1 = turf.polygon([
+    [
+    [-122.801742, 45.48565],
+    [-122.801742, 45.60491],
+    [-122.584762, 45.60491],
+    [-122.584762, 45.48565],
+    [-122.801742, 45.48565]
+]
+]);
+
+let poly2 = turf.polygon([
+    [
+    [-122.520217, 45.535693],
+    [-122.64038, 45.553967],
+    [-122.720031, 45.526554],
+    [-122.669906, 45.507309],
+    [-122.723464, 45.446643],
+    [-122.532577, 45.408574],
+    [-122.487258, 45.477466],
+    [-122.520217, 45.535693]
+]
+]);
+// 计算交集点
+let intersection = turf.intersect(poly1, poly2);
+let points = intersection.geometry.coordinates;
+let text = '';
+for (let [lng, lat] of points[0]) {
+    text += "lng:" + lng+"=>lat:" + lat+"<br/>";
+}
+$('#neirong').html(text);
+</script>
+</body>
+</html>

@@ -190,3 +190,27 @@ public class ServerRunner implements CommandLineRunner {
 
 访问地址：http://localhost:8080/netty/websocket/index
 
+#### 6.turf框架
+
+地理空间分析库，处理各种地图算法
+
+[turf官方中文地址](https://turfjs.fenxianglu.cn/)
+
+[turf计算并集](https://www.nuomiphp.com/eplan/141755.html)
+
+```
+let unionize = (triangles) => {
+    if(triangles.length == 0) {
+        return null
+    }
+    let ret = triangles[0].feature
+    triangles.forEach((t, index) => {
+        if(index > 0) {
+            ret = turf.union(t, t)
+        }
+    })
+    return ret
+}
+```
+
+[turf高德地图+vue实现页面点击绘制多边形及多边形切割拆分](http://www.zyiz.net/tech/detail-136608.html)

@@ -5,6 +5,8 @@ spring:
     name: spring-websocket
   profiles:
     active: dev
+  thymeleaf:
+    cache: false
   mvc:
     view:
       prefix: classpath:/templates/
