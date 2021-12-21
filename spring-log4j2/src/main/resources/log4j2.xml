@@ -35,9 +35,20 @@
             <OOMThresholdFilter level="ERROR" exceptionClass="java.lang.OutOfMemoryError" onMatch="ACCEPT" onMismatch="DENY" />
             <HtmlLayout title="Log4j Log ERROR Messages" contentType="text/html" fontSize="MEDIUM" locationInfo="true" fontName="arial,sans-serif" />
         </SMTP>
+
+        <!--自定义appender-->
+        <CustomAppender name="customAppender" async="true" bufferSize="1024">
+            <PatternLayout charset="UTF-8" pattern="%date{YYYY-MM-dd HH:mm:ss,SSS}####%X{traceId}####%thread####%msg"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+        </CustomAppender>
     </Appenders>
     <!--loggers-->
     <Loggers>
+        <!--自定义appender测试Logger-->
+        <logger name="com.atguigu.springcloud.logs.CustomAppenderLoggerService" level="ERROR" additivity="false">
+            <appender-ref ref="customAppender"/>
+        </logger>
+
         <AsyncLogger name="com.atguigu.springcloud.logs.LogsTest" includeLocation="true" level="TRACE" additivity="false">
             <AppenderRef ref="Console"/>
         </AsyncLogger>
