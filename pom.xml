@@ -58,6 +58,7 @@
 		<module>spring-elastic</module>
 		<module>spring-websocket</module>
 		<module>spring-log4j2</module>
+		<module>spring-resolver</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -73,6 +74,7 @@
         <druid.version>1.1.16</druid.version>
 		<guava.version>31.0.1-jre</guava.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
+        <commons.io.version>2.11.0</commons.io.version>
         <fastjson.version>1.2.75</fastjson.version>
     </properties>
 
@@ -137,6 +139,11 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commons.beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

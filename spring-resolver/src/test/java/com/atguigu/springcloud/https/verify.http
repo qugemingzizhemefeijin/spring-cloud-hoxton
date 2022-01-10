@@ -1,0 +1,29 @@
+### 测试需要验签名，并且正确
+POST http://localhost:8080/test/verify
+Content-Type: application/json
+sign: 48cd1c2bcf715d8ab7e262aaf6497acb
+
+{"username":"小橙子","address":"北京","userId":"123"}
+
+### 测试需要验签名，并且错误
+
+POST http://localhost:8080/test/verify
+Content-Type: application/json
+sign: 48cd1c2bcf715d8ab7e262aaf6496acb
+
+{"username":"小橙子","address":"北京","userId":"123"}
+
+### 测试不需要验签名
+
+POST http://localhost:8080/test/no
+Content-Type: application/json
+
+{"username":"小橙子","address":"北京","userId":"123"}
+
+### 测试默认的ResponseBody
+
+GET http://localhost:8080/test/getJson
+
+### 测试自定义ResultBody
+
+GET http://localhost:8080/test/getContent
