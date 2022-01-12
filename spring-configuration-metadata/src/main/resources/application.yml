@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: spring-configuration-metadata
+  profiles:
+    active: dev
+# yml中idea就会提示属性信息
+custom:
+  title: small orange
+  desc: your are big pig
+  url: https://www.github.com
+  version: v2.0

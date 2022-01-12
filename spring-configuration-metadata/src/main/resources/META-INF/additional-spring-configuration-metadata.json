@@ -1,0 +1,38 @@
+{"groups":[
+  {
+    "name": "custom",
+    "type": "com.atguigu.springcloud.configuration.CustomProperties",
+    "sourceType": "com.atguigu.springcloud.configuration.CustomConfiguration",
+    "defaultValue": "自定义提示",
+    "sourceMethod": "com.atguigu.springcloud.configuration.CustomConfiguration.buildCustomBean()"
+  }
+],"properties": [
+  {
+    "name": "custom.title",
+    "type": "java.lang.String",
+    "sourceType": "com.atguigu.springcloud.configuration.CustomProperties",
+    "defaultValue": "我的标题",
+    "description": "标题."
+  },
+  {
+    "name": "custom.desc",
+    "type": "java.lang.String",
+    "sourceType": "com.atguigu.springcloud.configuration.CustomProperties",
+    "defaultValue": "描述信息",
+    "description": "描述."
+  },
+  {
+    "name": "custom.url",
+    "type": "java.lang.String",
+    "defaultValue": "https://www.baidu.com/",
+    "sourceType": "com.atguigu.springcloud.configuration.CustomProperties",
+    "description": "网址信息."
+  },
+  {
+    "name": "custom.version",
+    "type": "java.lang.String",
+    "sourceType": "com.atguigu.springcloud.configuration.CustomProperties",
+    "defaultValue": "v1.0",
+    "description": "版本."
+  }
+]}

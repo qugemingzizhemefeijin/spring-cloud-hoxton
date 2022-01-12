@@ -59,6 +59,7 @@
 		<module>spring-websocket</module>
 		<module>spring-log4j2</module>
 		<module>spring-resolver</module>
+		<module>spring-configuration-metadata</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
