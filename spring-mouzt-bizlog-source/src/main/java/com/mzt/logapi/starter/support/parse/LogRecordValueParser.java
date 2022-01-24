@@ -116,6 +116,7 @@ public class LogRecordValueParser implements BeanFactoryAware {
                     if (functionService.beforeFunction(functionName)) {
                         String value = expressionEvaluator.parseExpression(expression, annotatedElementKey, evaluationContext);
                         String functionReturnValue = getFunctionReturnValue(null, value, functionName);
+                        // 这里可能不能简单的使用函数名来存储前置函数计算的结果（否则传入不同参数但是获取的值确实一个。这里应该要加上参数的名称信息来标记唯一）
                         functionNameAndReturnValueMap.put(functionName, functionReturnValue);
                     }
                 }

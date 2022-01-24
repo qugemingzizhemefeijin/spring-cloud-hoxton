@@ -5,10 +5,13 @@ import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.turf.TurfConstants;
 import com.mapbox.turf.TurfJoins;
+import com.mapbox.turf.TurfMeasurement;
 import com.mapbox.turf.TurfTransformation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Slf4j
@@ -39,6 +42,10 @@ public class TurfTest {
         // 判断多边形与点的关系
         log.info("复兴门是否在围栏中: {}", TurfJoins.inside(fxPoint, polygon));
         log.info("广电国际酒店是否在围栏中: {}", TurfJoins.inside(gdjiudian, polygon));
+
+
+        double area = TurfMeasurement.area(polygon);
+        log.info("围栏的面积为：{} 平方千米", new BigDecimal(area / 1000000).setScale(2, RoundingMode.HALF_UP).toString());
     }
 
     private static Polygon createPolygon(double[][] area) {

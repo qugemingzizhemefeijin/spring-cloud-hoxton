@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
@@ -10,6 +11,10 @@ import org.locationtech.spatial4j.shape.Point;
 import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.ShapeFactory;
 import org.locationtech.spatial4j.shape.SpatialRelation;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Spatial4jTest {
@@ -171,6 +176,37 @@ public class Spatial4jTest {
         // 判断多边形与点的关系
         log.info("复兴门是否在围栏中: {}", contains(polygonA, 116.364528, 39.912832));
         log.info("广电国际酒店是否在围栏中: {}", contains(polygonA, 116.361716, 39.909449));
+
+        // 此方法好像有问题。
+        double area = polygonA.getArea(shapeFactory.getSpatialContext());
+        log.info("围栏的面积为：{} 平方千米", area * 10000);
+    }
+
+    @Test
+    public void testFlatMap() {
+        List<User> userList = Lists.newArrayList(new User("a1;a2;a3;a4;a5"), new User("b1;b2;b3;b4;b5"));
+
+        List<String> L1 = userList.stream().map(User::getAddr).flatMap(x -> Arrays.stream(x.split(";"))).collect(Collectors.toList());
+        log.info("{}", L1);
+
+        List<String> L2 = userList.stream().map(User::getAddr).map(x -> x.split(";")).flatMap(Arrays::stream).collect(Collectors.toList());
+        log.info("{}", L2);
+    }
+
+    private static class User {
+        private String addr;
+        public User(){}
+        public User(String addr) {
+            this.addr = addr;
+        }
+
+        public String getAddr() {
+            return addr;
+        }
+
+        public void setAddr(String addr) {
+            this.addr = addr;
+        }
     }
 
 }
