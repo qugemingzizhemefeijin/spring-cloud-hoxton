@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.functions;
 
-import com.atguigu.springcloud.domain.Order;
+import com.atguigu.springcloud.easyexcel.domain.Order;
 import com.mzt.logapi.service.IParseFunction;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

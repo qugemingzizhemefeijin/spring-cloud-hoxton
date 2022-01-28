@@ -1,7 +1,7 @@
 package com.atguigu.springcloud;
 
-import com.atguigu.springcloud.domain.CustomAttributeVO;
-import com.atguigu.springcloud.domain.Order;
+import com.atguigu.springcloud.easyexcel.domain.CustomAttributeVO;
+import com.atguigu.springcloud.easyexcel.domain.Order;
 import com.atguigu.springcloud.service.OrderService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;

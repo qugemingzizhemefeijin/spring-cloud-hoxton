@@ -60,6 +60,7 @@
 		<module>spring-log4j2</module>
 		<module>spring-resolver</module>
 		<module>spring-configuration-metadata</module>
+		<module>spring-excel</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->

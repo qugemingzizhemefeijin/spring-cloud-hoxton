@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.domain;
+package com.atguigu.springcloud.easyexcel.domain;
 
 import lombok.Data;
 

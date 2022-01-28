@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.configuration;
 
-import com.atguigu.springcloud.domain.ActionResult;
+import com.atguigu.springcloud.easyexcel.domain.ActionResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;

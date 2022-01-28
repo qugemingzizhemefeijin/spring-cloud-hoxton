@@ -1,8 +1,8 @@
 package com.atguigu.springcloud.service;
 
 import com.atguigu.springcloud.constant.LogRecordType;
-import com.atguigu.springcloud.domain.CustomAttributeVO;
-import com.atguigu.springcloud.domain.Order;
+import com.atguigu.springcloud.easyexcel.domain.CustomAttributeVO;
+import com.atguigu.springcloud.easyexcel.domain.Order;
 import com.google.common.collect.Lists;
 import com.mzt.logapi.context.LogRecordContext;
 import com.mzt.logapi.starter.annotation.LogRecordAnnotation;

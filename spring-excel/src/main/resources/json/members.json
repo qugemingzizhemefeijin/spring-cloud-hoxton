@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "userName": "admin",
+    "password": null,
+    "nickName": "Admin",
+    "birthday": "1994-12-31",
+    "phone": "18790000000",
+    "icon": null,
+    "gender": 0
+  },
+  {
+    "id": 2,
+    "userName": "macro",
+    "password": null,
+    "nickName": "Macro",
+    "birthday": "1995-01-31",
+    "phone": "18791000000",
+    "icon": null,
+    "gender": 0
+  },
+  {
+    "id": 3,
+    "userName": "andy",
+    "password": null,
+    "nickName": "Andy",
+    "birthday": "1995-02-28",
+    "phone": "18792000000",
+    "icon": null,
+    "gender": 1
+  },
+  {
+    "id": 4,
+    "userName": "ruby",
+    "password": null,
+    "nickName": "Ruby",
+    "birthday": "1995-03-31",
+    "phone": "18793000000",
+    "icon": null,
+    "gender": 1
+  },
+  {
+    "id": 5,
+    "userName": "tom",
+    "password": null,
+    "nickName": "",
+    "birthday": "1995-03-31",
+    "phone": "18793000000",
+    "icon": null,
+    "gender": 1
+  }
+]

@@ -2,7 +2,7 @@ package com.atguigu.springcloud.controller;
 
 import com.atguigu.springcloud.configuration.Md5Verify;
 import com.atguigu.springcloud.configuration.ResultBody;
-import com.atguigu.springcloud.domain.CallbackReq;
+import com.atguigu.springcloud.easyexcel.domain.CallbackReq;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
