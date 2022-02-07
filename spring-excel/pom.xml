@@ -17,6 +17,7 @@
         <hutool.version>4.5.7</hutool.version>
         <springfox.version>3.0.0</springfox.version>
         <easypoi.sprintboot.version>4.4.0</easypoi.sprintboot.version>
+        <poi.version>3.17</poi.version>
     </properties>
 
     <dependencies>
@@ -77,6 +78,17 @@
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-spring-boot-starter</artifactId>
             <version>${easypoi.sprintboot.version}</version>
+        </dependency>
+        <!-- poi相关依赖 -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
         </dependency>
     </dependencies>
     
