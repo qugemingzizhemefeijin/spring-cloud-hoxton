@@ -29,6 +29,7 @@ public class MouztBizlogTest {
         order = new Order();
         order.setOrderNo("123");
         order.setPurchaseName("小橙子");
+        order.setProductName("红烧肉");
     }
 
     @Test
@@ -86,6 +87,11 @@ public class MouztBizlogTest {
     @Test
     public void userOperatorOrderTest() {
         orderService.userOperatorOrder("1", order);
+    }
+
+    @Test
+    public void changeOrderValueTest() {
+        orderService.changeOrderValue(order);
     }
 
 }

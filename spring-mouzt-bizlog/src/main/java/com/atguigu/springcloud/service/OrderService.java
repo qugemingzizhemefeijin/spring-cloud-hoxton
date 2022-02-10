@@ -178,4 +178,11 @@ public class OrderService {
         return false;
     }
 
+    @LogRecordAnnotation(success = "更新了订单：{ORDER{#order.orderNo}},{B_ORDER{#order.productName}}，{ORDER{#order.productName}}", prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+    public boolean changeOrderValue(Order order) {
+        order.setProductName("内部变量测试");
+
+        return true;
+    }
+
 }
