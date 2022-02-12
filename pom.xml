@@ -61,6 +61,7 @@
 		<module>spring-resolver</module>
 		<module>spring-configuration-metadata</module>
 		<module>spring-excel</module>
+		<module>spring-talk-robot</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
