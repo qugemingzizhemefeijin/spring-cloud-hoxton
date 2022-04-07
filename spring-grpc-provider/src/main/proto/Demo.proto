@@ -1,0 +1,22 @@
+//指定proto3格式
+syntax = "proto3";
+//一些生成代码的设置
+option java_multiple_files = false;//以非外部类模式生成
+option java_package = "com.atguigu.springcloud.grpc_api";//所在包名
+option java_outer_classname = "Grpc";//最外层类名称
+message UnaryRequest{
+	string serviceName = 1;
+	string methodName = 2;
+	bytes data = 3;
+	string request_id = 4;//参数默认都为可选，如果没有赋值，那么接口中不会出现该参数，不会默认为null之类的
+}
+message UnaryResponse{
+	string serviceName = 1;
+	string methodName = 2;
+	bytes data = 3;
+	string request_id = 4;
+}
+service GrpcService{
+	// 一对一服务请求
+	rpc SendUnaryRequest(UnaryRequest) returns(UnaryResponse);
+}
