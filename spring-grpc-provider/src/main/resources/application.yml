@@ -1,8 +1,13 @@
 server:
-  port: 8080
+  port: 8090
 
 spring:
   application:
-    name: spring-yml-include
+    name: spring-grpc-provider
   profiles:
     active: dev
+grpc:
+  server:
+    security:
+      enabled: false
+    port: 50055

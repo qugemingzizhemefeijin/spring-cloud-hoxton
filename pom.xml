@@ -62,6 +62,8 @@
 		<module>spring-configuration-metadata</module>
 		<module>spring-excel</module>
 		<module>spring-talk-robot</module>
+		<module>spring-grpc-consumer</module>
+		<module>spring-grpc-provider</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->

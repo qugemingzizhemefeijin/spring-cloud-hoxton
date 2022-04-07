@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-grpc-provider</artifactId>
+    <artifactId>spring-grpc-consumer</artifactId>
 
     <properties>
         <lombok.version>1.18.16</lombok.version>
@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>net.devh</groupId>
-            <artifactId>grpc-server-spring-boot-starter</artifactId>
+            <artifactId>grpc-client-spring-boot-starter</artifactId>
             <version>2.13.1.RELEASE</version>
         </dependency>
         <dependency>
@@ -57,10 +57,6 @@
                     <artifactId>log4j-to-slf4j</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
     
