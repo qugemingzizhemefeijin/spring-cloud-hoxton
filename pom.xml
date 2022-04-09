@@ -64,6 +64,7 @@
 		<module>spring-talk-robot</module>
 		<module>spring-grpc-consumer</module>
 		<module>spring-grpc-provider</module>
+		<module>spring-cache</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
