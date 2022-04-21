@@ -6,7 +6,7 @@ public interface IUserService {
 
     User getById(long id);
 
-    void update(User user);
+    User update(User user);
 
     void delete(long id);
 

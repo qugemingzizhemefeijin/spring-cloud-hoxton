@@ -5,6 +5,9 @@ import com.atguigu.springcloud.domain.User;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,17 +21,20 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 
     private User user;
 
+    @Cacheable(value = "user",key = "#id")
     @Override
     public User getById(long id) {
         String key = CacheConstant.USER + id;
         return (User)cache.get(key, k -> {
             log.info("模拟查询DB数据库，id = {}, key = {}", id, k);
+            reload();
             return user;
         });
     }
 
+    @CachePut(cacheNames = "user",key = "#user.id")
     @Override
-    public void update(User user) {
+    public User update(User user) {
         if (user == null) {
             throw new NullPointerException("user not found!");
         } else if(user.getId() != user.getId()) {
@@ -44,8 +50,11 @@ public class UserServiceImpl implements IUserService, InitializingBean {
 
         // 修改本地缓存
         cache.put(key, user);
+
+        return this.user;
     }
 
+    @CacheEvict(cacheNames = "user",key = "#id")
     @Override
     public void delete(long id) {
         log.info("delete user");
