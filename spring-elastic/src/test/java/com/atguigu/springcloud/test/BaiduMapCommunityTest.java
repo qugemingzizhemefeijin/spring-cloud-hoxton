@@ -6,6 +6,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.atguigu.springcloud.test.domain.CommunityInfo;
+import com.atguigu.springcloud.test.domain.Pixel;
 import com.atguigu.springcloud.test.domain.Point;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +33,16 @@ public class BaiduMapCommunityTest {
             new double[]{-1.981981304930552E-8, 8.983055099779535E-6, 0.03278182852591, 40.31678527705744, 0.65659298677277, -4.44255534477492, 0.85341911805263, 0.12923347998204, -0.04625736007561, 4482777.06},
             new double[]{3.09191371068437E-9, 8.983055096812155E-6, 6.995724062E-5, 23.10934304144901, -2.3663490511E-4, -0.6321817810242, -0.00663494467273, 0.03430082397953, -0.00466043876332, 2555164.4},
             new double[]{2.890871144776878E-9, 8.983055095805407E-6, -3.068298E-8, 7.47137025468032, -3.53937994E-6, -0.02145144861037, -1.234426596E-5, 1.0322952773E-4, -3.23890364E-6, 826088.5}
+    };
+
+    private static final int[] AU = new int[]{75, 60, 45, 30, 15, 0};
+    private static final double[][] IG = new double[][] {
+            {-0.0015702102444, 111320.7020616939, 1704480524535203D, -10338987376042340D, 26112667856603880D, -35149669176653700D, 26595700718403920D, -10725012454188240D, 1800819912950474D, 82.5},
+            {8.277824516172526E-4, 111320.7020463578, 6.477955746671607E8, -4.082003173641316E9, 1.077490566351142E10, -1.517187553151559E10, 1.205306533862167E10, -5.124939663577472E9, 9.133119359512032E8, 67.5},
+            {0.00337398766765, 111320.7020202162, 4481351.045890365, -2.339375119931662E7, 7.968221547186455E7, -1.159649932797253E8, 9.723671115602145E7, -4.366194633752821E7, 8477230.501135234, 52.5},
+            {0.00220636496208, 111320.7020209128, 51751.86112841131, 3796837.749470245, 992013.7397791013, -1221952.21711287, 1340652.697009075, -620943.6990984312, 144416.9293806241, 37.5},
+            {-3.441963504368392E-4, 111320.7020576856, 278.2353980772752, 2485758.690035394, 6070.750963243378, 54821.18345352118, 9540.606633304236, -2710.55326746645, 1405.483844121726, 22.5},
+            {-3.218135878613132E-4, 111320.7020701615, 0.00369383431289, 823725.6402795718, 0.46104986909093, 2351.343141331292, 1.58060784298199, 8.77738589078284, 0.37238884252424, 7.45}
     };
 
     // objectMapper.writeValueAsString(obj)
@@ -100,18 +111,18 @@ public class BaiduMapCommunityTest {
         return new Point(j.getDouble("x"), j.getDouble("y"));
     }
 
-    private static Point calcPoint(double lng, double lat, double[] b) {
+    private static <T> T calc(double x, double y, double[] b, CoordinateInterface<T> createCoordinate) {
         if (b == null) {
             return null;
         }
 
-        double c = b[0] + b[1] * Math.abs(lng);
-        double d = Math.abs(lat) / b[9];
+        double c = b[0] + b[1] * Math.abs(x);
+        double d = Math.abs(y) / b[9];
         d = b[2] + b[3] * d + b[4] * d * d + b[5] * d * d * d + b[6] * d * d * d * d + b[7] * d * d * d * d * d + b[8] * d * d * d * d * d * d;
-        c = c * (0 > lng ? -1 : 1);
-        d = d * (0 > lat ? -1 : 1);
+        c = c * (0 > x ? -1 : 1);
+        d = d * (0 > y ? -1 : 1);
 
-        return new Point(c, d);
+        return createCoordinate.getCoordinate(c, d);
     }
 
     private static Point meter2DegreeLocal(String x, String y) {
@@ -124,7 +135,7 @@ public class BaiduMapCommunityTest {
             }
         }
 
-        return calcPoint(lng, lat, c);
+        return calc(lng, lat, c, Point::new);
     }
 
     private static List<Point> coordinateToPoints(String coordinates) {
@@ -155,6 +166,56 @@ public class BaiduMapCommunityTest {
         return pointList;
     }
 
+    private static double calcLng(double a, double b, double c) {
+        while (a > c) {
+            a -= c - b;
+        }
+        while (a < b) {
+            a += c - b;
+        }
+        return a;
+    }
+
+    private static double calcLat(double a, double b, double c) {
+        a = Math.max(a, b);
+        a = Math.min(a, c);
+        return a;
+    }
+
+    private static Pixel coordinateToPixels(double lng, double lat) {
+        if (180 < lng || -180 > lng || 90 < lat || -90 > lat) {
+            return new Pixel(0, 0);
+        }
+
+        double[] c = null;
+        double x = calcLng(lng, -180, 180), y = calcLat(lat, -74, 74);
+        for (int d = 0; d < AU.length; d++) {
+            if (lat >= AU[d]) {
+                c = IG[d];
+                break;
+            }
+        }
+        if (c != null) for (int d = 0; d < AU.length; d++) {
+            if (lat <= -AU[d]) {
+                c = IG[d];
+                break;
+            }
+        }
+
+        return calc(x, y, c, Pixel::new);
+    }
+
+    private static Pixel coordinateToPixels(Point point) {
+        return coordinateToPixels(point.getLng(), point.getLat());
+    }
+
+    @FunctionalInterface
+    private interface CoordinateInterface<T> {
+
+        T getCoordinate(double x, double y);
+
+    }
+
     public static void main(String[] args) throws UnsupportedEncodingException, JsonProcessingException {
         List<CommunityInfo> communityInfoList = getCommunityInfoList("南通兴东机场");
         log.info("{}", objectMapper.writeValueAsString(communityInfoList));
@@ -167,6 +228,8 @@ public class BaiduMapCommunityTest {
 
         // 计算出经纬度坐标点
         log.info("{}", objectMapper.writeValueAsString(coordinateToPoints(coordinates)));
+
+        log.info("{}", objectMapper.writeValueAsString(coordinateToPixels(119.23559623413306D, 34.60902146363141D)));
 
 //        String body = "{\"p\":false,\"q\":\"金鹰国际城\",\"s\":[\"连云港市$海州区$$金鹰国际花园$347$bbb467bd96bc0a9ccac3db61$\",\"连云港市$海州区$$金鹰国际城营销中心$347$b6e0d441af4595569b68b4e1$\",\"连云港市$海州区$$金鹰国际花园-南门$347$ae9b574b8589a898bca822b2$\",\"连云港市$海州区$$金鹰国际花园-东门$347$bc43b05cbc34500278dbd268$\",\"连云港市$海州区$$金鹰国际花园-二期$347$1d451017d49f43f38e7727f9$\",\"连云港市$海州区$$金鹰国际花园-一期$347$af26423964cf68faf01937bf$\",\"连云港市$海州区$$金鹰国际花园-北门$347$ae103251b236bee4f4e73b2c$\",\"连云港市$海州区$$金鹰国际花园7幢$347$634b815fdf9599184207c1ef$\",\"连云港市$海州区$$金鹰国际花园-东二门$347$39313dfc2bfb2d94f50e7790$\",\"和田地区$和田市$$金鹰国际城$82$6177a61e5a21c5b14f6d4693$\"],\"t\":0}";
 //        JSONArray json = JSONUtil.parseObj(body).getJSONArray("s");
