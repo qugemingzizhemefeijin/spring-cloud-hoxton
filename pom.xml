@@ -65,6 +65,7 @@
 		<module>spring-grpc-consumer</module>
 		<module>spring-grpc-provider</module>
 		<module>spring-cache</module>
+		<module>spring-statemachine</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
