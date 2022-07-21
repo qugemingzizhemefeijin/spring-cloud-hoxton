@@ -1,5 +1,7 @@
 package com.atguigu.springcloud;
 
+import com.atguigu.springcloud.cola.JuiceMachineEvents;
+import com.atguigu.springcloud.cola.JuiceMachineStates;
 import com.atguigu.springcloud.statemachine.builder.BuilderStatemachineConfigurer;
 import com.atguigu.springcloud.statemachine.normal.TurnstileEvents;
 import com.atguigu.springcloud.statemachine.normal.TurnstileStates;
@@ -29,6 +31,21 @@ public class StateMachineMain8080 implements CommandLineRunner {
 	@Resource
 	private StateMachinePersister<TurnstileStates, TurnstileEvents, Integer> stateMachinePersister;
 
+	@Resource(name = "colaStateMachine")
+	private com.alibaba.cola.statemachine.StateMachine<JuiceMachineStates, JuiceMachineEvents, Integer> stateMachine;
+
+	@Resource(name = "multiColaStateMachine")
+	private com.alibaba.cola.statemachine.StateMachine<JuiceMachineStates, JuiceMachineEvents, Integer> multiColaStateMachine;
+
+	@Resource(name = "internalColaStateMachine")
+	private com.alibaba.cola.statemachine.StateMachine<JuiceMachineStates, JuiceMachineEvents, Integer> internalColaStateMachine;
+
+	@Resource(name = "choiceColaStateMachine")
+	private com.alibaba.cola.statemachine.StateMachine<JuiceMachineStates, JuiceMachineEvents, Integer> choiceColaStateMachine;
+
+	@Resource(name = "conditionNotMeet")
+	private com.alibaba.cola.statemachine.StateMachine<JuiceMachineStates, JuiceMachineEvents, Integer> conditionNotMeet;
+
 	@Resource
 	private BuilderStatemachineConfigurer builder;
 
@@ -40,9 +57,54 @@ public class StateMachineMain8080 implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		log.info("State Machine 启动完毕");
 
-		this.testStateChange();
+		// spring state machine
+		// this.testStateChange();
+
+		// cola state machine
+		// this.testJuiceStateChange();
+
+		// cola choice state machine
+		// this.testChoiceStateChange();
+
+		// cola not meet state machine
+		this.testNotMeetStateChange();
 
 		log.info("==================");
+	}
+
+	private void testNotMeetStateChange() {
+		// 当checkConditionFalse()执行时，永远不会满足状态流转的条件，则状态不会变化，会直接返回原来的STATE
+		JuiceMachineStates target = conditionNotMeet.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.COIN, 1);
+		log.info("not meet change status success {}", target);
+	}
+
+	private void testChoiceStateChange() {
+		JuiceMachineStates target1 = choiceColaStateMachine.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.COIN, 10);
+		log.info("choice change status success {}", target1);
+		JuiceMachineStates target2 = choiceColaStateMachine.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.COIN, 20);
+		log.info("choice change status success {}", target2);
+		JuiceMachineStates target3 = choiceColaStateMachine.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.COIN, 30);
+		log.info("choice change status success {}", target3);
+
+		// 还可以生成PlantUML
+		String uml = choiceColaStateMachine.generatePlantUML();
+		log.info(uml);
+	}
+
+	private void testJuiceStateChange() {
+		JuiceMachineStates target = stateMachine.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.COIN, 1);
+		log.info("change status success {}", target);
+
+		//target = multiColaStateMachine.fireEvent(JuiceMachineStates.OPEN, JuiceMachineEvents.COIN, 2);
+		//log.info("multi change status success {}", target);
+
+		target = multiColaStateMachine.fireEvent(JuiceMachineStates.FALL, JuiceMachineEvents.COIN, 2);
+		log.info("multi change status success {}", target);
+
+		// 状态内部触发流转
+		internalColaStateMachine.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.REACH, 3);
+		target = stateMachine.fireEvent(JuiceMachineStates.CLOSE, JuiceMachineEvents.COIN, 4);
+		log.info("internal change status success {}", target);
 	}
 
 	private void testStateChange() throws Exception {
