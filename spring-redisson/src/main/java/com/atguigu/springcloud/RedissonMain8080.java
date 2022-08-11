@@ -47,7 +47,7 @@ public class RedissonMain8080 implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		log.info("yml include 启动完毕，当前环境：{}", profileActive);
+		log.info("redisson lock project 启动完毕，当前环境：{}", profileActive);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.test;
 
-import com.atguigu.springcloud.RedissonLock;
+import com.atguigu.springcloud.RedissonFairLock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +11,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 非公平锁（重入锁）
+ * 公平锁
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class RedissonLockTest {
+public class RedissonFairLockTest {
 
     @Autowired
-    private RedissonLock redissonLock;
+    private RedissonFairLock redissonFairLock;
 
     @Test
     public void easyLockTest() throws InterruptedException {
@@ -44,13 +44,13 @@ public class RedissonLockTest {
 
         @Override
         public void run() {
-            redissonLock.addLock("demo");
+            redissonFairLock.addLock("demo");
             try {
                 TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                redissonLock.releaseLock("demo");
+                redissonFairLock.releaseLock("demo");
                 latch.countDown();
             }
         }
