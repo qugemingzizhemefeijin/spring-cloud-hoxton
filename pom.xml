@@ -83,6 +83,7 @@
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.io.version>2.11.0</commons.io.version>
         <fastjson.version>1.2.83</fastjson.version>
+        <alibaba.transmittable.version>2.14.0</alibaba.transmittable.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->

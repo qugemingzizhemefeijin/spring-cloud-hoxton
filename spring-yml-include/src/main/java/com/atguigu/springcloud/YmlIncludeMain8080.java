@@ -1,14 +1,19 @@
 package com.atguigu.springcloud;
 
+import com.atguigu.springcloud.config.TaskThreadPoolConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @Slf4j
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@EnableAsync
+//@EnableConfigurationProperties({TaskThreadPoolConfig.class}) // 开启配置属性支持
 public class YmlIncludeMain8080 implements CommandLineRunner {
 
 	@Value("${spring.profiles.active}")

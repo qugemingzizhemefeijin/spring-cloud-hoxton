@@ -6,3 +6,9 @@ spring:
     name: spring-yml-include
   profiles:
     active: dev
+task:
+  pool:
+    corePoolSize: 20
+    maxPoolSize: 40
+    keepAliveSeconds: 300
+    queueCapacity: 50
