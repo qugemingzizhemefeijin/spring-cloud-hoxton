@@ -68,6 +68,7 @@
 		<module>spring-statemachine</module>
 		<module>spring-webflux</module>
 		<module>spring-file-watch</module>
+		<module>spring-remote-rpc</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -85,6 +86,8 @@
         <commons.io.version>2.11.0</commons.io.version>
         <fastjson.version>1.2.83</fastjson.version>
         <alibaba.transmittable.version>2.14.0</alibaba.transmittable.version>
+        <hutool.version>5.1.0</hutool.version>
+        <lombok.version>1.18.16</lombok.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -153,6 +156,16 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

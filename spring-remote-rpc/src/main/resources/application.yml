@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: spring-remote-rpc
+  profiles:
+    active: dev
+cec:
+  sigSecret: 12345678
+  dataSecret: 12345678
+  dataIv: 12345678
+  operatorID: 12345678

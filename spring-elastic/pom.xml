@@ -17,7 +17,6 @@
         <mapbox.sdk.turf.version>5.8.0</mapbox.sdk.turf.version>
         <jst.version>1.18.1</jst.version>
         <guava.version>31.0.1-jre</guava.version>
-        <hutool.version>4.5.7</hutool.version>
     </properties>
 
     <dependencies>
@@ -89,7 +88,6 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

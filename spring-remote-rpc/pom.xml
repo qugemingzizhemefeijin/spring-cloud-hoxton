@@ -9,27 +9,28 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-talk-robot</artifactId>
-
-    <properties>
-        <guava.version>31.0.1-jre</guava.version>
-        <lombok.version>1.18.16</lombok.version>
-    </properties>
+    <artifactId>spring-remote-rpc</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
         <dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-configuration-processor</artifactId>
         	<optional>true</optional>
         </dependency>
+        <!-- 引入自己定义的api通用包，可以使用Payment支付Entity -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <groupId>com.atguigu.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
         </dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -39,6 +40,10 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -53,15 +58,6 @@
                     <artifactId>log4j-to-slf4j</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
     </dependencies>
     
