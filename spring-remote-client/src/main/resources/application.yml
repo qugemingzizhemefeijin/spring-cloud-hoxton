@@ -1,0 +1,17 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: spring-remote-client
+  profiles:
+    active: dev
+cec:
+  sigSecret: 12345678
+  dataSecret: ASDFGHJKLASDFGHJ
+  dataIv: 1234567890123456
+  operatorID: 12345678
+logging:
+  level:
+    # feign日志以什么级别监控哪个接口
+    com.atguigu.springcloud.service.CECTokenService: debug

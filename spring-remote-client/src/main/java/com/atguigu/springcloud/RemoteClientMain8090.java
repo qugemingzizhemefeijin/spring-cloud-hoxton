@@ -6,21 +6,23 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @Slf4j
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-public class RemoteRPCMain8080 implements CommandLineRunner {
+@EnableFeignClients
+public class RemoteClientMain8090 implements CommandLineRunner {
 
     @Value("${spring.profiles.active}")
     private String profileActive;
 
     public static void main(String[] args) {
-        SpringApplication.run(RemoteRPCMain8080.class, args);
+        SpringApplication.run(RemoteClientMain8090.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("remote RPC 启动完毕，当前环境：{}", profileActive);
+        log.info("remote client 启动完毕，当前环境：{}", profileActive);
     }
 
 }

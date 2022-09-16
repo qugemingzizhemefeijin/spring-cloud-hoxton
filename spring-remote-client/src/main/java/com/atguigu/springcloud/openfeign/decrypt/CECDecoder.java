@@ -34,13 +34,9 @@ public class CECDecoder extends SpringDecoder {
     public Object decode(Response response, Type type) throws IOException, FeignException {
         CECResponse<String> resp = this.getCECResponse(response);
         // TODO 应该做对应的异常判断然后抛出异常
-        String json = this.decryptStr(resp.getData());
+        String json = this.aes.decryptStr(resp.getData());
         Response newResp = response.toBuilder().body(json, StandardCharsets.UTF_8).build();
         return super.decode(newResp, type);
-    }
-
-    public String decryptStr(String data) {
-        return this.aes.decryptStr(data);
     }
 
     private CECResponse<String> getCECResponse(Response response) throws IOException {

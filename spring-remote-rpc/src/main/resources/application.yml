@@ -8,6 +8,6 @@ spring:
     active: dev
 cec:
   sigSecret: 12345678
-  dataSecret: 12345678
-  dataIv: 12345678
+  dataSecret: ASDFGHJKLASDFGHJ
+  dataIv: 1234567890123456
   operatorID: 12345678

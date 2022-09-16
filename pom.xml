@@ -69,6 +69,7 @@
 		<module>spring-webflux</module>
 		<module>spring-file-watch</module>
 		<module>spring-remote-rpc</module>
+		<module>spring-remote-client</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->

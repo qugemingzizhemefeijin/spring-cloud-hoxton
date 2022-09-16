@@ -10,7 +10,10 @@ public class CECTokenServiceImpl implements CECTokenService {
 
     @Override
     public QueryTokenResp queryToken(QueryTokenReq req) {
-        return null;
+        QueryTokenResp resp = new QueryTokenResp();
+        resp.setNickname("Hello" + req.getOperatorID());
+        resp.setUsername("World");
+        return resp;
     }
 
 }

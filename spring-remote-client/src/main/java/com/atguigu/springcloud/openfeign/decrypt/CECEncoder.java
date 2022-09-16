@@ -40,12 +40,6 @@ public class CECEncoder extends SpringEncoder {
     @Override
     public void encode(Object requestBody, Type bodyType, RequestTemplate request) throws EncodeException {
         // 数据加密
-        CECRequest<String> req = this.encrypt(requestBody);
-        super.encode(req, CECRequest.class.getGenericSuperclass(), request);
-    }
-
-    public CECRequest<String> encrypt(Object requestBody) {
-        // 数据加密
         String data = this.getEncrypt(requestBody);
         CECRequest<String> req = new CECRequest<>();
         req.setData(data);
@@ -55,10 +49,10 @@ public class CECEncoder extends SpringEncoder {
         // 签名计算
         String sig = this.getSig(req);
         req.setSig(sig.toUpperCase());
-        return req;
+        super.encode(req, CECRequest.class.getGenericSuperclass(), request);
     }
 
-    public String getEncrypt(Object requestBody) {
+    private String getEncrypt(Object requestBody) {
         String json = JsonUtil.toJson(requestBody);
         return Base64.encode(aes.encrypt(json.getBytes()));
     }
