@@ -1,0 +1,13 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: spring-remote-feign-rpc
+  profiles:
+    active: dev
+cec:
+  sigSecret: 12345678
+  dataSecret: ASDFGHJKLASDFGHJ
+  dataIv: 1234567890123456
+  operatorID: 12345678
