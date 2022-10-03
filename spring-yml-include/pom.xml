@@ -54,6 +54,42 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-all-deps</artifactId>
+            <version>3.3.1</version>
+            <exclusions>
+                <!--  排除windows 32位系统      -->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-win32</artifactId>
+                </exclusion>
+                <!--  排除linux 32位系统      -->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-linux32</artifactId>
+                </exclusion>
+                <!-- 排除Mac系统-->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-osx64</artifactId>
+                </exclusion>
+                <!-- 排除osxm-->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-osxm1</artifactId>
+                </exclusion>
+                <!-- 排除arm-->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-linux-arm32</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-linux-arm64</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
             <version>${alibaba.transmittable.version}</version>
