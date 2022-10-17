@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.mouzt</groupId>
             <artifactId>bizlog-sdk</artifactId>
-            <version>1.0.8</version>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>de.danielbechler</groupId>

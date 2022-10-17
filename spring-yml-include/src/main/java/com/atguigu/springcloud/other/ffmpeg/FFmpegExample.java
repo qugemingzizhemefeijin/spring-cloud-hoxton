@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other;
+package com.atguigu.springcloud.other.ffmpeg;
 
 import ws.schild.jave.process.ProcessWrapper;
 import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;

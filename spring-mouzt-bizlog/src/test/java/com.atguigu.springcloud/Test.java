@@ -11,7 +11,12 @@ public class Test {
         Order order1 = getOrder1();
         Order order2 = getOrder2();
         annotationDiffUtil(order1, order2);
+
+        System.out.println("=================================");
+
         diffObject(order1, order2);
+
+        System.out.println("=================================");
     }
 
     private static void diffObject(Order order1, Order order2) {

@@ -91,6 +91,7 @@
         <lombok.version>1.18.16</lombok.version>
         <esapi.version>2.5.0.0</esapi.version>
         <davidmoten.version>0.8.0</davidmoten.version>
+        <http.client.async.version>2.12.3</http.client.async.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -179,6 +180,11 @@
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>geo</artifactId>
                 <version>${davidmoten.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.asynchttpclient</groupId>
+                <artifactId>async-http-client</artifactId>
+                <version>${http.client.async.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
