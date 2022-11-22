@@ -94,6 +94,7 @@
         <http.client.async.version>2.12.3</http.client.async.version>
         <jol.version>0.16</jol.version>
         <jsqlparser.version>4.5</jsqlparser.version>
+        <fusesource.jansi.version>1.18</fusesource.jansi.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -197,6 +198,11 @@
                 <groupId>com.github.jsqlparser</groupId>
                 <artifactId>jsqlparser</artifactId>
                 <version>${jsqlparser.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.jansi</groupId>
+                <artifactId>jansi</artifactId>
+                <version>${fusesource.jansi.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
