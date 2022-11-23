@@ -95,6 +95,7 @@
         <jol.version>0.16</jol.version>
         <jsqlparser.version>4.5</jsqlparser.version>
         <fusesource.jansi.version>1.18</fusesource.jansi.version>
+        <aviator.version>5.3.3</aviator.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -203,6 +204,11 @@
                 <groupId>org.fusesource.jansi</groupId>
                 <artifactId>jansi</artifactId>
                 <version>${fusesource.jansi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.aviator</groupId>
+                <artifactId>aviator</artifactId>
+                <version>${aviator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
