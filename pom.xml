@@ -70,6 +70,7 @@
 		<module>spring-file-watch</module>
 		<module>spring-remote-rpc</module>
 		<module>spring-remote-client</module>
+		<module>spring-hello</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -97,6 +98,8 @@
         <fusesource.jansi.version>1.18</fusesource.jansi.version>
         <aviator.version>5.3.3</aviator.version>
         <luaj.version>3.0.1</luaj.version>
+        <hdrHistogram.version>2.1.12</hdrHistogram.version>
+        <affinity.version>3.2.3</affinity.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -215,6 +218,16 @@
                 <groupId>org.luaj</groupId>
                 <artifactId>luaj-jse</artifactId>
                 <version>${luaj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hdrHistogram</groupId>
+                <artifactId>HdrHistogram</artifactId>
+                <version>${hdrHistogram.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.openhft</groupId>
+                <artifactId>affinity</artifactId>
+                <version>${affinity.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

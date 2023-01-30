@@ -38,7 +38,18 @@ RingBuffer是一个首尾相连的环形数组，所谓首尾相连，是指当R
 
 Disruptor中的RingBuffer上只有一个指针，表示当前RingBuffer上消息写到了哪里，此外，每个消费者会维护一个sequence表示自己在RingBuffer上读到哪里，从这个角度讲，Disruptor中的RingBuffer上实际有消费者数+1个指针。由于我们要实现的是一个单消息单消费的阻塞队列，只要维护一个读指针（对应消费者）和一个写指针（对应生产者）即可，无论哪个指针，每次读写操作后都自增一次，一旦越界，即从数组头开始继续读写。
 
+### 等待策略
+
+- `BlockingWaitStrategy`：用了`ReentrantLock`的等待&&唤醒机制实现等待逻辑，是默认策略，比较节省CPU，默认策略；
+- `BusySpinWaitStrategy`：持续自旋，`JDK9`之下慎用（最好别用）；
+- `DummyWaitStrategy`：返回的`Sequence`值为0，正常环境是用不上的；
+- `LiteBlockingWaitStrategy`：基于`BlockingWaitStrategy`，在没有锁竞争的时候会省去唤醒操作，但是作者说测试不充分，不建议使用；
+- `TimeoutBlockingWaitStrategy`：带超时的等待，超时后会执行业务指定的处理逻辑；
+- `LiteTimeoutBlockingWaitStrategy`：基于`TimeoutBlockingWaitStrategy`，在没有锁竞争的时候会省去唤醒操作；
+- `SleepingWaitStrategy`：三段式，第一阶段自旋，第二阶段执行`Thread.yield`交出CPU，第三阶段睡眠执行时间，反复的的睡眠；
+- `YieldingWaitStrategy`：二段式，第一阶段自旋，第二阶段执行`Thread.yield`交出CPU；
+- `PhasedBackoffWaitStrategy`：四段式，第一阶段自旋指定次数，第二阶段自旋指定时间，第三阶段执行`Thread.yield`交出CPU，第四阶段调用成员变量的`waitFor`方法，这个成员变量可以被设置为`BlockingWaitStrategy`、`LiteBlockingWaitStrategy`、`SleepingWaitStrategy`这三个中的一个；
+
 ### 参考
 
 [《disruptor笔记》系列链接](https://blog.csdn.net/boling_cavalry/article/details/117636483)
-
