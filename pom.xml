@@ -100,7 +100,7 @@
         <luaj.version>3.0.1</luaj.version>
         <hdrHistogram.version>2.1.12</hdrHistogram.version>
         <affinity.version>3.2.3</affinity.version>
-        <http.client.version>4.5.10</http.client.version>
+        <http.client.version>4.5.13</http.client.version>
         <javatuples.version>1.2</javatuples.version>
     </properties>
 
