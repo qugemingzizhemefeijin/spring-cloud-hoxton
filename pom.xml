@@ -93,6 +93,7 @@
         <esapi.version>2.5.0.0</esapi.version>
         <davidmoten.version>0.8.0</davidmoten.version>
         <http.client.async.version>2.12.3</http.client.async.version>
+<<<<<<< Updated upstream
         <jol.version>0.16</jol.version>
         <jsqlparser.version>4.5</jsqlparser.version>
         <fusesource.jansi.version>1.18</fusesource.jansi.version>
@@ -100,6 +101,10 @@
         <luaj.version>3.0.1</luaj.version>
         <hdrHistogram.version>2.1.12</hdrHistogram.version>
         <affinity.version>3.2.3</affinity.version>
+=======
+        <http.client.version>4.5.10</http.client.version>
+        <javatuples.version>1.2</javatuples.version>
+>>>>>>> Stashed changes
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -195,6 +200,7 @@
                 <version>${http.client.async.version}</version>
             </dependency>
             <dependency>
+<<<<<<< Updated upstream
                 <groupId>org.openjdk.jol</groupId>
                 <artifactId>jol-core</artifactId>
                 <version>${jol.version}</version>
@@ -228,6 +234,31 @@
                 <groupId>net.openhft</groupId>
                 <artifactId>affinity</artifactId>
                 <version>${affinity.version}</version>
+=======
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>fluent-hc</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javatuples</groupId>
+                <artifactId>javatuples</artifactId>
+                <version>${javatuples.version}</version>
+>>>>>>> Stashed changes
             </dependency>
         </dependencies>
     </dependencyManagement>
