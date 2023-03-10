@@ -1,0 +1,11 @@
+https://developer.aliyun.com/article/724720?spm=a2c6h.13262185.profile.102.5596501cvZUxAW#slide-10
+
+带你读《Java图像处理：基于OpenCV与JVM》之一：基于JavaVM的OpenCV
+
+https://developer.aliyun.com/article/724619?spm=a2c6h.13262185.profile.71.296b4edaiKXStj
+
+带你读《JVM G1源码分析和调优》之一：垃圾回收概述
+
+https://blog.csdn.net/qq_31865983/article/details/102919445
+
+Hotspot 方法调用之HandleMark 源码解析
