@@ -24,6 +24,14 @@ public class TurfTest {
     // turf.js 中文官网 https://turfjs.fenxianglu.cn/category/
 
     @Test
+    public void testDistance() {
+        Point ggPoint = Point.fromLngLat(116.396939, 39.921382);
+        Point xdscPoint = Point.fromLngLat(116.3812, 39.918919);
+
+        log.info("两点距离：{}", TurfMeasurement.distance(ggPoint, xdscPoint));
+    }
+
+    @Test
     public void testCircleContainsPoint() {
         Point ggPoint = Point.fromLngLat(116.396939, 39.921382);
         Point xdscPoint = Point.fromLngLat(116.3812, 39.918919);

@@ -1,8 +1,8 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.*;
-import org.assertj.core.util.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class TaleMisc {
@@ -30,7 +30,7 @@ public final class TaleMisc {
             return null;
         }
 
-        List<Point> pointList = Lists.newArrayList();
+        List<Point> pointList = new ArrayList();
         for (List<Point> c : coordinates) {
             if (c == null || c.isEmpty()) {
                 continue;
@@ -47,7 +47,7 @@ public final class TaleMisc {
             return null;
         }
 
-        List<Point> pointList = Lists.newArrayList();
+        List<Point> pointList = new ArrayList<>();
 
         kinks(coordinates, pointList);
 

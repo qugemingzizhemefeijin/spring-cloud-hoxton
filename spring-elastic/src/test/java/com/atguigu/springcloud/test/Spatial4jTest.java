@@ -1,7 +1,7 @@
 package com.atguigu.springcloud.test;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.util.Lists;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;

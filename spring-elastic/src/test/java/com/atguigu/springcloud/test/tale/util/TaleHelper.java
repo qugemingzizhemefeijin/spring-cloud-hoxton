@@ -61,4 +61,32 @@ public final class TaleHelper {
         return radians * factor;
     }
 
+    /**
+     * 将以度为单位的角度转换为弧度
+     * @param degrees 度数
+     * @return double 弧度
+     */
+    public static double degreesToRadians(double degrees) {
+        return (degrees % 360 * Math.PI) / 180;
+    }
+
+    /**
+     * 角度转换为弧度
+     * @param angle 角度
+     * @return double 弧度
+     */
+    public static double angleToRadians(double angle) {
+        return angle * Math.PI / 180;
+    }
+
+    /**
+     * 将以弧度为单位的角度转换为度
+     * @param radians 弧度
+     * @return double 角度
+     */
+    public static double radiansToDegrees(double radians) {
+        double degrees = radians % (2 * Math.PI);
+        return degrees * 180 / Math.PI;
+    }
+
 }
