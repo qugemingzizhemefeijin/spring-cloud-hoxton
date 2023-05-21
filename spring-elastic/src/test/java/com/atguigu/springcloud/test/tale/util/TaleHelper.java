@@ -89,4 +89,23 @@ public final class TaleHelper {
         return degrees * 180 / Math.PI;
     }
 
+    /**
+     * 将距离测量值（假设地球为球形）从实际单位转换为弧度。
+     * 有效单位： MILES, NAUTICAL_MILES, INCHES, YARDS, METERS, METRES, KILOMETERS, CENTIMETERS, FEET
+     * @param distance 对应单位的距离
+     * @param units    距离对应的单位
+     * @return double
+     */
+    public static double lengthToRadians(double distance, Units units) {
+        if (units == null) {
+            units = Units.KILOMETERS;
+        }
+
+        Double factor = FACTORS.get(units);
+        if (factor == null) {
+            throw new Error(units + " units is invalid");
+        }
+        return distance / factor;
+    }
+
 }

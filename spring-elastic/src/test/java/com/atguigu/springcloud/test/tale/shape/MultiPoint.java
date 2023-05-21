@@ -3,30 +3,22 @@ package com.atguigu.springcloud.test.tale.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Line implements CoordinateContainer<List<Point>> {
+public final class MultiPoint implements CoordinateContainer<List<Point>> {
 
     private final List<Point> coordinates;
 
-    Line(List<Point> coordinates) {
+    MultiPoint(List<Point> coordinates) {
         if (coordinates == null) {
             throw new NullPointerException("Null coordinates");
         }
         this.coordinates = coordinates;
     }
 
-    public static Line fromLngLats(List<Point> points) {
-        return new Line(points);
+    public static MultiPoint fromLngLats(List<Point> points) {
+        return new MultiPoint(points);
     }
 
-    public static Line fromLngLats(Point start, Point end) {
-        List<Point> points = new ArrayList<>(2);
-        points.add(start);
-        points.add(end);
-
-        return fromLngLats(points);
-    }
-
-    public static Line fromLngLats(double[][] coordinates) {
+    public static MultiPoint fromLngLats(double[][] coordinates) {
         List<Point> points = new ArrayList<>(coordinates.length);
 
         for (double[] p : coordinates) {
@@ -43,12 +35,12 @@ public final class Line implements CoordinateContainer<List<Point>> {
 
     @Override
     public GeometryType type() {
-        return GeometryType.LINE;
+        return GeometryType.MULTI_POINT;
     }
 
     @Override
     public String toString() {
-        return "Line{" +
+        return "MultiPoint{" +
                 "coordinates=" + coordinates +
                 '}';
     }

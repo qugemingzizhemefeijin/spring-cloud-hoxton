@@ -3,7 +3,7 @@ package com.atguigu.springcloud.test.tale.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Polygon implements Geometry<List<Point>> {
+public final class Polygon implements CoordinateContainer<List<Point>> {
 
     private final List<Point> coordinates;
 

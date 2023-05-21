@@ -11,7 +11,7 @@ public final class TaleMisc {
         throw new AssertionError("No Instances.");
     }
 
-    public static List<Point> kinks(Geometry<?> geometry) {
+    public static List<Point> kinks(Geometry geometry) {
         switch(geometry.type()) {
             case POLYGON:
                 return kinks(((Polygon)geometry).coordinates());
@@ -30,7 +30,7 @@ public final class TaleMisc {
             return null;
         }
 
-        List<Point> pointList = new ArrayList();
+        List<Point> pointList = new ArrayList<>();
         for (List<Point> c : coordinates) {
             if (c == null || c.isEmpty()) {
                 continue;

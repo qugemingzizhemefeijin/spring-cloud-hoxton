@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.test.tale.shape;
 
-public final class Point implements Geometry<Point> {
+public final class Point implements CoordinateContainer<Point> {
 
     private final double longitude;
 
