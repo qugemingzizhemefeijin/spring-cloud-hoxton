@@ -35,4 +35,11 @@ public final class Polygon implements CoordinateContainer<List<Point>> {
     public GeometryType type() {
         return GeometryType.POLYGON;
     }
+
+    @Override
+    public String toString() {
+        return "Polygon{" +
+                "coordinates=" + coordinates +
+                '}';
+    }
 }

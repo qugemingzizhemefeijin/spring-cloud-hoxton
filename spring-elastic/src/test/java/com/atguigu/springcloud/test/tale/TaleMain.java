@@ -3,6 +3,7 @@ package com.atguigu.springcloud.test.tale;
 import com.atguigu.springcloud.test.tale.shape.BoundingBox;
 import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.Polygon;
 import com.atguigu.springcloud.test.tale.util.Units;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,9 +15,13 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[][]{new double[]{109.502991, 29.68718}, new double[]{108.837829, 32.969237}, new double[]{113.567871, 37.200787}});
-        Point point = TaleMeasurement.along(line, 300, Units.KILOMETERS);
-        log.info("目标点：{}", point);
+        Point center = Point.fromLngLat(-75.343, 39.984);
+        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);
+        log.info("circle:{}", circle);
+
+//        Line line = Line.fromLngLats(new double[][]{new double[]{109.502991, 29.68718}, new double[]{108.837829, 32.969237}, new double[]{113.567871, 37.200787}});
+//        Point point = TaleMeasurement.along(line, 300, Units.KILOMETERS);
+//        log.info("目标点：{}", point);
 
 //        BoundingBox bbox = BoundingBox.fromLngLats(-20, -20, -15, 0);
 //        BoundingBox newBbox = TaleMeasurement.square(bbox);
