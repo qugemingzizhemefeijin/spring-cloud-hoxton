@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.shape.Geometry;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import com.atguigu.springcloud.test.tale.util.Units;
@@ -7,7 +8,7 @@ import com.atguigu.springcloud.test.tale.util.Units;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaleTransformation {
+public final class TaleTransformation {
 
     private static final int DEFAULT_STEPS = 64;
 
@@ -51,9 +52,19 @@ public class TaleTransformation {
         }
 
         if (coordinate.size() > 0) {
-            coordinate.add(coordinate.get(0));
+            coordinate.add(Point.fromLngLat(coordinate.get(0)));
         }
         return Polygon.fromLngLats(coordinate);
+    }
+
+    /**
+     * 深度克隆一个 geometry 对象
+     * @param geometry 图形组件
+     * @return 返回克隆后的图形组件
+     */
+    public static <T extends Geometry> T clone(T geometry) {
+        // TODO
+        return null;
     }
 
 }

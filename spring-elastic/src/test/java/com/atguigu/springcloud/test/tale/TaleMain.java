@@ -1,7 +1,5 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.shape.BoundingBox;
-import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import com.atguigu.springcloud.test.tale.util.Units;
@@ -17,7 +15,24 @@ public class TaleMain {
 
         Point center = Point.fromLngLat(-75.343, 39.984);
         Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);
-        log.info("circle:{}", circle);
+
+        System.out.println(circle);
+
+        TaleMeta.coordEach(circle, (p, index, multiIndex, geomIndex) -> {
+            double latitude = p.getLatitude(), longitude = p.getLongitude();
+
+            // 翻转
+            p.setLongitude(latitude);
+            p.setLatitude(longitude);
+
+            return true;
+        });
+
+        System.out.println(circle);
+
+//        Point center = Point.fromLngLat(-75.343, 39.984);
+//        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);
+//        log.info("circle:{}", circle);
 
 //        Line line = Line.fromLngLats(new double[][]{new double[]{109.502991, 29.68718}, new double[]{108.837829, 32.969237}, new double[]{113.567871, 37.200787}});
 //        Point point = TaleMeasurement.along(line, 300, Units.KILOMETERS);

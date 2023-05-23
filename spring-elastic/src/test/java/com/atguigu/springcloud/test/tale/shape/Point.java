@@ -2,9 +2,9 @@ package com.atguigu.springcloud.test.tale.shape;
 
 public final class Point implements CoordinateContainer<Point> {
 
-    private final double longitude;
+    private double longitude;
 
-    private final double latitude;
+    private double latitude;
 
     public Point(double longitude, double latitude) {
         this.longitude = longitude;
@@ -19,16 +19,27 @@ public final class Point implements CoordinateContainer<Point> {
         if (coords.length == 2) {
             return Point.fromLngLat(coords[0], coords[1]);
         }
-
         return null;
+    }
+
+    public static Point fromLngLat(Point p) {
+        return Point.fromLngLat(p.getLongitude(), p.getLatitude());
     }
 
     public double getLongitude() {
         return longitude;
     }
 
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     public double getLatitude() {
         return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     @Override
