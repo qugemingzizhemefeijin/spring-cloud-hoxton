@@ -189,7 +189,7 @@ public final class TaleMeta {
      * @param point 点
      * @return double数组，0=经度，1=纬度
      */
-    public static double[] getCoord(Point point) {
+    public static double[] unwrapCoord(Point point) {
         return new double[]{point.getLongitude(), point.getLatitude()};
     }
 
@@ -199,7 +199,7 @@ public final class TaleMeta {
      * @param line 线
      * @return 坐标点展开数组
      */
-    public static double[][] getCoords(Line line) {
+    public static double[][] unwrapCoords(Line line) {
         return unwrapCoordinates(line.coordinates());
     }
 
@@ -209,7 +209,7 @@ public final class TaleMeta {
      * @param multiPoint 点集合
      * @return 坐标点展开数组
      */
-    public static double[][] getCoords(MultiPoint multiPoint) {
+    public static double[][] unwrapCoords(MultiPoint multiPoint) {
         return unwrapCoordinates(multiPoint.coordinates());
     }
 
@@ -219,7 +219,7 @@ public final class TaleMeta {
      * @param polygon 面
      * @return 坐标点展开数组
      */
-    public static double[][] getCoords(Polygon polygon) {
+    public static double[][] unwrapCoords(Polygon polygon) {
         return unwrapCoordinates(polygon.coordinates());
     }
 
@@ -229,7 +229,7 @@ public final class TaleMeta {
      * @param multiLine 线组合
      * @return 坐标点展开数组
      */
-    public static double[][][] getCoords(MultiLine multiLine) {
+    public static double[][][] unwrapCoords(MultiLine multiLine) {
         return unwrapHighCoordinates(multiLine.coordinates());
     }
 
@@ -239,7 +239,7 @@ public final class TaleMeta {
      * @param multiPolygon 面组合
      * @return 坐标点展开数组
      */
-    public static double[][][] getCoords(MultiPolygon multiPolygon) {
+    public static double[][][] unwrapCoords(MultiPolygon multiPolygon) {
         return unwrapHighCoordinates(multiPolygon.coordinates());
     }
 

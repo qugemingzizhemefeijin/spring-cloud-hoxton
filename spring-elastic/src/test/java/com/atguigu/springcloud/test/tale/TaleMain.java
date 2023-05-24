@@ -20,7 +20,7 @@ public class TaleMain {
         Point nearest = TaleClassification.nearestPoint(targetPoint, multiPoint);
         log.info("nearest {}", nearest);
 
-        System.out.println(Arrays.deepToString(TaleMeta.getCoords(multiPoint)));
+        System.out.println(Arrays.deepToString(TaleMeta.unwrapCoords(multiPoint)));
 
 //        Point center = Point.fromLngLat(-75.343, 39.984);
 //        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);
