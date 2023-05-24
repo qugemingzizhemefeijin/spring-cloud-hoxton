@@ -1,9 +1,10 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.shape.MultiPoint;
 import com.atguigu.springcloud.test.tale.shape.Point;
-import com.atguigu.springcloud.test.tale.shape.Polygon;
-import com.atguigu.springcloud.test.tale.util.Units;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
 
 @Slf4j
 public class TaleMain {
@@ -13,22 +14,30 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point center = Point.fromLngLat(-75.343, 39.984);
-        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);
+        Point targetPoint = Point.fromLngLat(112.015826, 36.074031);
+        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483, 35.834725}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});
 
-        System.out.println(circle);
+        Point nearest = TaleClassification.nearestPoint(targetPoint, multiPoint);
+        log.info("nearest {}", nearest);
 
-        TaleMeta.coordEach(circle, (p, index, multiIndex, geomIndex) -> {
-            double latitude = p.getLatitude(), longitude = p.getLongitude();
+        System.out.println(Arrays.deepToString(TaleMeta.getCoords(multiPoint)));
 
-            // 翻转
-            p.setLongitude(latitude);
-            p.setLatitude(longitude);
-
-            return true;
-        });
-
-        System.out.println(circle);
+//        Point center = Point.fromLngLat(-75.343, 39.984);
+//        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);
+//
+//        System.out.println(circle);
+//
+//        TaleMeta.coordEach(circle, (p, index, multiIndex, geomIndex) -> {
+//            double latitude = p.getLatitude(), longitude = p.getLongitude();
+//
+//            // 翻转
+//            p.setLongitude(latitude);
+//            p.setLatitude(longitude);
+//
+//            return true;
+//        });
+//
+//        System.out.println(circle);
 
 //        Point center = Point.fromLngLat(-75.343, 39.984);
 //        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);

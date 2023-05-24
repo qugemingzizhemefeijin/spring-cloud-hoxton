@@ -2,6 +2,8 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.callback.CoordEachCallback;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.mapbox.geojson.Feature;
+import com.mapbox.turf.TurfException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +114,7 @@ public final class TaleMeta {
 
     /**
      * 循环处理组件点信息
+     *
      * @param geometry 图形组件
      * @param callback 处理函数
      * @return 是否所有的点均处理成功
@@ -122,6 +125,7 @@ public final class TaleMeta {
 
     /**
      * 循环处理组件点信息
+     *
      * @param geometry         图形组件
      * @param callback         处理函数
      * @param excludeWrapCoord 如果是 POLYGON || MULTI_POLYGON 是否处理最后一个闭合点
@@ -177,6 +181,108 @@ public final class TaleMeta {
         }
 
         return true;
+    }
+
+    /**
+     * 从单个坐标展开坐标并返回数组
+     *
+     * @param point 点
+     * @return double数组，0=经度，1=纬度
+     */
+    public static double[] getCoord(Point point) {
+        return new double[]{point.getLongitude(), point.getLatitude()};
+    }
+
+    /**
+     * 从线中展开坐标并返回数组
+     *
+     * @param line 线
+     * @return 坐标点展开数组
+     */
+    public static double[][] getCoords(Line line) {
+        return unwrapCoordinates(line.coordinates());
+    }
+
+    /**
+     * 从点集合中展开坐标并返回数组
+     *
+     * @param multiPoint 点集合
+     * @return 坐标点展开数组
+     */
+    public static double[][] getCoords(MultiPoint multiPoint) {
+        return unwrapCoordinates(multiPoint.coordinates());
+    }
+
+    /**
+     * 从面中展开坐标并返回数组
+     *
+     * @param polygon 面
+     * @return 坐标点展开数组
+     */
+    public static double[][] getCoords(Polygon polygon) {
+        return unwrapCoordinates(polygon.coordinates());
+    }
+
+    /**
+     * 从线组合中展开坐标并返回数组
+     *
+     * @param multiLine 线组合
+     * @return 坐标点展开数组
+     */
+    public static double[][][] getCoords(MultiLine multiLine) {
+        return unwrapHighCoordinates(multiLine.coordinates());
+    }
+
+    /**
+     * 从面组合中展开坐标并返回数组
+     *
+     * @param multiPolygon 面组合
+     * @return 坐标点展开数组
+     */
+    public static double[][][] getCoords(MultiPolygon multiPolygon) {
+        return unwrapHighCoordinates(multiPolygon.coordinates());
+    }
+
+    /**
+     * 展开坐标信息
+     *
+     * @param pointList 坐标点集合
+     * @return 坐标点展开数组，二维
+     */
+    private static double[][] unwrapCoordinates(List<Point> pointList) {
+        int size = pointList.size();
+        double[][] coords = new double[size][2];
+        for (int i = 0; i < size; i++) {
+            Point p = pointList.get(i);
+            coords[i] = new double[]{p.getLongitude(), p.getLatitude()};
+        }
+
+        return coords;
+    }
+
+    /**
+     * 展开坐标信息
+     *
+     * @param pointList 坐标点集合
+     * @return 坐标点展开数组，三维
+     */
+    public static double[][][] unwrapHighCoordinates(List<List<Point>> pointList) {
+        int isize = pointList.size();
+        double[][][] highCoords = new double[isize][][];
+
+        for (int i = 0; i < isize; i++) {
+            List<Point> plist = pointList.get(i);
+            int jsize = plist.size();
+            double[][] coords = new double[jsize][2];
+            for (int j = 0; j < jsize; j++) {
+                Point p = plist.get(j);
+                coords[j] = new double[]{p.getLongitude(), p.getLatitude()};
+            }
+
+            highCoords[i] = coords;
+        }
+
+        return highCoords;
     }
 
 }
