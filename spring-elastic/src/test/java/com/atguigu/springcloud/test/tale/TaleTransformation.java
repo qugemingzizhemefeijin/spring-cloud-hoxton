@@ -1,8 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.shape.Geometry;
-import com.atguigu.springcloud.test.tale.shape.Point;
-import com.atguigu.springcloud.test.tale.shape.Polygon;
+import com.atguigu.springcloud.test.tale.exception.TaleException;
+import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.Units;
 
 import java.util.ArrayList;
@@ -62,9 +61,19 @@ public final class TaleTransformation {
      * @param geometry 图形组件
      * @return 返回克隆后的图形组件
      */
+    @SuppressWarnings("unchecked")
     public static <T extends Geometry> T clone(T geometry) {
-        // TODO
-        return null;
+        if (geometry == null) {
+            return null;
+        }
+
+        if (geometry instanceof CoordinateContainer) {
+            return ((CoordinateContainer<?, T>) geometry).deepClone();
+        } else if (geometry instanceof GeometryCollection) {
+            return (T) ((GeometryCollection) geometry).deepClone();
+        } else {
+            throw new TaleException("geometry not support deepClone");
+        }
     }
 
 }

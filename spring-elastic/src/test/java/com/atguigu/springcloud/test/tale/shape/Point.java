@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.test.tale.shape;
 
-public final class Point implements CoordinateContainer<Point> {
+public final class Point implements CoordinateContainer<Point, Point> {
 
     private double longitude;
 
@@ -53,6 +53,11 @@ public final class Point implements CoordinateContainer<Point> {
     @Override
     public Point coordinates() {
         return this;
+    }
+
+    @Override
+    public Point deepClone() {
+        return fromLngLat(this.longitude, this.latitude);
     }
 
     @Override

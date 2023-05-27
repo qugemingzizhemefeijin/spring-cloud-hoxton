@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class MultiLine implements CoordinateContainer<List<List<Point>>> {
+public final class MultiLine implements CoordinateContainer<List<List<Point>>, MultiLine> {
 
     private final List<List<Point>> coordinates;
 
@@ -48,6 +48,19 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>> {
     @Override
     public List<List<Point>> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public MultiLine deepClone() {
+        List<List<Point>> newList = new ArrayList<>(coordinates.size());
+        for (List<Point> coordinate : coordinates) {
+            List<Point> newCoordinate = new ArrayList<>(coordinate.size());
+            for (Point p : coordinate) {
+                newCoordinate.add(p.deepClone());
+            }
+            newList.add(newCoordinate);
+        }
+        return fromLngLats(newList);
     }
 
     @Override

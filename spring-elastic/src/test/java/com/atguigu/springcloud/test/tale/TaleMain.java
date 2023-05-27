@@ -17,10 +17,16 @@ public class TaleMain {
         Point targetPoint = Point.fromLngLat(112.015826, 36.074031);
         MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483, 35.834725}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});
 
-        Point nearest = TaleClassification.nearestPoint(targetPoint, multiPoint);
-        log.info("nearest {}", nearest);
+        MultiPoint multiPoint1 = TaleTransformation.clone(multiPoint);
+        multiPoint1.coordinates().remove(0);
 
-        System.out.println(Arrays.deepToString(TaleMeta.unwrapCoords(multiPoint)));
+        System.out.println(multiPoint.coordinates().size());
+        System.out.println(multiPoint1.coordinates().size());
+
+//        Point nearest = TaleClassification.nearestPoint(targetPoint, multiPoint);
+//        log.info("nearest {}", nearest);
+//
+//        System.out.println(Arrays.deepToString(TaleMeta.unwrapCoords(multiPoint)));
 
 //        Point center = Point.fromLngLat(-75.343, 39.984);
 //        Polygon circle = TaleTransformation.circle(center, 5, 10, Units.KILOMETERS);

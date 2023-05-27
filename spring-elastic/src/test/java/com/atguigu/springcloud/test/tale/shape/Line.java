@@ -3,7 +3,7 @@ package com.atguigu.springcloud.test.tale.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Line implements CoordinateContainer<List<Point>> {
+public final class Line implements CoordinateContainer<List<Point>, Line> {
 
     private final List<Point> coordinates;
 
@@ -39,6 +39,15 @@ public final class Line implements CoordinateContainer<List<Point>> {
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public Line deepClone() {
+        List<Point> list = new ArrayList<>(coordinates.size());
+        for (Point point : coordinates) {
+            list.add(point.deepClone());
+        }
+        return fromLngLats(list);
     }
 
     @Override

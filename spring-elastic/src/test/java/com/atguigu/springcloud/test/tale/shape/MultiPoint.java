@@ -3,7 +3,7 @@ package com.atguigu.springcloud.test.tale.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MultiPoint implements CoordinateContainer<List<Point>> {
+public final class MultiPoint implements CoordinateContainer<List<Point>, MultiPoint> {
 
     private final List<Point> coordinates;
 
@@ -31,6 +31,15 @@ public final class MultiPoint implements CoordinateContainer<List<Point>> {
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public MultiPoint deepClone() {
+        List<Point> list = new ArrayList<>(coordinates.size());
+        for (Point point : coordinates) {
+            list.add(point.deepClone());
+        }
+        return fromLngLats(list);
     }
 
     @Override

@@ -2,8 +2,6 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.callback.CoordEachCallback;
 import com.atguigu.springcloud.test.tale.shape.*;
-import com.mapbox.geojson.Feature;
-import com.mapbox.turf.TurfException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,14 +150,14 @@ public final class TaleMeta {
                     return false;
                 }
             } else if (gType == GeometryType.LINE || gType == GeometryType.POLYGON || gType == GeometryType.MULTI_POINT) {
-                List<Point> coordinate = ((CoordinateContainer<List<Point>>) geometry).coordinates();
+                List<Point> coordinate = ((CoordinateContainer<List<Point>, ?>) geometry).coordinates();
                 for (int i = 0, size = coordinate.size() - wrapShrink; i < size; i++) {
                     if (!callback.accept(coordinate.get(i), i, 0, geomIndex)) {
                         return false;
                     }
                 }
             } else if (gType == GeometryType.MULTI_LINE || gType == GeometryType.MULTI_POLYGON) {
-                List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>>) geometry).coordinates();
+                List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>, ?>) geometry).coordinates();
                 for (int i = 0, isize = coordinates.size() - wrapShrink; i < isize; i++) {
                     List<Point> coordinate = coordinates.get(i);
                     for (int j = 0, jsize = coordinate.size(); j < jsize; j++) {

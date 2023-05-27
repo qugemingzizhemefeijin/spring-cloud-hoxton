@@ -1,5 +1,7 @@
 package com.atguigu.springcloud.test.tale.shape;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,21 @@ public final class GeometryCollection implements Geometry {
 
     public List<Geometry> geometries() {
         return geometries;
+    }
+
+    public GeometryCollection deepClone() {
+        List<Geometry> newList = new ArrayList<>(geometries.size());
+        for (Geometry geometry : geometries) {
+            if (geometry instanceof CoordinateContainer) {
+                CoordinateContainer<?, ? extends Geometry> coordinateContainer = (CoordinateContainer<?, ? extends Geometry>) geometry;
+                newList.add(coordinateContainer.deepClone());
+            } else if (geometry instanceof GeometryCollection) {
+                newList.add(((GeometryCollection) geometry).deepClone());
+            } else {
+                throw new TaleException("geometry not support deepClone");
+            }
+        }
+        return fromGeometries(newList);
     }
 
     @Override
