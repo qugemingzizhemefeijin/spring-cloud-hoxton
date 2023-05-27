@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale.util;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
@@ -106,6 +107,66 @@ public final class TaleHelper {
             throw new Error(units + " units is invalid");
         }
         return distance / factor;
+    }
+
+    /**
+     * 将距离测量值（假设地球为球形）从实际单位转换为度。
+     * 有效单位： MILES, NAUTICAL_MILES, INCHES, YARDS, METERS, METRES, KILOMETERS, CENTIMETERS, FEET
+     * @param distance 对应单位的距离
+     * @param units    距离对应的单位
+     * @return double 角度
+     */
+    public static double lengthToDegrees(double distance, Units units) {
+        return radiansToDegrees(lengthToRadians(distance, units));
+    }
+
+    /**
+     * 将轴角度转化为方位角
+     * @param bearing 轴角度，介于 -180 和 +180 度之间
+     * @return 0 到 360 度之间的角度
+     */
+    public static double bearingToAzimuth(double bearing) {
+        double angle = bearing % 360;
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
+    }
+
+    /**
+     * 四舍五入小数
+     * @param number 数值
+     * @return 舍入后的数值
+     */
+    public static double round(double number) {
+        return Math.round(number);
+    }
+
+    /**
+     * 四舍五入并保留指定位数的小数
+     * @param number    数值
+     * @param precision 保留的小数位
+     * @return 舍入后的数值
+     */
+    public static double round(double number, int precision) {
+        if (precision < 0) {
+            throw new TaleException("precision must be a positive number");
+        } else if (precision == 0) {
+            return Math.round(number);
+        }
+
+        double multiplier = Math.pow(10, precision);
+        return Math.round(number * multiplier) / multiplier;
+    }
+
+    /**
+     * 验证数组是否是一个BBox数组
+     * @param bbox double数组
+     */
+    public static void validateBBox(double[] bbox) {
+        if (bbox.length != 4) {
+            throw new TaleException("bbox must be an Array of 4 numbers");
+        }
     }
 
 }
