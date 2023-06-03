@@ -2,6 +2,7 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.MultiPoint;
 import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.util.TaleHelper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -15,13 +16,19 @@ public class TaleMain {
         // [0, 1], [2, 1], [e, n], [x, n]
 
         Point targetPoint = Point.fromLngLat(112.015826, 36.074031);
-        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483, 35.834725}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});
+        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483000001, 35.83472500002}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});
 
-        MultiPoint multiPoint1 = TaleTransformation.clone(multiPoint);
-        multiPoint1.coordinates().remove(0);
+//        MultiPoint multiPoint1 = TaleTransformation.clone(multiPoint);
+//        multiPoint1.coordinates().remove(0);
+//
+//        System.out.println(multiPoint.coordinates().size());
+//        System.out.println(multiPoint1.coordinates().size());
 
-        System.out.println(multiPoint.coordinates().size());
-        System.out.println(multiPoint1.coordinates().size());
+        TaleCoordinateMutation.truncate(multiPoint);
+        System.out.println(multiPoint);
+
+        System.out.println(TaleHelper.round(120.4321, 2));
+
 
 //        Point nearest = TaleClassification.nearestPoint(targetPoint, multiPoint);
 //        log.info("nearest {}", nearest);

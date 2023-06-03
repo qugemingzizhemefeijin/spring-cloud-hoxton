@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale.util;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
+import com.atguigu.springcloud.test.tale.shape.Point;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
@@ -35,6 +36,7 @@ public final class TaleHelper {
 
     /**
      * 将距离测量值（假设地球为球形）从弧度转换为公里单位。
+     *
      * @param radians 弧度值
      * @return double
      */
@@ -45,6 +47,7 @@ public final class TaleHelper {
     /**
      * 将距离测量值（假设地球为球形）从弧度转换为更友好的单位。
      * 有效单位：MILES、NAUTICAL_MILES、INCHES、YARDS、METERS、METRES、KILOMETERS、CENTIMETERS、FEET
+     *
      * @param radians 弧度值
      * @param units   单位
      * @return double
@@ -64,6 +67,7 @@ public final class TaleHelper {
 
     /**
      * 将以度为单位的角度转换为弧度
+     *
      * @param degrees 度数
      * @return double 弧度
      */
@@ -73,6 +77,7 @@ public final class TaleHelper {
 
     /**
      * 角度转换为弧度
+     *
      * @param angle 角度
      * @return double 弧度
      */
@@ -82,6 +87,7 @@ public final class TaleHelper {
 
     /**
      * 将以弧度为单位的角度转换为度
+     *
      * @param radians 弧度
      * @return double 角度
      */
@@ -93,6 +99,7 @@ public final class TaleHelper {
     /**
      * 将距离测量值（假设地球为球形）从实际单位转换为弧度。
      * 有效单位： MILES, NAUTICAL_MILES, INCHES, YARDS, METERS, METRES, KILOMETERS, CENTIMETERS, FEET
+     *
      * @param distance 对应单位的距离
      * @param units    距离对应的单位
      * @return double
@@ -112,6 +119,7 @@ public final class TaleHelper {
     /**
      * 将距离测量值（假设地球为球形）从实际单位转换为度。
      * 有效单位： MILES, NAUTICAL_MILES, INCHES, YARDS, METERS, METRES, KILOMETERS, CENTIMETERS, FEET
+     *
      * @param distance 对应单位的距离
      * @param units    距离对应的单位
      * @return double 角度
@@ -122,6 +130,7 @@ public final class TaleHelper {
 
     /**
      * 将轴角度转化为方位角
+     *
      * @param bearing 轴角度，介于 -180 和 +180 度之间
      * @return 0 到 360 度之间的角度
      */
@@ -135,6 +144,7 @@ public final class TaleHelper {
 
     /**
      * 四舍五入小数
+     *
      * @param number 数值
      * @return 舍入后的数值
      */
@@ -144,6 +154,7 @@ public final class TaleHelper {
 
     /**
      * 四舍五入并保留指定位数的小数
+     *
      * @param number    数值
      * @param precision 保留的小数位
      * @return 舍入后的数值
@@ -161,12 +172,24 @@ public final class TaleHelper {
 
     /**
      * 验证数组是否是一个BBox数组
+     *
      * @param bbox double数组
      */
     public static void validateBBox(double[] bbox) {
         if (bbox.length != 4) {
             throw new TaleException("bbox must be an Array of 4 numbers");
         }
+    }
+
+    /**
+     * 比较两个坐标点是否一致
+     *
+     * @param pt1 Point
+     * @param pt2 Point
+     * @return 一致返回true
+     */
+    public static boolean equals(Point pt1, Point pt2) {
+        return pt1.getLongitude() == pt2.getLongitude() && pt1.getLatitude() == pt2.getLatitude();
     }
 
 }

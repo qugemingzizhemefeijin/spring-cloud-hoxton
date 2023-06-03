@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.callback.CoordEachCallback;
+import com.atguigu.springcloud.test.tale.callback.CoordsEachCallback;
 import com.atguigu.springcloud.test.tale.shape.*;
 
 import java.util.ArrayList;
@@ -158,9 +159,9 @@ public final class TaleMeta {
                 }
             } else if (gType == GeometryType.MULTI_LINE || gType == GeometryType.MULTI_POLYGON) {
                 List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>, ?>) geometry).coordinates();
-                for (int i = 0, isize = coordinates.size() - wrapShrink; i < isize; i++) {
+                for (int i = 0, isize = coordinates.size(); i < isize; i++) {
                     List<Point> coordinate = coordinates.get(i);
-                    for (int j = 0, jsize = coordinate.size(); j < jsize; j++) {
+                    for (int j = 0, jsize = coordinate.size() - wrapShrink; j < jsize; j++) {
                         if (!callback.accept(coordinate.get(j), j, i, geomIndex)) {
                             return false;
                         }
@@ -174,7 +175,55 @@ public final class TaleMeta {
                     }
                 }
             } else {
-                throw new IllegalArgumentException("Unknown Geometry Type");
+                throw new IllegalArgumentException("Not Support Geometry Type");
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 循环处理组件点集合信息（注意：此函数不能处理Point类型）
+     *
+     * @param geometry         图形组件
+     * @param callback         处理函数
+     * @return 是否所有的点均处理成功
+     */
+    @SuppressWarnings({"all"})
+    public static <T extends Geometry> boolean coordsEach(T geometry, CoordsEachCallback callback) {
+        if (geometry == null) {
+            return false;
+        }
+
+        GeometryType geometryType = geometry.type();
+        GeometryCollection geometryCollection = geometryType == GeometryType.GEOMETRY_COLLECTION ? ((GeometryCollection) geometry) : null;
+        int stop = geometryCollection != null ? geometryCollection.geometries().size() : 1;
+
+        for (int geomIndex = 0; geomIndex < stop; geomIndex++) {
+            int multiIndex = 0;
+            Geometry g = geometryCollection != null ? geometryCollection.geometries().get(geomIndex) : geometry;
+            GeometryType gType = g.type();
+
+            if (gType == GeometryType.LINE || gType == GeometryType.POLYGON || gType == GeometryType.MULTI_POINT) {
+                List<Point> coordinate = ((CoordinateContainer<List<Point>, ?>) geometry).coordinates();
+                return callback.accept(coordinate, 0, geomIndex);
+            } else if (gType == GeometryType.MULTI_LINE || gType == GeometryType.MULTI_POLYGON) {
+                List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>, ?>) geometry).coordinates();
+                for (int i = 0, isize = coordinates.size(); i < isize; i++) {
+                    List<Point> coordinate = coordinates.get(i);
+                    if (!callback.accept(coordinate, i, geomIndex)) {
+                        return false;
+                    }
+                }
+            } else if (gType == GeometryType.GEOMETRY_COLLECTION) {
+                GeometryCollection newGeometryCollection = (GeometryCollection) g;
+                for (Geometry newGeometry : newGeometryCollection.geometries()) {
+                    if (!coordsEach(newGeometry, callback)) {
+                        return false;
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("Not Support Geometry Type");
             }
         }
 
