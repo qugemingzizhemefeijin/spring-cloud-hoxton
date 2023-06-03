@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.MultiPoint;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
@@ -15,8 +16,17 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point targetPoint = Point.fromLngLat(112.015826, 36.074031);
-        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483000001, 35.83472500002}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});
+        Line line = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 2}, new double[]{0, 5}, new double[]{0, 8}, new double[]{0, 8}, new double[]{0, 10}});
+        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 0}, new double[]{2, 2}});
+
+        TaleCoordinateMutation.cleanCoords(line, true);
+        TaleCoordinateMutation.cleanCoords(multiPoint, true);
+
+        System.out.println(line);
+        System.out.println(multiPoint);
+
+//        Point targetPoint = Point.fromLngLat(112.015826, 36.074031);
+//        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483000001, 35.83472500002}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});
 
 //        MultiPoint multiPoint1 = TaleTransformation.clone(multiPoint);
 //        multiPoint1.coordinates().remove(0);
@@ -24,10 +34,10 @@ public class TaleMain {
 //        System.out.println(multiPoint.coordinates().size());
 //        System.out.println(multiPoint1.coordinates().size());
 
-        TaleCoordinateMutation.truncate(multiPoint);
-        System.out.println(multiPoint);
-
-        System.out.println(TaleHelper.round(120.4321, 2));
+//        TaleCoordinateMutation.truncate(multiPoint);
+//        System.out.println(multiPoint);
+//
+//        System.out.println(TaleHelper.round(120.4321, 2));
 
 
 //        Point nearest = TaleClassification.nearestPoint(targetPoint, multiPoint);

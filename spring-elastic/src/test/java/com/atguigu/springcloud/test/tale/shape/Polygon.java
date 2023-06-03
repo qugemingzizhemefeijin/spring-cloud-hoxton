@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class Polygon implements CoordinateContainer<List<Point>, Polygon> {
 
-    private final List<Point> coordinates;
+    private List<Point> coordinates;
 
     Polygon(List<Point> coordinates) {
         if (coordinates == null) {
@@ -29,6 +29,11 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void setCoordinates(List<Point> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

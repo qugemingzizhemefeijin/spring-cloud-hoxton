@@ -6,7 +6,7 @@ import java.util.List;
 
 public final class MultiLine implements CoordinateContainer<List<List<Point>>, MultiLine> {
 
-    private final List<List<Point>> coordinates;
+    private List<List<Point>> coordinates;
 
     MultiLine(List<List<Point>> coordinates) {
         if (coordinates == null) {
@@ -48,6 +48,11 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>, M
     @Override
     public List<List<Point>> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void setCoordinates(List<List<Point>> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

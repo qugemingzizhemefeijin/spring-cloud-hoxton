@@ -56,6 +56,12 @@ public final class Point implements CoordinateContainer<Point, Point> {
     }
 
     @Override
+    public void setCoordinates(Point coordinates) {
+        this.longitude = coordinates.longitude;
+        this.latitude = coordinates.latitude;
+    }
+
+    @Override
     public Point deepClone() {
         return fromLngLat(this.longitude, this.latitude);
     }

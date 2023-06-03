@@ -147,13 +147,13 @@ public final class TaleMeta {
             int wrapShrink = excludeWrapCoord && (gType == GeometryType.POLYGON || gType == GeometryType.MULTI_POLYGON) ? 1 : 0;
 
             if (gType == GeometryType.POINT) {
-                if (!callback.accept((Point) geometry, 0, 0, geomIndex)) {
+                if (!callback.accept(g, (Point) geometry, 0, 0, geomIndex)) {
                     return false;
                 }
             } else if (gType == GeometryType.LINE || gType == GeometryType.POLYGON || gType == GeometryType.MULTI_POINT) {
                 List<Point> coordinate = ((CoordinateContainer<List<Point>, ?>) geometry).coordinates();
                 for (int i = 0, size = coordinate.size() - wrapShrink; i < size; i++) {
-                    if (!callback.accept(coordinate.get(i), i, 0, geomIndex)) {
+                    if (!callback.accept(g, coordinate.get(i), i, 0, geomIndex)) {
                         return false;
                     }
                 }
@@ -162,7 +162,7 @@ public final class TaleMeta {
                 for (int i = 0, isize = coordinates.size(); i < isize; i++) {
                     List<Point> coordinate = coordinates.get(i);
                     for (int j = 0, jsize = coordinate.size() - wrapShrink; j < jsize; j++) {
-                        if (!callback.accept(coordinate.get(j), j, i, geomIndex)) {
+                        if (!callback.accept(g, coordinate.get(j), j, i, geomIndex)) {
                             return false;
                         }
                     }
@@ -206,12 +206,12 @@ public final class TaleMeta {
 
             if (gType == GeometryType.LINE || gType == GeometryType.POLYGON || gType == GeometryType.MULTI_POINT) {
                 List<Point> coordinate = ((CoordinateContainer<List<Point>, ?>) geometry).coordinates();
-                return callback.accept(coordinate, 0, geomIndex);
+                return callback.accept(g, coordinate, 0, geomIndex);
             } else if (gType == GeometryType.MULTI_LINE || gType == GeometryType.MULTI_POLYGON) {
                 List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>, ?>) geometry).coordinates();
                 for (int i = 0, isize = coordinates.size(); i < isize; i++) {
                     List<Point> coordinate = coordinates.get(i);
-                    if (!callback.accept(coordinate, i, geomIndex)) {
+                    if (!callback.accept(g, coordinate, i, geomIndex)) {
                         return false;
                     }
                 }

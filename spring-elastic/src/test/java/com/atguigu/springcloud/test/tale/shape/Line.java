@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class Line implements CoordinateContainer<List<Point>, Line> {
 
-    private final List<Point> coordinates;
+    private List<Point> coordinates;
 
     Line(List<Point> coordinates) {
         if (coordinates == null) {
@@ -39,6 +39,11 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void setCoordinates(List<Point> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

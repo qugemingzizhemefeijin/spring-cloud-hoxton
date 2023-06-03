@@ -6,7 +6,7 @@ import java.util.List;
 
 public final class MultiPolygon implements CoordinateContainer<List<List<Point>>, MultiPolygon> {
 
-    private final List<List<Point>> coordinates;
+    private List<List<Point>> coordinates;
 
     MultiPolygon(List<List<Point>> coordinates) {
         if (coordinates == null) {
@@ -58,6 +58,11 @@ public final class MultiPolygon implements CoordinateContainer<List<List<Point>>
     @Override
     public List<List<Point>> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void setCoordinates(List<List<Point>> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class MultiPoint implements CoordinateContainer<List<Point>, MultiPoint> {
 
-    private final List<Point> coordinates;
+    private List<Point> coordinates;
 
     MultiPoint(List<Point> coordinates) {
         if (coordinates == null) {
@@ -31,6 +31,11 @@ public final class MultiPoint implements CoordinateContainer<List<Point>, MultiP
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void setCoordinates(List<Point> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override
