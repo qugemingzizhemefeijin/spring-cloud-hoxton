@@ -73,4 +73,10 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>, M
         return GeometryType.MULTI_LINE;
     }
 
+    @Override
+    public String toString() {
+        return "MultiLine{" +
+                "coordinates=" + coordinates +
+                '}';
+    }
 }

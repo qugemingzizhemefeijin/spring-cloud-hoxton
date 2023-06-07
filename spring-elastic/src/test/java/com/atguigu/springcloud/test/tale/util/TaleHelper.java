@@ -4,6 +4,7 @@ import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.google.common.collect.Maps;
 
+import java.util.List;
 import java.util.Map;
 
 public final class TaleHelper {
@@ -190,6 +191,21 @@ public final class TaleHelper {
      */
     public static boolean equals(Point pt1, Point pt2) {
         return pt1.getLongitude() == pt2.getLongitude() && pt1.getLatitude() == pt2.getLatitude();
+    }
+
+    /**
+     * 验证多边形是否是首尾相连
+     * @param points 多边形点集合
+     * @return 如果收尾相连则返回true
+     */
+    public static boolean validatePolygonEndToEnd(List<Point> points) {
+        if (points == null || points.size() < 2) {
+            throw new TaleException("points must be an Array of 2 numbers");
+        }
+
+        Point first = points.get(0), end = points.get(points.size() - 1);
+
+        return first.getLongitude() == end.getLongitude() && first.getLatitude() == end.getLatitude();
     }
 
 }

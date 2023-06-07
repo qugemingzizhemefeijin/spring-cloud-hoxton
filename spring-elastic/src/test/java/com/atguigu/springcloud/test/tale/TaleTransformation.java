@@ -2,10 +2,12 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.TailClipHelper;
 import com.atguigu.springcloud.test.tale.util.Units;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class TaleTransformation {
 
@@ -17,6 +19,7 @@ public final class TaleTransformation {
 
     /**
      * 给定一个中心点和要求的半径，使用默认的64步长绘制一个多边形的圆
+     *
      * @param center 中心点位
      * @param radius 半径，单位公里
      * @return 多边形圆
@@ -27,6 +30,7 @@ public final class TaleTransformation {
 
     /**
      * 给定一个中心点和要求的半径，使用默认的64步长绘制一个多边形的圆
+     *
      * @param center 中心点位
      * @param radius 半径
      * @param units  半径单位
@@ -38,6 +42,7 @@ public final class TaleTransformation {
 
     /**
      * 给定一个中心点和要求的半径，绘制一个多边形的圆
+     *
      * @param center 中心点位
      * @param radius 半径
      * @param steps  步长
@@ -58,6 +63,7 @@ public final class TaleTransformation {
 
     /**
      * 深度克隆一个 geometry 对象
+     *
      * @param geometry 图形组件
      * @return 返回克隆后的图形组件
      */
@@ -73,6 +79,49 @@ public final class TaleTransformation {
             return (T) ((GeometryCollection) geometry).deepClone();
         } else {
             throw new TaleException("geometry not support deepClone");
+        }
+    }
+
+    /**
+     * 边界裁剪<br>
+     * 使用lineclip将该图形裁切到bbox。在裁剪多边形时可能导致退化边缘。<br>
+     * 图形支持：POLYGON、MULTI_POLYGON、LINE、MULTI_LINE
+     *
+     * @param geometry 图形组件
+     * @param bbox     裁剪区域
+     * @return 返回裁剪后的图形，这里如果是LINE类型的话有可能会返回MultiLine，需要自己判断。
+     */
+    public static Geometry bboxClip(Geometry geometry, BoundingBox bbox) {
+        switch (geometry.type()) {
+            case LINE:
+            case MULTI_LINE: {
+                List<List<Point>> lines = new ArrayList<>();
+                List<List<Point>> coords;
+                if (geometry.type() == GeometryType.LINE) {
+                    coords = new ArrayList<>(1);
+                    coords.add(((Line) geometry).coordinates());
+                } else {
+                    coords = ((MultiLine) geometry).coordinates();
+                }
+
+                for (List<Point> line : coords) {
+                    TailClipHelper.lineclip(line, bbox, lines);
+                }
+
+                if (lines.size() == 1) {
+                    return Line.fromLngLats(lines.get(0));
+                } else {
+                    return MultiLine.fromLngLats(lines);
+                }
+            }
+            case POLYGON:
+                return Polygon.fromLngLats(TailClipHelper.clipPolygon(((Polygon) geometry).coordinates(), bbox));
+            case MULTI_POLYGON: {
+                List<List<Point>> coords = ((MultiPolygon) geometry).coordinates();
+                return MultiPolygon.fromLngLats(coords.stream().map(poly -> TailClipHelper.clipPolygon(poly, bbox)).collect(Collectors.toList()));
+            }
+            default:
+                throw new TaleException("geometry " + geometry.type() + " not supported");
         }
     }
 

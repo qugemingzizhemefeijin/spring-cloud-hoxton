@@ -1,12 +1,10 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.shape.BoundingBox;
+import com.atguigu.springcloud.test.tale.shape.Geometry;
 import com.atguigu.springcloud.test.tale.shape.Line;
-import com.atguigu.springcloud.test.tale.shape.MultiPoint;
-import com.atguigu.springcloud.test.tale.shape.Point;
-import com.atguigu.springcloud.test.tale.util.TaleHelper;
+import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Arrays;
 
 @Slf4j
 public class TaleMain {
@@ -16,14 +14,23 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 2}, new double[]{0, 5}, new double[]{0, 8}, new double[]{0, 8}, new double[]{0, 10}});
-        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 0}, new double[]{2, 2}});
+        BoundingBox bbox = BoundingBox.fromLngLats(0, 0, 10, 10);
+        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{2, 2}, new double[]{8, 4}, new double[]{12, 8}, new double[]{3, 7}, new double[]{2, 2}});
+        Polygon newPolygon = (Polygon) TaleTransformation.bboxClip(polygon, bbox);
+        System.out.println(newPolygon);
 
-        TaleCoordinateMutation.cleanCoords(line, true);
-        TaleCoordinateMutation.cleanCoords(multiPoint, true);
+        Line line = Line.fromLngLats(new double[][]{new double[]{2, 2}, new double[]{8, 4}, new double[]{12, 8}, new double[]{3, 7}});
+        Geometry geometry = TaleTransformation.bboxClip(line, bbox);
+        System.out.println(geometry);
 
-        System.out.println(line);
-        System.out.println(multiPoint);
+//        Line line = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 2}, new double[]{0, 5}, new double[]{0, 8}, new double[]{0, 8}, new double[]{0, 10}});
+//        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 0}, new double[]{2, 2}});
+//
+//        TaleCoordinateMutation.cleanCoords(line, true);
+//        TaleCoordinateMutation.cleanCoords(multiPoint, true);
+//
+//        System.out.println(line);
+//        System.out.println(multiPoint);
 
 //        Point targetPoint = Point.fromLngLat(112.015826, 36.074031);
 //        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{105.142483000001, 35.83472500002}, new double[]{104.772949, 30.963027}, new double[]{110.907223, 33.09316}});

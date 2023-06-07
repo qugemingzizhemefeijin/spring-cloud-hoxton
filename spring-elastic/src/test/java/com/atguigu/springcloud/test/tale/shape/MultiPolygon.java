@@ -83,4 +83,10 @@ public final class MultiPolygon implements CoordinateContainer<List<List<Point>>
         return GeometryType.MULTI_POLYGON;
     }
 
+    @Override
+    public String toString() {
+        return "MultiPolygon{" +
+                "coordinates=" + coordinates +
+                '}';
+    }
 }
