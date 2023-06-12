@@ -1,9 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.shape.BoundingBox;
-import com.atguigu.springcloud.test.tale.shape.Geometry;
 import com.atguigu.springcloud.test.tale.shape.Line;
-import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -14,14 +11,19 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        BoundingBox bbox = BoundingBox.fromLngLats(0, 0, 10, 10);
-        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{2, 2}, new double[]{8, 4}, new double[]{12, 8}, new double[]{3, 7}, new double[]{2, 2}});
-        Polygon newPolygon = (Polygon) TaleTransformation.bboxClip(polygon, bbox);
-        System.out.println(newPolygon);
+        Line line = Line.fromLngLats(new double[][]{new double[]{-76.091308, 18.427501},new double[]{-76.695556, 18.729501},new double[]{-76.552734, 19.40443},new double[]{-74.61914, 19.134789},new double[]{-73.652343, 20.07657},new double[]{-73.157958, 20.210656}});
+        Line bezierLine = TaleTransformation.bezierSpline(line);
+        System.out.println(bezierLine);
+        System.out.println(bezierLine.coordinates().size());
 
-        Line line = Line.fromLngLats(new double[][]{new double[]{2, 2}, new double[]{8, 4}, new double[]{12, 8}, new double[]{3, 7}});
-        Geometry geometry = TaleTransformation.bboxClip(line, bbox);
-        System.out.println(geometry);
+//        BoundingBox bbox = BoundingBox.fromLngLats(0, 0, 10, 10);
+//        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{2, 2}, new double[]{8, 4}, new double[]{12, 8}, new double[]{3, 7}, new double[]{2, 2}});
+//        Polygon newPolygon = (Polygon) TaleTransformation.bboxClip(polygon, bbox);
+//        System.out.println(newPolygon);
+//
+//        Line line = Line.fromLngLats(new double[][]{new double[]{2, 2}, new double[]{8, 4}, new double[]{12, 8}, new double[]{3, 7}});
+//        Geometry geometry = TaleTransformation.bboxClip(line, bbox);
+//        System.out.println(geometry);
 
 //        Line line = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 2}, new double[]{0, 5}, new double[]{0, 8}, new double[]{0, 8}, new double[]{0, 10}});
 //        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 0}, new double[]{2, 2}});

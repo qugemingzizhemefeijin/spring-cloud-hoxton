@@ -42,6 +42,14 @@ public final class Point implements CoordinateContainer<Point, Point> {
         this.latitude = latitude;
     }
 
+    public double getX() {
+        return longitude;
+    }
+
+    public double getY() {
+        return latitude;
+    }
+
     @Override
     public String toString() {
         return "Point{" +

@@ -2,6 +2,7 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.BezierSpline;
 import com.atguigu.springcloud.test.tale.util.TailClipHelper;
 import com.atguigu.springcloud.test.tale.util.Units;
 
@@ -123,6 +124,40 @@ public final class TaleTransformation {
             default:
                 throw new TaleException("geometry " + geometry.type() + " not supported");
         }
+    }
+
+    /**
+     * 获取一条直线应用 贝塞尔算法 (opens new window)返回一个贝塞尔曲线。duration默认为 {@link BezierSpline#DURATION}，sharpness 默认为 {@link BezierSpline#SHARPNESS}
+     * @param line 线条组件
+     * @return 返回线条组件
+     */
+    public static Line bezierSpline(Line line) {
+        return bezierSpline(line, BezierSpline.DURATION, BezierSpline.SHARPNESS);
+    }
+
+    /**
+     * 获取一条直线应用 贝塞尔算法 (opens new window)返回一个贝塞尔曲线。sharpness 默认为 {@link BezierSpline#SHARPNESS}
+     * @param line     线条组件
+     * @param duration 相邻两个点之间的时间间隔（以毫秒为单位）
+     * @return 返回线条组件
+     */
+    public static Line bezierSpline(Line line, int duration) {
+        return bezierSpline(line, duration, BezierSpline.SHARPNESS);
+    }
+
+    /**
+     * 获取一条直线应用 贝塞尔算法 (opens new window)返回一个贝塞尔曲线。
+     * @param line      线条组件
+     * @param duration  相邻两个点之间的时间间隔（以毫秒为单位）
+     * @param sharpness 样条线之间路径的弯曲值
+     * @return 返回线条组件
+     */
+    public static Line bezierSpline(Line line, int duration, double sharpness) {
+        List<Point> coords = BezierSpline.bezierSpline(line.coordinates(), duration, sharpness);
+        if (coords.isEmpty()) {
+            return null;
+        }
+        return Line.fromLngLats(coords);
     }
 
 }
