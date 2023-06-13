@@ -71,6 +71,7 @@
 		<module>spring-remote-rpc</module>
 		<module>spring-remote-client</module>
 		<module>spring-hello</module>
+		<module>spring-java-agent</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -102,6 +103,8 @@
         <affinity.version>3.2.3</affinity.version>
         <http.client.version>4.5.10</http.client.version>
         <javatuples.version>1.2</javatuples.version>
+        <groovy.version>2.4.16</groovy.version>
+        <groovy.sandbox.version>1.7</groovy.sandbox.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -255,6 +258,16 @@
                 <groupId>org.javatuples</groupId>
                 <artifactId>javatuples</artifactId>
                 <version>${javatuples.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kohsuke</groupId>
+                <artifactId>groovy-sandbox</artifactId>
+                <version>${groovy.sandbox.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

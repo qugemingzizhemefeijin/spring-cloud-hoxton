@@ -9,16 +9,21 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-hello</artifactId>
+    <artifactId>spring-java-agent</artifactId>
+
+    <properties>
+        <lombok.version>1.18.16</lombok.version>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.18.1-GA</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -29,7 +34,7 @@
             <artifactId>groovy-all</artifactId>
         </dependency>
     </dependencies>
-
+    
     <build>
         <plugins>
             <plugin>
@@ -61,15 +66,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>libs/</classpathPrefix>
-                            <mainClass>
-                                com.atguigu.springcloud.HotCode
-                            </mainClass>
-                        </manifest>
+                        <!--       就是把前面的配置的MANIFEST.MF打入jar中，以指定premain的位置，否则会报：
+                                     Failed to find Premain-Class manifest attribute in
+                        -->
+                        <!--manifestFile>${maven.configuration.manifestFile}</manifestFile-->
+                        <manifestEntries>
+                            <Premain-Class>com.atguigu.springcloud.agent.MyJavaAssigent</Premain-Class>
+                            <Boot-Class-Path>
+                                C:/Users/a/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar
+                            </Boot-Class-Path>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
