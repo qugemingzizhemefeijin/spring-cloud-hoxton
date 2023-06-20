@@ -70,4 +70,9 @@ elasticsearch-setup-passwords interactive
 
 如果在yml配置文件中，加上以下配置可以在浏览器中提示，输入用户密码。
 
+#### turf.js 地理空间分析库，处理各种地图算法
+
+[turf.js中文网](https://turfjs.fenxianglu.cn/)
+
+[几何计算-基于Turf.js实现多边形的拆分及合并](https://zhuanlan.zhihu.com/p/389395519)
 

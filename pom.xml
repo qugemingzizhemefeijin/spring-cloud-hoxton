@@ -105,6 +105,9 @@
         <javatuples.version>1.2</javatuples.version>
         <groovy.version>2.4.16</groovy.version>
         <groovy.sandbox.version>1.7</groovy.sandbox.version>
+        <alibaba.bytekit.version>0.0.8</alibaba.bytekit.version>
+        <alibaba.taobao.arthas>3.6.9</alibaba.taobao.arthas>
+        <bytebuddy.version>1.12.21</bytebuddy.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -268,6 +271,21 @@
                 <groupId>org.kohsuke</groupId>
                 <artifactId>groovy-sandbox</artifactId>
                 <version>${groovy.sandbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>bytekit-core</artifactId>
+                <version>${alibaba.bytekit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.taobao.arthas</groupId>
+                <artifactId>arthas-core</artifactId>
+                <version>${alibaba.taobao.arthas}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>${bytebuddy.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
