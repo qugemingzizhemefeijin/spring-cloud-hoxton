@@ -2,6 +2,8 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.callback.CoordEachCallback;
 import com.atguigu.springcloud.test.tale.callback.CoordsEachCallback;
+import com.atguigu.springcloud.test.tale.callback.GeometryEachCallback;
+import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 
 import java.util.ArrayList;
@@ -330,6 +332,61 @@ public final class TaleMeta {
         }
 
         return highCoords;
+    }
+
+    /**
+     * 循环处理Geometry对象
+     *
+     * @param geometry 图形组件
+     * @param callback 处理函数
+     * @return 是否所有的对象均处理成功
+     */
+    @SuppressWarnings({"all"})
+    public static <T extends Geometry> boolean geomEach(T geometry, GeometryEachCallback callback) {
+        if (geometry == null) {
+            return false;
+        }
+
+        GeometryType geometryType = geometry.type();
+        GeometryCollection geometryCollection = geometryType == GeometryType.GEOMETRY_COLLECTION ? ((GeometryCollection) geometry) : null;
+        int stop = geometryCollection != null ? geometryCollection.geometries().size() : 1;
+
+        for (int geomIndex = 0; geomIndex < stop; geomIndex++) {
+            int multiIndex = 0;
+            Geometry g = geometryCollection != null ? geometryCollection.geometries().get(geomIndex) : geometry;
+            GeometryType gType = g.type();
+
+            // Handle null Geometry
+            if (g == null) {
+                if (!callback.accept(null, geometryCollection != null ? geometryCollection : null, geomIndex)) {
+                    return false;
+                }
+                continue;
+            }
+
+            switch (gType) {
+                case POINT:
+                case LINE:
+                case MULTI_POINT:
+                case POLYGON:
+                case MULTI_LINE:
+                case MULTI_POLYGON:
+                    if (!callback.accept(g, geometryCollection != null ? geometryCollection : null, geomIndex)) {
+                        return false;
+                    }
+                case GEOMETRY_COLLECTION:
+                    GeometryCollection newGeometryCollection = (GeometryCollection) g;
+                    for (Geometry newGeometry : newGeometryCollection.geometries()) {
+                        if (!geomEach(newGeometry, callback)) {
+                            return false;
+                        }
+                    }
+                default:
+                    throw new TaleException("Unknown Geometry Type");
+            }
+        }
+
+        return true;
     }
 
 }

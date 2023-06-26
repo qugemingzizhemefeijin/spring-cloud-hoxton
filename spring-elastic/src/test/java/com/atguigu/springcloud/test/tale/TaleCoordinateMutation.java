@@ -7,10 +7,7 @@ import com.atguigu.springcloud.test.tale.shape.GeometryType;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class TaleCoordinateMutation {
 
@@ -262,6 +259,101 @@ public final class TaleCoordinateMutation {
             return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
         } else {
             return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
+        }
+    }
+
+    /**
+     * Rewind Line、MultiLine、Polygon、MultiPolygon、GeometryCollection 默认按照顺时针返回
+     *
+     * @param geometry 图形组件
+     * @return 返回处理后的图形组件
+     */
+    public static <T extends Geometry> T rewind(T geometry) {
+        return rewind(geometry, true, false);
+    }
+
+    /**
+     * Rewind Line、MultiLine、Polygon、MultiPolygon、GeometryCollection 默认按照顺时针返回
+     *
+     * @param geometry 图形组件
+     * @param mutate   是否影响原图形坐标
+     * @return 返回处理后的图形组件
+     */
+    public static <T extends Geometry> T rewind(T geometry, boolean mutate) {
+        return rewind(geometry, true, mutate);
+    }
+
+    /**
+     * Rewind Line、MultiLine、Polygon、MultiPolygon、GeometryCollection true顺时针和false逆时针
+     *
+     * @param geometry 图形组件
+     * @param reverse  true顺时针和false逆时针
+     * @param mutate   是否影响原图形坐标
+     * @return 返回处理后的图形组件
+     */
+    public static <T extends Geometry> T rewind(T geometry, boolean reverse, boolean mutate) {
+        T newGeometry;
+
+        // 确保我们不会直接修改传入的geometry对象。
+        if (!mutate) {
+            newGeometry = TaleTransformation.clone(geometry);
+        } else {
+            newGeometry = geometry;
+        }
+
+        if (newGeometry.type() == GeometryType.GEOMETRY_COLLECTION) {
+            TaleMeta.geomEach(newGeometry, (geo, parentGeo, geomIndex) -> {
+                rewindGeo(geo, reverse);
+                return true;
+            });
+
+            return newGeometry;
+        } else {
+            return rewindGeo(newGeometry, reverse);
+        }
+    }
+
+    /**
+     * Rewind Line、MultiLine、Polygon、MultiPolygon、GeometryCollection true顺时针和false逆时针
+     * @param geometry 图形组件
+     * @param reverse  true顺时针和false逆时针
+     * @return 返回处理后的图形组件
+     */
+    private static <T extends Geometry> T rewindGeo(T geometry, boolean reverse) {
+        GeometryType type = geometry.type();
+
+        // Support all GeoJSON Geometry Objects
+        switch (type) {
+            case GEOMETRY_COLLECTION:
+                TaleMeta.geomEach(geometry, (geo, parentGeo, geomIndex) -> {
+                    rewindGeo(geo, reverse);
+                    return true;
+                });
+                return geometry;
+            case LINE:
+            case POLYGON:
+            case MULTI_LINE:
+            case MULTI_POLYGON:
+                TaleMeta.coordsEach(geometry, (geo, pointList, multiIndex, geomIndex) -> {
+                    rewindCoords(pointList, reverse);
+                    return true;
+                });
+                return geometry;
+            case POINT:
+            case MULTI_POINT:
+                return geometry;
+        }
+        return null;
+    }
+
+    /**
+     * Rewind - true顺时针和false逆时针
+     * @param coords  点集合
+     * @param reverse true顺时针和false逆时针
+     */
+    private static void rewindCoords(List<Point> coords, boolean reverse) {
+        if (TaleBooleans.booleanClockwise(coords) != reverse) {
+            Collections.reverse(coords);
         }
     }
 
