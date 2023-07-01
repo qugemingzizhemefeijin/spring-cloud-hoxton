@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.Line;
+import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,15 +13,22 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{1, 1}, new double[]{1, 0}, new double[]{0, 0}});
-        System.out.println(TaleBooleans.booleanClockwise(line));
+        Point pt1 = Point.fromLngLat(0, 0);
+        Point pt2 = Point.fromLngLat(0, 0);
+        Point pt3 = Point.fromLngLat(1, 1);
 
-        Line line2 = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{1, 0}, new double[]{1, 1}, new double[]{0, 0}});
-        System.out.println(TaleBooleans.booleanClockwise(line2));
+        System.out.println(TaleBooleans.booleanEqual(pt1, pt2));
+        System.out.println(TaleBooleans.booleanEqual(pt2, pt3));
 
-        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{121, -29}, new double[]{138, -29}, new double[]{138, -18}, new double[]{121, -18}, new double[]{121, -29}});
-        TaleCoordinateMutation.rewind(polygon, true);
-        System.out.println(polygon);
+//        Line line = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{1, 1}, new double[]{1, 0}, new double[]{0, 0}});
+//        System.out.println(TaleBooleans.booleanClockwise(line));
+//
+//        Line line2 = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{1, 0}, new double[]{1, 1}, new double[]{0, 0}});
+//        System.out.println(TaleBooleans.booleanClockwise(line2));
+//
+//        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{121, -29}, new double[]{138, -29}, new double[]{138, -18}, new double[]{121, -18}, new double[]{121, -29}});
+//        TaleCoordinateMutation.rewind(polygon, true);
+//        System.out.println(polygon);
 
 //        Line line = Line.fromLngLats(new double[][]{new double[]{-76.091308, 18.427501},new double[]{-76.695556, 18.729501},new double[]{-76.552734, 19.40443},new double[]{-74.61914, 19.134789},new double[]{-73.652343, 20.07657},new double[]{-73.157958, 20.210656}});
 //        Line bezierLine = TaleTransformation.bezierSpline(line);

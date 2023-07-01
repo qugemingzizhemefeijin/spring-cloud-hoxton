@@ -5,7 +5,7 @@ import com.atguigu.springcloud.test.tale.exception.TaleException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeometryCollection implements Geometry {
+public final class GeometryCollection implements CollectionContainer {
 
     private final List<Geometry> geometries;
 
