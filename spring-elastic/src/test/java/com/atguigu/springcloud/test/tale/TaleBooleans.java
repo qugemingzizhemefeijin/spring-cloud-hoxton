@@ -1,11 +1,10 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
-import com.atguigu.springcloud.test.tale.shape.Geometry;
-import com.atguigu.springcloud.test.tale.shape.Line;
-import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.Equality;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
+import com.atguigu.springcloud.test.tale.util.TalePointInPolygonHelper;
 
 import java.util.List;
 
@@ -109,6 +108,46 @@ public final class TaleBooleans {
         double slope2 = TaleHelper.bearingToAzimuth(TaleMeasurement.rhumbBearing(line2.coordinates().get(0), line2.coordinates().get(1)));
 
         return slope1 == slope2;
+    }
+
+    /**
+     * 判断点是否在多边形内，如果点在多边形的边界上，也算在内。
+     *
+     * @param point          要判断的点
+     * @param polygon        多边形
+     * @return 如果点在多边形内，则返回true;否则返回false
+     */
+    public static boolean booleanPointInPolygon(Point point, Polygon polygon) {
+        return booleanPointInPolygon(point, polygon, false);
+    }
+
+    /**
+     * 判断点是否在多边形内
+     *
+     * @param point          要判断的点
+     * @param polygon        多边形
+     * @param ignoreBoundary 是否忽略多边形边界（true如果点在多边形的边界上不算，false则也算在多边形内）
+     * @return 如果点在多边形内，则返回true;否则返回false
+     */
+    public static boolean booleanPointInPolygon(Point point, Polygon polygon, boolean ignoreBoundary) {
+        if (point == null) {
+            throw new TaleException("point is required");
+        }
+        if (polygon == null) {
+            throw new TaleException("polygon is required");
+        }
+
+        BoundingBox bbox = TaleMeasurement.bbox(polygon);
+        if (!TaleHelper.inBBox(point, bbox)) {
+            return false;
+        }
+
+        int polyResult = TalePointInPolygonHelper.pointInPolygon(point, polygon);
+        if (polyResult == 0) {
+            return !ignoreBoundary;
+        } else {
+            return polyResult == 1;
+        }
     }
 
 }

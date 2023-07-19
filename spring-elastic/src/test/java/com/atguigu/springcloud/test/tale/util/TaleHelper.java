@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale.util;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
+import com.atguigu.springcloud.test.tale.shape.BoundingBox;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.google.common.collect.Maps;
 
@@ -206,6 +207,20 @@ public final class TaleHelper {
         Point first = points.get(0), end = points.get(points.size() - 1);
 
         return first.getLongitude() == end.getLongitude() && first.getLatitude() == end.getLatitude();
+    }
+
+    /**
+     * 判断一个点是否在BBox矩形中
+     *
+     * @param point 要验证的点
+     * @param bbox  矩形
+     * @return true则在矩形中，否则为false
+     */
+    public static boolean inBBox(Point point, BoundingBox bbox) {
+        double[] b = bbox.bbox();
+        double longitude = point.getLongitude(), latitude = point.getLatitude();
+
+        return b[0] <= longitude && b[1] <= latitude && b[2] >= longitude && b[3] >= latitude;
     }
 
 }

@@ -1,6 +1,8 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.Line;
+import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -11,10 +13,14 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line1 = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 1}});
-        Line line2 = Line.fromLngLats(new double[][]{new double[]{1, 0}, new double[]{1, 1}});
+        Point pt = Point.fromLngLat(-81, 47);
+        Polygon poly = Polygon.fromLngLats(new double[][]{new double[]{-81, 41}, new double[]{-81, 47}, new double[]{-72, 47}, new double[]{-72, 41}, new double[]{-81, 41}});
+        System.out.println(TaleBooleans.booleanPointInPolygon(pt, poly, true));
 
-        System.out.println(TaleBooleans.booleanParallel(line1, line2));
+//        Line line1 = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 1}});
+//        Line line2 = Line.fromLngLats(new double[][]{new double[]{1, 0}, new double[]{1, 1}});
+//
+//        System.out.println(TaleBooleans.booleanParallel(line1, line2));
 
 //        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{-50, 5}, new double[]{-40, -10}, new double[]{-50, -10}, new double[]{-40, 5}, new double[]{-50, 5}});
 //        List<Line> lines = TaleMisc.lineSegment(polygon);

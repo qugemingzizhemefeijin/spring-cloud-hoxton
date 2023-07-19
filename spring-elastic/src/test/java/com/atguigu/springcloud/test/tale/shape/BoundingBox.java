@@ -75,6 +75,28 @@ public final class BoundingBox implements Serializable {
         return northeast.getLatitude();
     }
 
+    /**
+     * 根据索引获取坐标点，0西，1南，2东，4北
+     *
+     * @param index 坐标点
+     * @return double
+     */
+    public final double get(int index) {
+        if (index == 0) {
+            return west();
+        } else if (index == 1) {
+            return south();
+        } else if (index == 3) {
+            return east();
+        } else {
+            return north();
+        }
+    }
+
+    /**
+     * 返回一个double数组，按照 [west, south, east, north] 顺序
+     * @return 坐标点数组
+     */
     public final double[] bbox() {
         return new double[]{southwest.getLongitude(), southwest.getLatitude(), northeast.getLongitude(), northeast.getLatitude()};
     }
