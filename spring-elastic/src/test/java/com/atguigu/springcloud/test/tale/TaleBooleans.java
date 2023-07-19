@@ -1,9 +1,11 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.Geometry;
 import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.util.Equality;
+import com.atguigu.springcloud.test.tale.util.TaleHelper;
 
 import java.util.List;
 
@@ -64,6 +66,49 @@ public final class TaleBooleans {
      */
     public static boolean booleanEqual(Geometry g1, Geometry g2, int precision) {
         return Equality.compare(g1, g2, precision);
+    }
+
+    /**
+     * 如果line1的每个线段与line2的对应线段平行，则返回True。
+     *
+     * @param line1 线段1
+     * @param line2 线段2
+     * @return 当线段平行，则返回true
+     */
+    public static boolean booleanParallel(Line line1, Line line2) {
+        if (line1 == null) {
+            throw new TaleException("line1 is required");
+        }
+        if (line2 == null) {
+            throw new TaleException("line2 is required");
+        }
+
+        List<Line> segments1 = TaleMisc.lineSegment(TaleCoordinateMutation.cleanCoords(line1));
+        List<Line> segments2 = TaleMisc.lineSegment(TaleCoordinateMutation.cleanCoords(line2));
+
+        for (int i = 0, size1 = segments1.size(), size2 = segments2.size(); i < size1; i++) {
+            if (i >= size2) {
+                break;
+            }
+            if (!isParallel(segments1.get(i), segments2.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 比较两个线条的斜率并返回结果
+     *
+     * @param line1 线段1
+     * @param line2 线段2
+     * @return 如果斜率相等返回true
+     */
+    private static boolean isParallel(Line line1, Line line2) {
+        double slope1 = TaleHelper.bearingToAzimuth(TaleMeasurement.rhumbBearing(line1.coordinates().get(0), line1.coordinates().get(1)));
+        double slope2 = TaleHelper.bearingToAzimuth(TaleMeasurement.rhumbBearing(line2.coordinates().get(0), line2.coordinates().get(1)));
+
+        return slope1 == slope2;
     }
 
 }

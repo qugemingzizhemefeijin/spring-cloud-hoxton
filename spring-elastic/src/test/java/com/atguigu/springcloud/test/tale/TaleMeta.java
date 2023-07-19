@@ -2,6 +2,7 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.callback.CoordEachCallback;
 import com.atguigu.springcloud.test.tale.callback.CoordsEachCallback;
+import com.atguigu.springcloud.test.tale.callback.FlattenEachCallback;
 import com.atguigu.springcloud.test.tale.callback.GeometryEachCallback;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
@@ -187,8 +188,8 @@ public final class TaleMeta {
     /**
      * 循环处理组件点集合信息（注意：此函数不能处理Point类型）
      *
-     * @param geometry         图形组件
-     * @param callback         处理函数
+     * @param geometry 图形组件
+     * @param callback 处理函数
      * @return 是否所有的点均处理成功
      */
     @SuppressWarnings({"all"})
@@ -374,6 +375,7 @@ public final class TaleMeta {
                     if (!callback.accept(g, geometryCollection != null ? geometryCollection : null, geomIndex)) {
                         return false;
                     }
+                    break;
                 case GEOMETRY_COLLECTION:
                     GeometryCollection newGeometryCollection = (GeometryCollection) g;
                     for (Geometry newGeometry : newGeometryCollection.geometries()) {
@@ -381,12 +383,65 @@ public final class TaleMeta {
                             return false;
                         }
                     }
+                    break;
                 default:
                     throw new TaleException("Unknown Geometry Type");
             }
         }
 
         return true;
+    }
+
+    /**
+     * 迭代任何对象中的扁平特性，类似于Array.forEach，会将Multi(Point|Line|Polygon)拆分成单个图形
+     *
+     * @param geometry 要迭代的元素
+     * @param callback 回调处理函数
+     */
+    public static void flattenEach(Geometry geometry, FlattenEachCallback callback) {
+        geomEach(geometry, (g, parent, geomIndex) -> {
+            // Callback for single geometry
+            if (g == null) {
+                return callback.accept(null, 0);
+            }
+
+            GeometryType type = g.type();
+            switch (type) {
+                case POINT:
+                case LINE:
+                case POLYGON:
+                    return callback.accept(g, 0);
+            }
+
+            switch (type) {
+                case MULTI_POINT:
+                    MultiPoint multiPoint = (MultiPoint) g;
+                    for (int i = 0, size = multiPoint.coordinates().size(); i < size; i++) {
+                        if (!callback.accept(multiPoint.coordinates().get(i), i)) {
+                            return false;
+                        }
+                    }
+                    break;
+                case MULTI_LINE:
+                    MultiLine multiLine = (MultiLine) g;
+                    for (int i = 0, size = multiLine.coordinates().size(); i < size; i++) {
+                        if (!callback.accept(Line.fromLngLats(multiLine.coordinates().get(i)), i)) {
+                            return false;
+                        }
+                    }
+                    break;
+                case MULTI_POLYGON:
+                    MultiPolygon multiPolygon = (MultiPolygon) g;
+                    for (int i = 0, size = multiPolygon.coordinates().size(); i < size; i++) {
+                        if (!callback.accept(Polygon.fromLngLats(multiPolygon.coordinates().get(i)), i)) {
+                            return false;
+                        }
+                    }
+                    break;
+            }
+
+            return true;
+        });
     }
 
 }

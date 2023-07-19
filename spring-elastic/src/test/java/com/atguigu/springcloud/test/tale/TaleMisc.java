@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 
 import java.util.ArrayList;
@@ -136,6 +137,71 @@ public final class TaleMisc {
                     ", onLine2=" + onLine2 +
                     '}';
         }
+    }
+
+    /**
+     * 多边型顶点连线，从一个(多)Line或(多)Polygon创建一个2-vertex线段的GeometryCollection
+     * @param geometry 支持 Line|MultiLine|MultiPolygon|Polygon
+     * @return List<Line>
+     */
+    public static List<Line> lineSegment(Geometry geometry) {
+        if (geometry == null) {
+            throw new TaleException("geometry is required");
+        }
+
+        List<Line> results = new ArrayList<>();
+        TaleMeta.flattenEach(geometry, (g, multiIndex) -> {
+            lineSegmentFeature(g, results);
+            return true;
+        });
+
+        return results;
+    }
+
+    /**
+     * 从Line中创建线段
+     * @param geometry 支持 Line|Polygon
+     * @param results  待返回的线段集合
+     */
+    private static void lineSegmentFeature(Geometry geometry, List<Line> results) {
+        GeometryType type = geometry.type();
+        List<Point> coords = null;
+        switch (type) {
+            case POLYGON:
+                coords = ((Polygon)geometry).coordinates();
+                break;
+            case LINE:
+                coords = ((Line)geometry).coordinates();
+                break;
+        }
+
+        if (coords == null || coords.isEmpty()) {
+            return;
+        }
+
+        // 组合成N组线段
+        List<Line> segments = createSegments(coords);
+        if (!segments.isEmpty()) {
+            results.addAll(segments);
+        }
+    }
+
+    /**
+     * 将传入的coords中的点两两组合成一组线段
+     * @param coords 传入的坐标组
+     * @return List<Line>
+     */
+    private static List<Line> createSegments(List<Point> coords) {
+        List<Line> segments = new ArrayList<>();
+
+        for (int i = 1, size = coords.size(); i < size; i++) {
+            Point previousCoords = coords.get(i - 1);
+            Point currentCoords = coords.get(i);
+
+            segments.add(Line.fromLngLats(previousCoords, currentCoords));
+        }
+
+        return segments;
     }
 
 }

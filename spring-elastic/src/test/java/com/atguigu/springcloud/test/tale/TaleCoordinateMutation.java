@@ -113,6 +113,15 @@ public final class TaleCoordinateMutation {
     }
 
     /**
+     * 清除重复坐标点，默认情况不影响原图形
+     * @param geometry 图形组件
+     * @return 返回处理后的图形组件
+     */
+    public static <T extends Geometry> T cleanCoords(T geometry) {
+        return cleanCoords(geometry, false);
+    }
+
+    /**
      * 清除重复坐标点
      *
      * @param geometry 图形组件
