@@ -13,9 +13,13 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point pt = Point.fromLngLat(-81, 47);
-        Polygon poly = Polygon.fromLngLats(new double[][]{new double[]{-81, 41}, new double[]{-81, 47}, new double[]{-72, 47}, new double[]{-72, 41}, new double[]{-81, 41}});
-        System.out.println(TaleBooleans.booleanPointInPolygon(pt, poly, true));
+        Point pt = Point.fromLngLat(-1, -1);
+        Line line = Line.fromLngLats(new double[][]{new double[]{-1, -1}, new double[]{1, 1}, new double[]{1.5, 2.2}});
+        System.out.println(TaleBooleans.booleanPointOnLine(pt, line));
+
+//        Point pt = Point.fromLngLat(-81, 47);
+//        Polygon poly = Polygon.fromLngLats(new double[][]{new double[]{-81, 41}, new double[]{-81, 47}, new double[]{-72, 47}, new double[]{-72, 41}, new double[]{-81, 41}});
+//        System.out.println(TaleBooleans.booleanPointInPolygon(pt, poly, true));
 
 //        Line line1 = Line.fromLngLats(new double[][]{new double[]{0, 0}, new double[]{0, 1}});
 //        Line line2 = Line.fromLngLats(new double[][]{new double[]{1, 0}, new double[]{1, 1}});
