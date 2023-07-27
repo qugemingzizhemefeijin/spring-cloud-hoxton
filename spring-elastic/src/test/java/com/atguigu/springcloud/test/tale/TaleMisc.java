@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
+import com.atguigu.springcloud.test.tale.models.IntersectsResult;
 import com.atguigu.springcloud.test.tale.shape.*;
 
 import java.util.ArrayList;
@@ -12,6 +13,12 @@ public final class TaleMisc {
         throw new AssertionError("No Instances.");
     }
 
+    /**
+     * 返回自身的相交点
+     *
+     * @param geometry 图形，支持 POLYGON、LINE、MULTI_LINE、MULTI_POLYGON
+     * @return 返回自相交点集合
+     */
     public static List<Point> kinks(Geometry geometry) {
         switch(geometry.type()) {
             case POLYGON:
@@ -70,7 +77,7 @@ public final class TaleMisc {
 
                 IntersectsResult result = lineIntersects(coordinates.get(i), coordinates.get(i + 1), coordinates.get(k), coordinates.get(k + 1));
                 if (result != null) {
-                    pointList.add(Point.fromLngLat(result.x, result.y));
+                    pointList.add(Point.fromLngLat(result.getX(), result.getY()));
                 }
             }
         }
@@ -91,7 +98,7 @@ public final class TaleMisc {
         IntersectsResult result = new IntersectsResult();
         denominator = (line2EndY - line2StartY) * (line1EndX - line1StartX) - (line2EndX - line2StartX) * (line1EndY - line1StartY);
         if (denominator == 0) {
-            if (result.x != null && result.y != null) {
+            if (result.getX() != null && result.getY() != null) {
                 return result;
             } else {
                 return null;
@@ -105,37 +112,20 @@ public final class TaleMisc {
         a = numerator1 / denominator;
         b = numerator2 / denominator;
 
-        result.x = line1StartX + a * (line1EndX - line1StartX);
-        result.y = line1StartY + a * (line1EndY - line1StartY);
+        result.setX(line1StartX + a * (line1EndX - line1StartX));
+        result.setY(line1StartY + a * (line1EndY - line1StartY));
 
         if (a >= 0 && a <= 1) {
-            result.onLine1 = true;
+            result.setOnLine1(true);
         }
         if (b >= 0 && b <= 1) {
-            result.onLine2 = true;
+            result.setOnLine2(true);
         }
 
-        if (result.onLine1 && result.onLine2) {
+        if (result.isOnLine1() && result.isOnLine2()) {
             return result;
         } else {
             return null;
-        }
-    }
-
-    private static class IntersectsResult {
-        private Double x;
-        private Double y;
-        private boolean onLine1;
-        private boolean onLine2;
-
-        @Override
-        public String toString() {
-            return "IntersectsResult{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    ", onLine1=" + onLine1 +
-                    ", onLine2=" + onLine2 +
-                    '}';
         }
     }
 
