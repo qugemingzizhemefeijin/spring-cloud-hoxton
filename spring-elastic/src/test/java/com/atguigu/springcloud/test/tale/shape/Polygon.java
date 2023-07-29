@@ -37,6 +37,11 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
     }
 
     @Override
+    public int coordsSize() {
+        return coordinates != null ? coordinates.size() : 0;
+    }
+
+    @Override
     public Polygon deepClone() {
         List<Point> list = new ArrayList<>(coordinates.size());
         for (Point point : coordinates) {

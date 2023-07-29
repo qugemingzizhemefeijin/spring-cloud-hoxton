@@ -1,7 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.Line;
-import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,9 +12,41 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point pt = Point.fromLngLat(-1, -1);
-        Line line = Line.fromLngLats(new double[][]{new double[]{-1, -1}, new double[]{1, 1}, new double[]{1.5, 2.2}});
-        System.out.println(TaleBooleans.booleanPointOnLine(pt, line));
+        Polygon polygon1 = Polygon.fromLngLats(new double[][]{new double[]{116.288136,40.008065},
+                new double[]{116.484182,39.978437},
+                new double[]{116.49913,39.844283},
+                new double[]{116.290435,39.846056},
+                new double[]{116.288136,40.008065}});
+        Polygon polygon2 = Polygon.fromLngLats(new double[][]{new double[]{116.349939,40.019228},
+                new double[]{116.418929,39.997564},
+                new double[]{116.431002,39.800061},
+                new double[]{116.375236,39.823118},
+                new double[]{116.349939,40.019228}});
+        System.out.println(TaleMisc.lineIntersect(polygon1, polygon2));
+
+        // 创建R树时，可以指定最小、最大孩子结点数，splitter
+//        SpatialSearch<Rect2d> rtree = SpatialSearches.rTree(new Rect2d.Builder(), 2, 9, RTree.Split.AXIAL);
+//        rtree.add(new Rect2d(116.288136, 39.978437, 116.484182, 40.008065));
+//        rtree.add(new Rect2d(116.484182, 39.844283, 116.49913, 39.978437));
+//        rtree.add(new Rect2d(116.290435, 39.844283, 116.49913, 39.846056));
+//        rtree.add(new Rect2d(116.288136, 39.846056, 116.290435, 40.008065));
+//
+//        final Rect2d searchRect = new Rect2d(116.388136, 39.978437, 116.484182, 39.988437);
+//        Rect2d[] results = new Rect2d[20];
+//
+//        final int foundCount = rtree.search(searchRect, results);
+//        System.out.println(results.length);
+//        System.out.println(foundCount);;
+
+//        Line line1 = Line.fromLngLats(126, -11, 129, -21);
+//        Line line2 = Line.fromLngLats(123, -18, 131, -14);
+//
+//        List<Point> intersects = TaleMisc.lineIntersect(line1, line2);
+//        System.out.println(intersects); // [127.43478260869566, -15.782608695652174]
+
+//        Point pt = Point.fromLngLat(-1, -1);
+//        Line line = Line.fromLngLats(new double[][]{new double[]{-1, -1}, new double[]{1, 1}, new double[]{1.5, 2.2}});
+//        System.out.println(TaleBooleans.booleanPointOnLine(pt, line));
 
 //        Point pt = Point.fromLngLat(-81, 47);
 //        Polygon poly = Polygon.fromLngLats(new double[][]{new double[]{-81, 41}, new double[]{-81, 47}, new double[]{-72, 47}, new double[]{-72, 41}, new double[]{-81, 41}});

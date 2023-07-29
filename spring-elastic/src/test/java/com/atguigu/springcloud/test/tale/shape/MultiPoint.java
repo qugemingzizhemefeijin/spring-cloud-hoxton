@@ -39,6 +39,11 @@ public final class MultiPoint implements CoordinateContainer<List<Point>, MultiP
     }
 
     @Override
+    public int coordsSize() {
+        return coordinates != null ? coordinates.size() : 0;
+    }
+
+    @Override
     public MultiPoint deepClone() {
         List<Point> list = new ArrayList<>(coordinates.size());
         for (Point point : coordinates) {

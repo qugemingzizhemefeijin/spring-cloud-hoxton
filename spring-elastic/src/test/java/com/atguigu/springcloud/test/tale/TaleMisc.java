@@ -3,9 +3,13 @@ package com.atguigu.springcloud.test.tale;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.models.IntersectsResult;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.github.davidmoten.rtree.Entry;
+import com.github.davidmoten.rtree.RTree;
+import com.github.davidmoten.rtree.geometry.Geometries;
+import com.github.davidmoten.rtree.geometry.Rectangle;
+import rx.Observable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class TaleMisc {
 
@@ -20,15 +24,15 @@ public final class TaleMisc {
      * @return 返回自相交点集合
      */
     public static List<Point> kinks(Geometry geometry) {
-        switch(geometry.type()) {
+        switch (geometry.type()) {
             case POLYGON:
-                return kinks(((Polygon)geometry).coordinates());
+                return kinks(((Polygon) geometry).coordinates());
             case LINE:
-                return kinks(((Line)geometry).coordinates());
+                return kinks(((Line) geometry).coordinates());
             case MULTI_LINE:
-                return kinksMulti(((MultiLine)geometry).coordinates());
+                return kinksMulti(((MultiLine) geometry).coordinates());
             case MULTI_POLYGON:
-                return kinksMulti(((MultiPolygon)geometry).coordinates());
+                return kinksMulti(((MultiPolygon) geometry).coordinates());
         }
         return null;
     }
@@ -91,9 +95,9 @@ public final class TaleMisc {
     }
 
     private static IntersectsResult lineIntersects(double line1StartX, double line1StartY,
-                                                  double line1EndX, double line1EndY,
-                                                  double line2StartX, double line2StartY,
-                                                  double line2EndX, double line2EndY) {
+                                                   double line1EndX, double line1EndY,
+                                                   double line2StartX, double line2StartY,
+                                                   double line2EndX, double line2EndY) {
         double denominator, a, b, numerator1, numerator2;
         IntersectsResult result = new IntersectsResult();
         denominator = (line2EndY - line2StartY) * (line1EndX - line1StartX) - (line2EndX - line2StartX) * (line1EndY - line1StartY);
@@ -131,6 +135,7 @@ public final class TaleMisc {
 
     /**
      * 多边型顶点连线，从一个(多)Line或(多)Polygon创建一个2-vertex线段的GeometryCollection
+     *
      * @param geometry 支持 Line|MultiLine|MultiPolygon|Polygon
      * @return List<Line>
      */
@@ -150,6 +155,7 @@ public final class TaleMisc {
 
     /**
      * 从Line中创建线段
+     *
      * @param geometry 支持 Line|Polygon
      * @param results  待返回的线段集合
      */
@@ -158,10 +164,10 @@ public final class TaleMisc {
         List<Point> coords = null;
         switch (type) {
             case POLYGON:
-                coords = ((Polygon)geometry).coordinates();
+                coords = ((Polygon) geometry).coordinates();
                 break;
             case LINE:
-                coords = ((Line)geometry).coordinates();
+                coords = ((Line) geometry).coordinates();
                 break;
         }
 
@@ -178,6 +184,7 @@ public final class TaleMisc {
 
     /**
      * 将传入的coords中的点两两组合成一组线段
+     *
      * @param coords 传入的坐标组
      * @return List<Line>
      */
@@ -192,6 +199,133 @@ public final class TaleMisc {
         }
 
         return segments;
+    }
+
+    /**
+     * 计算两个图形相交点
+     *
+     * @param geometry1 图形1，支持 Line、Polygon
+     * @param geometry2 图形2，支持 Line、Polygon
+     * @return 返回相交点集合
+     */
+    public static List<Point> lineIntersect(Geometry geometry1, Geometry geometry2) {
+        if (geometry1 == null) {
+            throw new TaleException("geometry1 is required");
+        }
+        if (geometry2 == null) {
+            throw new TaleException("geometry2 is required");
+        }
+
+        GeometryType t1 = geometry1.type(), t2 = geometry2.type();
+        if (t1 != GeometryType.LINE && t1 != GeometryType.POLYGON) {
+            throw new TaleException("geometry1 type must Line or Polygon");
+        }
+        if (t2 != GeometryType.LINE && t2 != GeometryType.POLYGON) {
+            throw new TaleException("geometry2 type must Line or Polygon");
+        }
+
+        // 如果两个都是一条线段的话，不需要展开处理
+        if (t1 == GeometryType.LINE
+                && t2 == GeometryType.LINE
+                && geometry1.coordsSize() == 2
+                && geometry1.coordsSize() == 2) {
+            Point intersect = intersects(Line.line(geometry1), Line.line(geometry2));
+
+            return Collections.singletonList(intersect);
+        }
+
+        // 处理复杂的几何图形
+        List<Point> results = new ArrayList<>();
+        Set<String> unique = new HashSet<>();
+
+        RTree<Line, Rectangle> rtree = initRTree(geometry2);
+        for (Line segment : TaleMisc.lineSegment(geometry1)) {
+            Observable<Entry<Line, Rectangle>> entries = rtree.search(createRectangle(segment));
+
+            for (Entry<Line, Rectangle> p : entries.toBlocking().toIterable()) {
+                Point intersect = intersects(segment, p.value());
+                if (intersect != null) {
+                    // 防止重复点
+                    if (unique.add(intersect.getX() + "," + intersect.getY())) {
+                        results.add(intersect);
+                    }
+                }
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * 创建 RTree 需要使用到的 Rectangle 对象
+     *
+     * @param line 线段
+     * @return Rectangle
+     */
+    private static Rectangle createRectangle(Line line) {
+        BoundingBox bbox = TaleMeasurement.bbox(line);
+
+        return Geometries.rectangle(bbox.west(), bbox.south(), bbox.east(), bbox.north());
+    }
+
+    /**
+     * 构建一棵R树
+     *
+     * @param geometry 图形
+     * @return RTree<Line, Rectangle>
+     */
+    private static RTree<Line, Rectangle> initRTree(Geometry geometry) {
+        // 创建R树时，可以指定最小、最大孩子结点数
+        RTree<Line, Rectangle> rtree = RTree.minChildren(2).maxChildren(9).create();
+        for (Line line : TaleMisc.lineSegment(geometry)) {
+            rtree = rtree.add(line, createRectangle(line));
+        }
+
+        return rtree;
+    }
+
+    /**
+     * 查找与线串相交的点，每个点有两个坐标
+     *
+     * @param line1 必须是只有两个点的线段
+     * @param line2 必须是只有两个点的线段
+     * @return 返回相交点
+     */
+    private static Point intersects(Line line1, Line line2) {
+        List<Point> coords1 = line1.coordinates(), coords2 = line2.coordinates();
+
+        if (coords1.size() != 2) {
+            throw new TaleException("<intersects> line1 must only contain 2 coordinates");
+        }
+        if (coords2.size() != 2) {
+            throw new TaleException("<intersects> line2 must only contain 2 coordinates");
+        }
+
+        double x1 = coords1.get(0).getX(), y1 = coords1.get(0).getY();
+        double x2 = coords1.get(1).getX(), y2 = coords1.get(1).getY();
+        double x3 = coords2.get(0).getX(), y3 = coords2.get(0).getY();
+        double x4 = coords2.get(1).getX(), y4 = coords2.get(1).getY();
+
+        double denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        double numeA = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+        double numeB = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+
+        if (denom == 0) {
+            if (numeA == 0 && numeB == 0) {
+                return null;
+            }
+            return null;
+        }
+
+        double uA = numeA / denom;
+        double uB = numeB / denom;
+
+        if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+            double x = x1 + uA * (x2 - x1);
+            double y = y1 + uA * (y2 - y1);
+            return Point.fromLngLat(x, y);
+        }
+        return null;
     }
 
 }

@@ -26,6 +26,10 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
         return fromLngLats(points);
     }
 
+    public static Line fromLngLats(double x1, double y1, double x2, double y2) {
+        return fromLngLats(Point.fromLngLat(x1, y1), Point.fromLngLat(x2, y2));
+    }
+
     public static Line fromLngLats(double[][] coordinates) {
         List<Point> points = new ArrayList<>(coordinates.length);
 
@@ -36,9 +40,18 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
         return fromLngLats(points);
     }
 
+    public static Line line(Geometry g) {
+        return (Line)g;
+    }
+
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public int coordsSize() {
+        return coordinates != null ? coordinates.size() : 0;
     }
 
     @Override

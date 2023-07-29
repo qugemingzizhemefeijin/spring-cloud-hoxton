@@ -70,6 +70,11 @@ public final class Point implements CoordinateContainer<Point, Point> {
     }
 
     @Override
+    public int coordsSize() {
+        return 1;
+    }
+
+    @Override
     public Point deepClone() {
         return fromLngLat(this.longitude, this.latitude);
     }
