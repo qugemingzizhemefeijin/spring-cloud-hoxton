@@ -32,6 +32,15 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>, M
         return new MultiLine(points);
     }
 
+    public static MultiLine fromLngLats(double[][] coordinates) {
+        List<Point> line = new ArrayList<>(coordinates.length);
+        for (double[] p : coordinates) {
+            line.add(Point.fromLngLat(p));
+        }
+
+        return new MultiLine(Collections.singletonList(line));
+    }
+
     public static MultiLine fromLngLats(double[][][] coordinates) {
         List<List<Point>> multiLine = new ArrayList<>(coordinates.length);
         for (double[][] coordinate : coordinates) {

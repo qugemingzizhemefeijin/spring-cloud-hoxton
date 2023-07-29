@@ -12,17 +12,54 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Polygon polygon1 = Polygon.fromLngLats(new double[][]{new double[]{116.288136,40.008065},
-                new double[]{116.484182,39.978437},
-                new double[]{116.49913,39.844283},
-                new double[]{116.290435,39.846056},
-                new double[]{116.288136,40.008065}});
-        Polygon polygon2 = Polygon.fromLngLats(new double[][]{new double[]{116.349939,40.019228},
-                new double[]{116.418929,39.997564},
-                new double[]{116.431002,39.800061},
-                new double[]{116.375236,39.823118},
-                new double[]{116.349939,40.019228}});
-        System.out.println(TaleMisc.lineIntersect(polygon1, polygon2));
+        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{115, -35},
+                new double[]{125, -30},
+                new double[]{135, -30},
+                new double[]{145, -35},
+                new double[]{115, -35}});
+
+        Line line2 = Line.fromLngLats(new double[][]{new double[]{115, -25},
+                new double[]{125, -30},
+                new double[]{135, -30},
+                new double[]{145, -25}});
+
+        System.out.println(TaleMisc.lineOverlap(polygon, line2, null));
+
+//        MultiLine line = MultiLine.fromLngLats(new double[][]{new double[]{-77.031669, 38.878605},
+//                new double[]{-77.029609, 38.881946},
+//                new double[]{-77.020339, 38.884084},
+//                new double[]{-77.025661, 38.885821},
+//                new double[]{-77.021884, 38.889563},
+//                new double[]{-77.019824, 38.892368}});
+//        Point pt = Point.fromLngLat(-77.037076, 38.884017);
+//
+//        System.out.println(TaleMisc.nearestPointOnLine(line, pt));
+
+//        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{-50, 5},
+//                new double[]{-40, -10},
+//                new double[]{-50, -10},
+//                new double[]{-40, 5},
+//                new double[]{-50, 5}});
+//
+//        IntHolder total = new IntHolder();
+//        TaleMeta.segmentEach(polygon, ((currentSegment, geometryIndex, segmentIndex) -> {
+//            total.value++;
+//            return true;
+//        }));
+//
+//        System.out.println(total.value);
+
+//        Polygon polygon1 = Polygon.fromLngLats(new double[][]{new double[]{116.288136,40.008065},
+//                new double[]{116.484182,39.978437},
+//                new double[]{116.49913,39.844283},
+//                new double[]{116.290435,39.846056},
+//                new double[]{116.288136,40.008065}});
+//        Polygon polygon2 = Polygon.fromLngLats(new double[][]{new double[]{116.349939,40.019228},
+//                new double[]{116.418929,39.997564},
+//                new double[]{116.431002,39.800061},
+//                new double[]{116.375236,39.823118},
+//                new double[]{116.349939,40.019228}});
+//        System.out.println(TaleMisc.lineIntersect(polygon1, polygon2));
 
         // 创建R树时，可以指定最小、最大孩子结点数，splitter
 //        SpatialSearch<Rect2d> rtree = SpatialSearches.rTree(new Rect2d.Builder(), 2, 9, RTree.Split.AXIAL);

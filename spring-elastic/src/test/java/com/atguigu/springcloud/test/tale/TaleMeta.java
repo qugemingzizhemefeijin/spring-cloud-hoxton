@@ -1,11 +1,10 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.callback.CoordEachCallback;
-import com.atguigu.springcloud.test.tale.callback.CoordsEachCallback;
-import com.atguigu.springcloud.test.tale.callback.FlattenEachCallback;
-import com.atguigu.springcloud.test.tale.callback.GeometryEachCallback;
+import com.atguigu.springcloud.test.tale.callback.*;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.ObjectHolder;
+import org.omg.CORBA.IntHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -441,6 +440,46 @@ public final class TaleMeta {
             }
 
             return true;
+        });
+    }
+
+    /**
+     * 迭代对象的线段
+     *
+     * @param geometry 要迭代的图形
+     * @param callback 回调函数
+     */
+    public static void segmentEach(Geometry geometry, SegmentEachCallback callback) {
+        flattenEach(geometry, (g1, multiIndex) -> {
+            GeometryType type = g1.type();
+            // （多）点几何不包含线段，因此在此操作期间将忽略它们
+            if (type == GeometryType.POINT || type == GeometryType.MULTI_POINT) {
+                return true;
+            }
+
+            IntHolder segmentIndex = new IntHolder();
+            ObjectHolder<Point> previousCoords = new ObjectHolder<>();
+            IntHolder prevGeomIndex = new IntHolder();
+
+            return coordEach(g1, (g2, currentCoord, index, m, geomIndex) -> {
+                if (previousCoords.value == null || geomIndex > prevGeomIndex.value) {
+                    previousCoords.value = currentCoord;
+                    prevGeomIndex.value = geomIndex;
+                    segmentIndex.value = 0;
+
+                    return true;
+                }
+
+                Line currentSegment = Line.fromLngLats(previousCoords.value, currentCoord);
+                if (!callback.accept(currentSegment, geomIndex, m, segmentIndex.value)) {
+                    return false;
+                }
+
+                segmentIndex.value++;
+                previousCoords.value = currentCoord;
+
+                return true;
+            });
         });
     }
 

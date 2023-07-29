@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.test.tale.shape;
 
-public final class Point implements CoordinateContainer<Point, Point> {
+public final class Point implements CoordinateContainer<Point, Point>, Comparable<Point> {
 
     private double longitude;
 
@@ -82,5 +82,20 @@ public final class Point implements CoordinateContainer<Point, Point> {
     @Override
     public GeometryType type() {
         return GeometryType.POINT;
+    }
+
+    @Override
+    public int compareTo(Point o) {
+        if (this.longitude == o.longitude) {
+            if (this.latitude == o.latitude) {
+                return 0;
+            }
+            return this.latitude > o.latitude ? 1 : -1;
+        }
+        if (this.longitude > o.longitude) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }

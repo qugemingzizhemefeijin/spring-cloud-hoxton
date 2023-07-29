@@ -3,10 +3,14 @@ package com.atguigu.springcloud.test.tale;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.models.IntersectsResult;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.ObjectHolder;
+import com.atguigu.springcloud.test.tale.util.TaleHelper;
+import com.atguigu.springcloud.test.tale.util.Units;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
+import org.omg.CORBA.DoubleHolder;
 import rx.Observable;
 
 import java.util.*;
@@ -231,7 +235,7 @@ public final class TaleMisc {
                 && geometry1.coordsSize() == 2) {
             Point intersect = intersects(Line.line(geometry1), Line.line(geometry2));
 
-            return Collections.singletonList(intersect);
+            return intersect != null ? Collections.singletonList(intersect) : null;
         }
 
         // 处理复杂的几何图形
@@ -326,6 +330,216 @@ public final class TaleMisc {
             return Point.fromLngLat(x, y);
         }
         return null;
+    }
+
+    /**
+     * 计算两个图形之间重叠的线
+     *
+     * @param geometry1 图形1，支持 Line、MultiLine、Polygon、MultiPolygon
+     * @param geometry2 图形1，支持 Line、MultiLine、Polygon、MultiPolygon
+     * @param tolerance 匹配重叠线段的容差距离（以公里为单位）
+     * @return 返回两个图形之间重叠的线段集合
+     */
+    public static List<Line> lineOverlap(Geometry geometry1, Geometry geometry2, Integer tolerance) {
+        if (geometry1 == null) {
+            throw new TaleException("geometry1 is required");
+        }
+        if (geometry2 == null) {
+            throw new TaleException("geometry2 is required");
+        }
+
+        GeometryType t1 = geometry1.type(), t2 = geometry2.type();
+        if (t1 != GeometryType.LINE && t1 != GeometryType.POLYGON && t1 != GeometryType.MULTI_LINE && t1 != GeometryType.MULTI_POLYGON) {
+            throw new TaleException("geometry1 type must Line or Polygon or MultiLine or MultiPolygon");
+        }
+        if (t2 != GeometryType.LINE && t2 != GeometryType.POLYGON && t2 != GeometryType.MULTI_LINE && t2 != GeometryType.MULTI_POLYGON) {
+            throw new TaleException("geometry2 type must Line or Polygon or MultiLine or MultiPolygon");
+        }
+
+        int disparity = tolerance == null ? 0 : tolerance; // 差距
+        Units units = Units.KILOMETERS; // 计算距离的单位为公里
+
+        // 构建R树
+        RTree<Line, Rectangle> rtree = initRTree(geometry1);
+
+        List<Line> result = new ArrayList<>();
+        List<Point> overlapSegment = new ArrayList<>(); // 线段点集合
+
+        TaleMeta.segmentEach(geometry2, (segment, geometryIndex, multiIndex, segmentIndex) -> {
+            boolean doesOverlaps = false;
+
+            Observable<Entry<Line, Rectangle>> entries = rtree.search(createRectangle(segment));
+            // 迭代落在相同边界内的每个段
+            for (Entry<Line, Rectangle> p : entries.toBlocking().toIterable()) {
+                if (doesOverlaps) {
+                    break;
+                }
+
+                Line match = p.value();
+
+                List<Point> coordsSegment = new ArrayList<>(segment.coordinates());
+                List<Point> coordsMatch = new ArrayList<>(match.coordinates());
+
+                Collections.sort(coordsSegment);
+                Collections.sort(coordsMatch);
+
+                // 线段重叠
+                if (TaleHelper.deepEquals(coordsSegment, coordsMatch)) {
+                    doesOverlaps = true;
+
+                    // 重叠已存在 - 仅附加线段的最后一个坐标
+                    if (overlapSegment.size() > 0) {
+                        concatSegment(overlapSegment, segment);
+                    } else {
+                        overlapSegment.addAll(segment.coordinates());
+                    }
+                } else if (disparity == 0
+                        ? (TaleBooleans.booleanPointOnLine(coordsSegment.get(0), match)
+                        && TaleBooleans.booleanPointOnLine(coordsSegment.get(1), match))
+                        : (TaleMeasurement.distance(coordsMatch.get(0), nearestPointOnLine(match, coordsSegment.get(0), units), units) <= tolerance
+                        && TaleMeasurement.distance(coordsMatch.get(1), nearestPointOnLine(match, coordsSegment.get(1), units), units) <= tolerance)) {
+                    doesOverlaps = true;
+                    if (overlapSegment.size() > 0) {
+                        concatSegment(overlapSegment, segment);
+                    } else {
+                        overlapSegment.addAll(segment.coordinates());
+                    }
+                } else if (disparity == 0
+                        ? (TaleBooleans.booleanPointOnLine(coordsMatch.get(0), segment)
+                        && TaleBooleans.booleanPointOnLine(coordsMatch.get(1), segment))
+                        : (TaleMeasurement.distance(coordsMatch.get(0), nearestPointOnLine(segment, coordsMatch.get(0), units), units) <= tolerance
+                        && TaleMeasurement.distance(coordsMatch.get(1), nearestPointOnLine(segment, coordsMatch.get(1), units), units) <= tolerance)) {
+                    // 不要定义（doesOverlap = true），因为同一段中可能会出现更多匹配项
+                    if (overlapSegment.size() > 0) {
+                        concatSegment(overlapSegment, match);
+                    } else {
+                        overlapSegment.addAll(match.coordinates());
+                    }
+                }
+            }
+
+            // Segment 不重叠 - 向结果添加重叠并重置
+            if (!doesOverlaps && overlapSegment.size() > 0) {
+                result.add(Line.fromLngLatsShallowCopy(overlapSegment));
+                overlapSegment.clear();
+            }
+
+            return true;
+        });
+
+        // 添加最后一个段（如果存在）
+        if (overlapSegment.size() > 0) {
+            result.add(Line.fromLngLatsShallowCopy(overlapSegment));
+        }
+
+        return result;
+    }
+
+    private static void concatSegment(List<Point> lineCoords, Line segment) {
+        List<Point> coords = segment.coordinates();
+
+        Point start = lineCoords.get(0);
+        Point end = lineCoords.get(lineCoords.size() - 1);
+
+        Point s = coords.get(0), e = coords.get(1);
+
+        if (TaleHelper.equals(s, start)) {
+            lineCoords.add(0, e);
+        } else if (TaleHelper.equals(s, end)) {
+            lineCoords.add(e);
+        } else if (TaleHelper.equals(e, start)) {
+            lineCoords.add(0, s);
+        } else if (TaleHelper.equals(e, end)) {
+            lineCoords.add(s);
+        }
+    }
+
+    /**
+     * 计算点到多线段的最短间距的点，默认距离单位：公里
+     *
+     * @param lines 要计算的线段，支持Line、MultiLine
+     * @param pt    点
+     * @return 返回线段上最短距离的点
+     */
+    public static Point nearestPointOnLine(Geometry lines, Point pt) {
+        return nearestPointOnLine(lines, pt, Units.KILOMETERS);
+    }
+
+    /**
+     * 计算点到多线段的最短间距的点
+     *
+     * @param lines 要计算的线段，支持Line、MultiLine
+     * @param pt    点
+     * @param units 距离单位
+     * @return 返回线段上最短距离的点
+     */
+    public static Point nearestPointOnLine(Geometry lines, Point pt, Units units) {
+        if (lines == null) {
+            throw new TaleException("lines is required");
+        }
+        if (pt == null) {
+            throw new TaleException("pt is required");
+        }
+        if (lines.type() != GeometryType.LINE && lines.type() != GeometryType.MULTI_LINE) {
+            throw new TaleException("geometry2 type must Line or MultiLine");
+        }
+        if (units != Units.DEGREES
+                && units != Units.RADIANS
+                && units != Units.MILES
+                && units != Units.KILOMETERS
+                && units != Units.KILOMETRES) {
+            throw new TaleException("units can be degrees, radians, miles, or kilometers");
+        }
+
+        ObjectHolder<Point> closePt = new ObjectHolder<>();
+        DoubleHolder closeDist = new DoubleHolder(Double.POSITIVE_INFINITY);
+
+        TaleMeta.flattenEach(lines, ((line, multiIndex) -> {
+            List<Point> coords = ((Line) line).coordinates();
+
+            for (int i = 0, size = coords.size(); i < size - 1; i++) {
+                Point start = coords.get(i);
+                double startDist = TaleMeasurement.distance(pt, start, units);
+
+                Point stop = coords.get(i + 1);
+                double stopDist = TaleMeasurement.distance(pt, stop, units);
+
+                // double sectionLength = TaleMeasurement.distance(start, stop, units);
+                double heightDistance = Math.max(startDist, stopDist);
+                // 计算方位角
+                double direction = TaleMeasurement.bearing(start, stop);
+
+                Point perpendicularPt1 = TaleMeasurement.destination(pt, heightDistance, direction + 90, units);
+                Point perpendicularPt2 = TaleMeasurement.destination(pt, heightDistance, direction - 90, units);
+
+                // 计算两个线的相交点
+                List<Point> intersect = lineIntersect(Line.fromLngLats(perpendicularPt1, perpendicularPt2), Line.fromLngLats(start, stop));
+
+                Point intersectPt = null;
+                double intersectDist = 0;
+                if (intersect != null && intersect.size() > 0) {
+                    intersectPt = intersect.get(0);
+                    intersectDist = TaleMeasurement.distance(pt, intersectPt, units);
+                }
+
+                if (startDist < closeDist.value) {
+                    closePt.value = start;
+                    closeDist.value = startDist;
+                }
+                if (stopDist < closeDist.value) {
+                    closePt.value = stop;
+                    closeDist.value = stopDist;
+                }
+                if (intersectPt != null && intersectDist < closeDist.value) {
+                    closePt.value = intersectPt;
+                    closeDist.value = intersectDist;
+                }
+            }
+
+            return true;
+        }));
+
+        return closePt.value;
     }
 
 }

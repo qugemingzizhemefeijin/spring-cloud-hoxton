@@ -195,7 +195,38 @@ public final class TaleHelper {
     }
 
     /**
+     * 深度比较两个点集合是否一致
+     *
+     * @param p1 点集合1
+     * @param p2 点集合2
+     * @return 完全一致则返回true
+     */
+    public static boolean deepEquals(List<Point> p1, List<Point> p2) {
+        if (p1 == null && p2 == null) {
+            return true;
+        } else if (p1 != null && p2 == null) {
+            return false;
+        } else if (p1 == null) {
+            return false;
+        }
+
+        // 两个均不为空
+        if (p1.size() != p2.size()) {
+            return false;
+        }
+
+        for (int i = 0, size = p1.size(); i < size; i++) {
+            if (!equals(p1.get(i), p2.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * 验证多边形是否是首尾相连
+     *
      * @param points 多边形点集合
      * @return 如果收尾相连则返回true
      */

@@ -18,6 +18,10 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
         return new Line(points);
     }
 
+    public static Line fromLngLatsShallowCopy(List<Point> points) {
+        return new Line(new ArrayList<>(points));
+    }
+
     public static Line fromLngLats(Point start, Point end) {
         List<Point> points = new ArrayList<>(2);
         points.add(start);
