@@ -236,61 +236,9 @@ public final class TaleBooleans {
                 }
             }
 
-            if (isPointOnLineSegment(pointList.get(i), pointList.get(i + 1), point, ignoreBoundary, epsilon)) {
+            if (TaleHelper.isPointOnLineSegment(pointList.get(i), pointList.get(i + 1), point, ignoreBoundary, epsilon)) {
                 return true;
             }
-        }
-
-        return false;
-    }
-
-    /**
-     * 判断点是否在线的两端之间
-     *
-     * @param lineSegmentStart 线段开始坐标对的行首
-     * @param lineSegmentEnd   线段结束坐标对的行尾
-     * @param point            判断的点
-     * @param excludeBoundary  排除边界是否允许点落在线端，0不忽略，1开头，2结尾，3中间
-     * @param epsilon          要与交叉乘积结果进行比较的小数。用于处理浮点，例如经纬度点
-     * @return boolean
-     */
-    private static boolean isPointOnLineSegment(Point lineSegmentStart, Point lineSegmentEnd, Point point, int excludeBoundary, Number epsilon) {
-        double x = point.getX(), y = point.getY();
-        double x1 = lineSegmentStart.getX(), y1 = lineSegmentStart.getY();
-        double x2 = lineSegmentEnd.getX(), y2 = lineSegmentEnd.getY();
-        double dxc = x - x1, dyc = y - y1;
-        double dxl = x2 - x1, dyl = y2 - y1;
-        double cross = dxc * dyl - dyc * dxl;
-
-        if (epsilon != null) {
-            if (Math.abs(cross) > epsilon.doubleValue()) {
-                return false;
-            }
-        } else if (cross != 0) {
-            return false;
-        }
-
-        boolean dxlGtdyl = Math.abs(dxl) >= Math.abs(dyl);
-        if (excludeBoundary == 0) {
-            if (dxlGtdyl) {
-                return dxl > 0 ? x1 <= x && x <= x2 : x2 <= x && x <= x1;
-            }
-            return dyl > 0 ? y1 <= y && y <= y2 : y2 <= y && y <= y1;
-        } else if (excludeBoundary == 1) {
-            if (dxlGtdyl) {
-                return dxl > 0 ? x1 < x && x <= x2 : x2 <= x && x < x1;
-            }
-            return dyl > 0 ? y1 < y && y <= y2 : y2 <= y && y < y1;
-        } else if (excludeBoundary == 2) {
-            if (dxlGtdyl) {
-                return dxl > 0 ? x1 <= x && x < x2 : x2 < x && x <= x1;
-            }
-            return dyl > 0 ? y1 <= y && y < y2 : y2 < y && y <= y1;
-        } else if (excludeBoundary == 3) {
-            if (dxlGtdyl) {
-                return dxl > 0 ? x1 < x && x < x2 : x2 < x && x < x1;
-            }
-            return dyl > 0 ? y1 < y && y < y2 : y2 < y && y < y1;
         }
 
         return false;

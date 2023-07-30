@@ -215,7 +215,7 @@ public final class TaleCoordinateMutation {
             newPointsLength = newPoints.size();
             if (newPointsLength > 2) {
                 // 如果最后第二个元素在最后第三个元素与最后一个元素的线上，则直接将其删除掉
-                if (isPointOnLineSegment(newPoints.get(newPointsLength - 3),
+                if (TaleHelper.isPointOnLineSegment(newPoints.get(newPointsLength - 3),
                         newPoints.get(newPointsLength - 1),
                         newPoints.get(newPointsLength - 2))) {
                     newPoints.remove(newPointsLength - 2);
@@ -234,41 +234,13 @@ public final class TaleCoordinateMutation {
         }
 
         // 如果最后第二个元素在最后第三个元素与最后一个元素的线上，则直接将其删除掉
-        if (isPointOnLineSegment(newPoints.get(newPointsLength - 3),
+        if (TaleHelper.isPointOnLineSegment(newPoints.get(newPointsLength - 3),
                 newPoints.get(newPointsLength - 1),
                 newPoints.get(newPointsLength - 2))) {
             newPoints.remove(newPointsLength - 2);
         }
 
         return newPoints;
-    }
-
-    /**
-     * 判断point是否位于start和end之间的线段上
-     *
-     * @param start 开始的点
-     * @param end   结束的点
-     * @param point 需要判断的点
-     * @return 在线段上则返回true
-     */
-    private static boolean isPointOnLineSegment(Point start, Point end, Point point) {
-        double x = point.getLongitude(), y = point.getLatitude();
-        double startX = start.getLongitude(), startY = start.getLatitude();
-        double endX = end.getLongitude(), endY = end.getLatitude();
-
-        double dxc = x - startX;
-        double dyc = y - startY;
-        double dxl = endX - startX;
-        double dyl = endY - startY;
-        double cross = dxc * dyl - dyc * dxl;
-
-        if (cross != 0) {
-            return false;
-        } else if (Math.abs(dxl) >= Math.abs(dyl)) {
-            return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
-        } else {
-            return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
-        }
     }
 
     /**

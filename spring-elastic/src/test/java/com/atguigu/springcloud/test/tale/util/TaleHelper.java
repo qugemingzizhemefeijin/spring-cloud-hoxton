@@ -386,7 +386,7 @@ public final class TaleHelper {
     /**
      * 判断线段是否在多边形中
      *
-     * @param line          要判断的线段
+     * @param line         要判断的线段
      * @param multiPolygon 组合多边形
      * @return 如果line在多边形内，则返回true
      */
@@ -422,7 +422,7 @@ public final class TaleHelper {
             }
             // 跑到这里，证明点在多边形的边界上，则计算当前点与下一个点的中间点是否在多边形上，如果在的话，则证明先在多边形内。
             if (!foundInsidePoint) {
-                Point midPoint = TaleMeasurement.midpoint(p, coordinates.get(i + 1));
+                Point midPoint = getMidPoint(p, coordinates.get(i + 1));
                 foundInsidePoint = TaleBooleans.booleanPointInPolygon(midPoint, geometry, true);
             }
         }
@@ -484,6 +484,122 @@ public final class TaleHelper {
      */
     public static Point getMidPoint(Point p1, Point p2) {
         return Point.fromLngLat((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+    }
+
+    /**
+     * 判断point是否位于start和end之间的线段上（不忽略线的两段）
+     *
+     * @param start 开始的点
+     * @param end   结束的点
+     * @param point 需要判断的点
+     * @return 在线段上则返回true
+     */
+    public static boolean isPointOnLineSegment(Point start, Point end, Point point) {
+        double x = point.getLongitude(), y = point.getLatitude();
+        double startX = start.getLongitude(), startY = start.getLatitude();
+        double endX = end.getLongitude(), endY = end.getLatitude();
+
+        double dxc = x - startX;
+        double dyc = y - startY;
+        double dxl = endX - startX;
+        double dyl = endY - startY;
+        double cross = dxc * dyl - dyc * dxl;
+
+        if (cross != 0) {
+            return false;
+        } else if (Math.abs(dxl) >= Math.abs(dyl)) {
+            return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
+        } else {
+            return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
+        }
+    }
+
+    /**
+     * 判断点是否在线的两端之间
+     *
+     * @param lineSegmentStart 线段开始坐标对的行首
+     * @param lineSegmentEnd   线段结束坐标对的行尾
+     * @param point            判断的点
+     * @param incEndVertices   是否允许点落在线两端
+     * @return boolean
+     */
+    public static boolean isPointOnLineSegment(Point lineSegmentStart, Point lineSegmentEnd, Point point, boolean incEndVertices) {
+        double x = point.getX(), y = point.getY();
+        double x1 = lineSegmentStart.getX(), y1 = lineSegmentStart.getY();
+        double x2 = lineSegmentEnd.getX(), y2 = lineSegmentEnd.getY();
+        double dxc = x - x1, dyc = y - y1;
+        double dxl = x2 - x1, dyl = y2 - y1;
+        double cross = dxc * dyl - dyc * dxl;
+
+        if (cross != 0) {
+            return false;
+        }
+
+        boolean dxlGtdyl = Math.abs(dxl) >= Math.abs(dyl);
+        // 是否允许判断两端
+        if (incEndVertices) {
+            if (dxlGtdyl) {
+                return dxl > 0 ? x1 <= x && x <= x2 : x2 <= x && x <= x1;
+            }
+            return dyl > 0 ? y1 <= y && y <= y2 : y2 <= y && y <= y1;
+        } else {
+            if (dxlGtdyl) {
+                return dxl > 0 ? x1 < x && x < x2 : x2 < x && x < x1;
+            }
+            return dyl > 0 ? y1 < y && y < y2 : y2 < y && y < y1;
+        }
+    }
+
+    /**
+     * 判断点是否在线的两端之间
+     *
+     * @param lineSegmentStart 线段开始坐标对的行首
+     * @param lineSegmentEnd   线段结束坐标对的行尾
+     * @param point            判断的点
+     * @param excludeBoundary  排除边界是否允许点落在线端，0不忽略，1开头，2结尾，3中间
+     * @param epsilon          要与交叉乘积结果进行比较的小数。用于处理浮点，例如经纬度点
+     * @return boolean
+     */
+    public static boolean isPointOnLineSegment(Point lineSegmentStart, Point lineSegmentEnd, Point point, int excludeBoundary, Number epsilon) {
+        double x = point.getX(), y = point.getY();
+        double x1 = lineSegmentStart.getX(), y1 = lineSegmentStart.getY();
+        double x2 = lineSegmentEnd.getX(), y2 = lineSegmentEnd.getY();
+        double dxc = x - x1, dyc = y - y1;
+        double dxl = x2 - x1, dyl = y2 - y1;
+        double cross = dxc * dyl - dyc * dxl;
+
+        if (epsilon != null) {
+            if (Math.abs(cross) > epsilon.doubleValue()) {
+                return false;
+            }
+        } else if (cross != 0) {
+            return false;
+        }
+
+        boolean dxlGtdyl = Math.abs(dxl) >= Math.abs(dyl);
+        if (excludeBoundary == 0) {
+            if (dxlGtdyl) {
+                return dxl > 0 ? x1 <= x && x <= x2 : x2 <= x && x <= x1;
+            }
+            return dyl > 0 ? y1 <= y && y <= y2 : y2 <= y && y <= y1;
+        } else if (excludeBoundary == 1) {
+            if (dxlGtdyl) {
+                return dxl > 0 ? x1 < x && x <= x2 : x2 <= x && x < x1;
+            }
+            return dyl > 0 ? y1 < y && y <= y2 : y2 <= y && y < y1;
+        } else if (excludeBoundary == 2) {
+            if (dxlGtdyl) {
+                return dxl > 0 ? x1 <= x && x < x2 : x2 < x && x <= x1;
+            }
+            return dyl > 0 ? y1 <= y && y < y2 : y2 < y && y <= y1;
+        } else if (excludeBoundary == 3) {
+            if (dxlGtdyl) {
+                return dxl > 0 ? x1 < x && x < x2 : x2 < x && x < x1;
+            }
+            return dyl > 0 ? y1 < y && y < y2 : y2 < y && y < y1;
+        }
+
+        return false;
     }
 
 }
