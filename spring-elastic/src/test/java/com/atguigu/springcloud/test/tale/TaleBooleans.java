@@ -5,6 +5,7 @@ import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.Equality;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
 import com.atguigu.springcloud.test.tale.util.TalePointInPolygonHelper;
+import org.omg.CORBA.IntHolder;
 
 import java.util.List;
 
@@ -113,52 +114,90 @@ public final class TaleBooleans {
     /**
      * 判断点是否在多边形内，如果点在多边形的边界上，也算在内。
      *
-     * @param point          要判断的点
-     * @param polygon        多边形
+     * @param point    要判断的点
+     * @param geometry 多边形，支持 Polygon、MultiPolygon
      * @return 如果点在多边形内，则返回true;否则返回false
      */
-    public static boolean booleanPointInPolygon(Point point, Polygon polygon) {
-        return booleanPointInPolygon(point, polygon, false);
+    public static boolean booleanPointInPolygon(Point point, Geometry geometry) {
+        return booleanPointInPolygon(point, geometry, false);
     }
 
     /**
      * 判断点是否在多边形内
      *
      * @param point          要判断的点
-     * @param polygon        多边形
+     * @param geometry       多边形，支持 Polygon、MultiPolygon
      * @param ignoreBoundary 是否忽略多边形边界（true如果点在多边形的边界上不算，false则也算在多边形内）
      * @return 如果点在多边形内，则返回true;否则返回false
      */
-    public static boolean booleanPointInPolygon(Point point, Polygon polygon, boolean ignoreBoundary) {
+    public static boolean booleanPointInPolygon(Point point, Geometry geometry, boolean ignoreBoundary) {
         if (point == null) {
             throw new TaleException("point is required");
         }
-        if (polygon == null) {
+        if (geometry == null) {
             throw new TaleException("polygon is required");
         }
+        if (geometry.type() != GeometryType.POLYGON && geometry.type() != GeometryType.MULTI_POLYGON) {
+            throw new TaleException("geometry only support polygon or multiPolygon");
+        }
 
-        BoundingBox bbox = TaleMeasurement.bbox(polygon);
+        BoundingBox bbox = TaleMeasurement.bbox(geometry);
         if (!TaleHelper.inBBox(point, bbox)) {
             return false;
         }
 
-        int polyResult = TalePointInPolygonHelper.pointInPolygon(point, polygon);
-        if (polyResult == 0) {
-            return !ignoreBoundary;
+        if (geometry instanceof Polygon) {
+            int polyResult = TalePointInPolygonHelper.pointInPolygon(point, Polygon.polygon(geometry));
+            if (polyResult == 0) {
+                return !ignoreBoundary;
+            } else {
+                return polyResult == 1;
+            }
         } else {
-            return polyResult == 1;
+            MultiPolygon multiPolygon = MultiPolygon.multiPolygon(geometry);
+
+            // FIXME 此代码在turf.js的master下有BUG。可以有机会提一个isuse
+            boolean result = false;
+            for (Polygon polygon : multiPolygon.polygons()) {
+                int polyResult = TalePointInPolygonHelper.pointInPolygon(point, polygon);
+                if (polyResult == 0) {
+                    if (ignoreBoundary) { // 如果在边界上，并且在边界上不算的话，则直接返回
+                        return false;
+                    } else {
+                        result = true;
+                    }
+                } else if (polyResult == 1) { // 如果在边界内
+                    result = true;
+                } else {
+                    return false;
+                }
+            }
+
+            return result;
         }
     }
 
     /**
      * 如果点位于直线上，则返回 true。默认不忽略忽略线段的起始和终止顶点.
      *
-     * @param point             要判断的点
-     * @param line              线
+     * @param point 要判断的点
+     * @param line  线
      * @return boolean
      */
     public static boolean booleanPointOnLine(Point point, Line line) {
         return booleanPointOnLine(point, line, false, null);
+    }
+
+    /**
+     * 如果点位于直线上，则返回 true。接受可选参数以忽略线串的开始和结束顶点。
+     *
+     * @param point             要判断的点
+     * @param line              线
+     * @param ignoreEndVertices 是否忽略线段的起始和终止顶点
+     * @return boolean
+     */
+    public static boolean booleanPointOnLine(Point point, Line line, boolean ignoreEndVertices) {
+        return booleanPointOnLine(point, line, ignoreEndVertices, null);
     }
 
     /**
@@ -255,6 +294,147 @@ public final class TaleBooleans {
         }
 
         return false;
+    }
+
+    /**
+     * 判断是否重叠。<br>
+     * <br>
+     * 比较相同维度的两个几何图形，如果它们的交集集产生的几何图形与两个几何图形不同，但维度相同，则返回true。
+     *
+     * @param geometry1 图形1，支持Line、MultiLine、Polygon、MultiPolygon
+     * @param geometry2 图形2，支持Line、MultiLine、Polygon、MultiPolygon
+     * @return 如果重叠则返回true
+     */
+    public static boolean booleanOverlap(Geometry geometry1, Geometry geometry2) {
+        GeometryType type1 = geometry1.type(), type2 = geometry2.type();
+
+        if ((type1 == GeometryType.MULTI_POINT && type2 != GeometryType.MULTI_POINT) ||
+                ((type1 == GeometryType.LINE || type1 == GeometryType.MULTI_LINE)
+                        && type2 != GeometryType.LINE && type2 != GeometryType.MULTI_LINE) ||
+                ((type1 == GeometryType.POLYGON || type1 == GeometryType.MULTI_POLYGON) && type2 != GeometryType.POLYGON
+                        && type2 != GeometryType.MULTI_POLYGON)
+        ) {
+            throw new TaleException("features must be of the same type");
+        }
+        if (type1 == GeometryType.POINT) {
+            throw new TaleException("Point geometry not supported");
+        }
+
+        // must be not equal 不知道为什么要有这一段？？
+        if (Equality.compare(geometry1, geometry2, 6)) {
+            return false;
+        }
+
+        IntHolder overlap = new IntHolder();
+        switch (type1) {
+            case MULTI_POINT:
+                List<Point> pointList1 = MultiPoint.multiPoint(geometry1).coordinates();
+                List<Point> pointList2 = MultiPoint.multiPoint(geometry2).coordinates();
+                for (Point p1 : pointList1) {
+                    for (Point p2 : pointList2) {
+                        if (TaleHelper.equals(p1, p2)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case LINE:
+            case MULTI_LINE:
+                TaleMeta.segmentEach(geometry1, (currentSegment1, geometryIndex1, multiIndex1, segmentIndex1) -> {
+                    TaleMeta.segmentEach(geometry2, (currentSegment2, geometryIndex2, multiIndex2, segmentIndex2) -> {
+                        List<Line> overlapLines = TaleMisc.lineOverlap(currentSegment1, currentSegment2);
+                        if (overlapLines.size() > 0) {
+                            overlap.value++;
+                        }
+                        return true;
+                    });
+
+                    return true;
+                });
+                break;
+            case POLYGON:
+            case MULTI_POLYGON:
+                TaleMeta.segmentEach(geometry1, (currentSegment1, geometryIndex1, multiIndex1, segmentIndex1) -> {
+                    TaleMeta.segmentEach(geometry2, (currentSegment2, geometryIndex2, multiIndex2, segmentIndex2) -> {
+                        List<Point> intersectLines = TaleMisc.lineIntersect(currentSegment1, currentSegment2);
+                        if (intersectLines != null && intersectLines.size() > 0) {
+                            overlap.value++;
+                        }
+                        return true;
+                    });
+
+                    return true;
+                });
+                break;
+        }
+
+        return overlap.value > 0;
+    }
+
+    /**
+     * 判断第一个图形是否完全在第二个图形内 <br><br>
+     * <p>
+     * 如果第一个几何图形完全在第二个几何图形内，则返回true。两个几何图形的内部必须相交，
+     * 并且，主几何图形(几何a)的内部和边界不能相交于次几何图形(几何b)的外部。
+     *
+     * <br><br>
+     * 注意：这里有几个问题：比如判断两个线，实际只是判断线1的所有点是否在线2中，注入此类。
+     *
+     * @param geometry1 图形组件1
+     * @param geometry2 图形组件2
+     * @return 第一个图形在第二个图形内，则返回true
+     */
+    public static boolean booleanWithin(Geometry geometry1, Geometry geometry2) {
+        GeometryType type1 = geometry1.type(), type2 = geometry2.type();
+
+        switch (type1) {
+            case POINT:
+                switch (type2) {
+                    case MULTI_POINT:
+                        return TaleHelper.isPointInMultiPoint(Point.point(geometry1), MultiPoint.multiPoint(geometry2));
+                    case LINE:
+                        return TaleBooleans.booleanPointOnLine(Point.point(geometry1), Line.line(geometry2), true);
+                    case POLYGON:
+                    case MULTI_POLYGON:
+                        return TaleBooleans.booleanPointInPolygon(Point.point(geometry1), geometry2, true);
+                    default:
+                        throw new TaleException("geometry2 " + type2 + " geometry not supported");
+                }
+            case MULTI_POINT:
+                switch (type2) {
+                    case MULTI_POINT:
+                        return TaleHelper.isMultiPointInMultiPoint(MultiPoint.multiPoint(geometry1), MultiPoint.multiPoint(geometry2));
+                    case LINE:
+                        return TaleHelper.isMultiPointOnLine(MultiPoint.multiPoint(geometry1), Line.line(geometry2));
+                    case POLYGON:
+                        return TaleHelper.isMultiPointInPolygon(MultiPoint.multiPoint(geometry1), Polygon.polygon(geometry2));
+                    case MULTI_POLYGON:
+                        return TaleHelper.isMultiPointInPolygon(MultiPoint.multiPoint(geometry1), MultiPolygon.multiPolygon(geometry2));
+                    default:
+                        throw new TaleException("geometry2 " + type2 + " geometry not supported");
+                }
+            case LINE:
+                switch (type2) {
+                    case LINE:
+                        return TaleHelper.isLineOnLine(Line.line(geometry1), Line.line(geometry2));
+                    case POLYGON:
+                        return TaleHelper.isLineInPolygon(Line.line(geometry1), Polygon.polygon(geometry2));
+                    case MULTI_POINT:
+                        return TaleHelper.isLineInPolygon(Line.line(geometry1), MultiPolygon.multiPolygon(geometry2));
+                    default:
+                        throw new TaleException("geometry2 " + type2 + " geometry not supported");
+                }
+            case POLYGON:
+                switch (type2) {
+                    case POLYGON:
+                    case MULTI_POLYGON:
+                        return TaleHelper.isPolygonInPolygon(Polygon.polygon(geometry1), geometry2);
+                    default:
+                        throw new TaleException("geometry2 " + type2 + " geometry not supported");
+                }
+            default:
+                throw new TaleException("geometry1 " + type1 + " geometry not supported");
+        }
     }
 
 }

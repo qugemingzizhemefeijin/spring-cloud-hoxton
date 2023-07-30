@@ -28,6 +28,10 @@ public final class MultiPoint implements CoordinateContainer<List<Point>, MultiP
         return fromLngLats(points);
     }
 
+    public static MultiPoint multiPoint(Geometry g) {
+        return (MultiPoint)g;
+    }
+
     @Override
     public List<Point> coordinates() {
         return coordinates;

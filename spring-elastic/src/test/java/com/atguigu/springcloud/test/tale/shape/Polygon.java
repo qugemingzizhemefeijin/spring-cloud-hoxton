@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale.shape;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
 
 import java.util.ArrayList;
@@ -17,7 +18,15 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
     }
 
     public static Polygon fromLngLats(List<Point> coordinates) {
-        Point tailPt = coordinates.get(coordinates.size() - 1);
+        if (coordinates == null) {
+            throw new TaleException("coordinates can not be null");
+        }
+        int len = coordinates.size();
+        if (len < 3) {
+            throw new TaleException("coordinates length at least 3");
+        }
+
+        Point tailPt = coordinates.get(len - 1);
         Point headPt = coordinates.get(0);
 
         // 判断尾巴是否与头部相同
@@ -31,12 +40,20 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
     }
 
     public static Polygon fromLngLats(double[][] coordinates) {
-        double[] tailPt = coordinates[coordinates.length - 1];
+        if (coordinates == null) {
+            throw new TaleException("coordinates can not be null");
+        }
+        int len = coordinates.length;
+        if (len < 3) {
+            throw new TaleException("coordinates length at least 3");
+        }
+
+        double[] tailPt = coordinates[len - 1];
 
         // 判断尾巴是否与头部相同
         boolean tail = coordinates[0][0] == tailPt[0] && coordinates[0][1] == tailPt[1];
 
-        List<Point> converted = new ArrayList<>(tail ? coordinates.length : (coordinates.length + 1));
+        List<Point> converted = new ArrayList<>(tail ? len : (len + 1));
         for (double[] coordinate : coordinates) {
             converted.add(Point.fromLngLat(coordinate));
         }
@@ -46,6 +63,39 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
         }
 
         return new Polygon(converted);
+    }
+
+    public static Polygon fromLngLats(double[] coordinates) {
+        if (coordinates == null) {
+            throw new TaleException("coordinates can not be null");
+        }
+        int len = coordinates.length;
+        if (len < 6) {
+            throw new TaleException("coordinates length at least 6");
+        }
+
+        // 判断尾巴是否与头部相同
+        boolean tail = coordinates[0] == coordinates[len - 2] && coordinates[1] == coordinates[len - 1];
+
+        // 则必须为2个倍数
+        if (coordinates.length % 2 == 1) {
+            throw new TaleException("coordinates length must be a multiple of 2");
+        }
+
+        int ps = len / 2;
+        List<Point> converted = new ArrayList<>(tail ? ps : (ps + 1));
+        for (int i = 0; i < len; i = i + 2) {
+            converted.add(Point.fromLngLat(coordinates[i], coordinates[i + 1]));
+        }
+        if (!tail) {
+            converted.add(Point.fromLngLat(coordinates[0], coordinates[1]));
+        }
+
+        return new Polygon(converted);
+    }
+
+    public static Polygon polygon(Geometry g) {
+        return (Polygon) g;
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.atguigu.springcloud.test.tale.util;
 
+import com.atguigu.springcloud.test.tale.TaleBooleans;
+import com.atguigu.springcloud.test.tale.TaleMeasurement;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
-import com.atguigu.springcloud.test.tale.shape.BoundingBox;
-import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.*;
 import com.google.common.collect.Maps;
 
 import java.util.List;
@@ -252,6 +253,237 @@ public final class TaleHelper {
         double longitude = point.getLongitude(), latitude = point.getLatitude();
 
         return b[0] <= longitude && b[1] <= latitude && b[2] >= longitude && b[3] >= latitude;
+    }
+
+    /**
+     * 判断点是否在点组合中
+     *
+     * @param pt 要判断的点
+     * @param mp 点组合
+     * @return 如果pt在mp中，则返回true
+     */
+    public static boolean isPointInMultiPoint(Point pt, MultiPoint mp) {
+        for (Point p : mp.coordinates()) {
+            if (equals(pt, p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断mp1中的点是否均在mp2中
+     *
+     * @param mp1 要判断的点组合
+     * @param mp2 点组合
+     * @return 如果mp1中的所有点均在mp2中，则返回true
+     */
+    public static boolean isMultiPointInMultiPoint(MultiPoint mp1, MultiPoint mp2) {
+        for (Point p1 : mp1.coordinates()) {
+            boolean anyMatch = false;
+            for (Point p2 : mp2.coordinates()) {
+                if (equals(p1, p2)) {
+                    anyMatch = true;
+                }
+            }
+
+            if (!anyMatch) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断点组合中的点是否均在线上（至少有一个点不在开始和结束顶点上）
+     *
+     * @param mp   要判断的点组合
+     * @param line 线段
+     * @return 如果mp中所有点均在Line上，则返回true
+     */
+    public static boolean isMultiPointOnLine(MultiPoint mp, Line line) {
+        boolean foundInsidePoint = false;
+
+        for (Point p : mp.coordinates()) {
+            if (!TaleBooleans.booleanPointOnLine(p, line)) {
+                return false;
+            }
+            if (!foundInsidePoint) {
+                foundInsidePoint = TaleBooleans.booleanPointOnLine(p, line, true);
+            }
+        }
+
+        return foundInsidePoint;
+    }
+
+    /**
+     * 判断点组合中的点是否均在多边形中(必须至少一个点在多边形内)
+     *
+     * @param mp      要判断的点组合
+     * @param polygon 多边形
+     * @return 如果mp中所有点均在polygon中，则返回true
+     */
+    public static boolean isMultiPointInPolygon(MultiPoint mp, Polygon polygon) {
+        boolean oneInside = false;
+        for (Point p : mp.coordinates()) {
+            if (!TaleBooleans.booleanPointInPolygon(p, polygon)) {
+                return false;
+            }
+            if (!oneInside) {
+                oneInside = TaleBooleans.booleanPointInPolygon(p, polygon, true);
+            }
+        }
+        return oneInside;
+    }
+
+    /**
+     * 判断点组合中的点是否均在多边形中(必须至少一个点在多边形内)
+     *
+     * @param mp           要判断的点组合
+     * @param multiPolygon 组合多边形
+     * @return 如果mp中所有点均在polygon中，则返回true
+     */
+    public static boolean isMultiPointInPolygon(MultiPoint mp, MultiPolygon multiPolygon) {
+        boolean oneInside = false;
+        for (Point p : mp.coordinates()) {
+            if (!TaleBooleans.booleanPointInPolygon(p, multiPolygon)) {
+                return false;
+            }
+            if (!oneInside) {
+                oneInside = TaleBooleans.booleanPointInPolygon(p, multiPolygon, true);
+            }
+        }
+        return oneInside;
+    }
+
+    /**
+     * 判断线段1是否在线段2上
+     *
+     * @param line1 要判断的线段
+     * @param line2 线段
+     * @return 如果line1完全在line2中，则返回true
+     */
+    public static boolean isLineOnLine(Line line1, Line line2) {
+        for (Point p : line1.coordinates()) {
+            if (!TaleBooleans.booleanPointOnLine(p, line2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断线段是否在多边形中
+     *
+     * @param line    要判断的线段
+     * @param polygon 多边形
+     * @return 如果line在多边形内，则返回true
+     */
+    public static boolean isLineInPolygon(Line line, Polygon polygon) {
+        return isLineInPoly(line, polygon);
+    }
+
+    /**
+     * 判断线段是否在多边形中
+     *
+     * @param line          要判断的线段
+     * @param multiPolygon 组合多边形
+     * @return 如果line在多边形内，则返回true
+     */
+    public static boolean isLineInPolygon(Line line, MultiPolygon multiPolygon) {
+        return isLineInPoly(line, multiPolygon);
+    }
+
+    /**
+     * 判断线段是否在多边形中
+     *
+     * @param line     要判断的线段
+     * @param geometry 多边形，只支持Polygon、MultiPolygon
+     * @return 如果line在多边形内，则返回true
+     */
+    private static boolean isLineInPoly(Line line, Geometry geometry) {
+        BoundingBox polyBbox = TaleMeasurement.bbox(geometry);
+        BoundingBox lineBbox = TaleMeasurement.bbox(line);
+        if (!isBBoxOverlap(polyBbox, lineBbox)) {
+            return false;
+        }
+
+        boolean foundInsidePoint = false;
+        List<Point> coordinates = line.coordinates();
+        for (int i = 0, size = coordinates.size() - 1; i < size; i++) {
+            Point p = coordinates.get(i);
+            // 如果点不在多边形中，直接返回
+            if (!TaleBooleans.booleanPointInPolygon(p, geometry, false)) {
+                return false;
+            }
+            // 下面军事判断点是否在多边形内（不能在边界上）
+            if (!foundInsidePoint) {
+                foundInsidePoint = TaleBooleans.booleanPointInPolygon(p, geometry, true);
+            }
+            // 跑到这里，证明点在多边形的边界上，则计算当前点与下一个点的中间点是否在多边形上，如果在的话，则证明先在多边形内。
+            if (!foundInsidePoint) {
+                Point midPoint = TaleMeasurement.midpoint(p, coordinates.get(i + 1));
+                foundInsidePoint = TaleBooleans.booleanPointInPolygon(midPoint, geometry, true);
+            }
+        }
+
+        return foundInsidePoint;
+    }
+
+    /**
+     * 判断多边形1是否在多边形2中
+     *
+     * @param polygon1 要判断的多边形
+     * @param polygon2 多边形，支持Polygon、MultiPolygon
+     * @return 如果多边形1在多边形2中，则返回true
+     */
+    public static boolean isPolygonInPolygon(Polygon polygon1, Geometry polygon2) {
+        BoundingBox poly1Bbox = TaleMeasurement.bbox(polygon1);
+        BoundingBox poly2Bbox = TaleMeasurement.bbox(polygon2);
+        if (!isBBoxOverlap(poly2Bbox, poly1Bbox)) {
+            return false;
+        }
+
+        for (Point p : polygon1.coordinates()) {
+            if (!TaleBooleans.booleanPointInPolygon(p, polygon2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断bbox1是否覆盖了bbox2
+     *
+     * @param bbox1 矩形Box1
+     * @param bbox2 矩形Box2
+     * @return bbox1覆盖了bbox2则返回true
+     */
+    public static boolean isBBoxOverlap(BoundingBox bbox1, BoundingBox bbox2) {
+        if (bbox1.get(0) > bbox2.get(0)) {
+            return false;
+        }
+        if (bbox1.get(2) < bbox2.get(2)) {
+            return false;
+        }
+        if (bbox1.get(1) > bbox2.get(1)) {
+            return false;
+        }
+        if (bbox1.get(3) < bbox2.get(3)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 计算两个点之间的中间点，仅仅是两个点的位置/2。与 #{@link TaleMeasurement#midpoint } 是有区别的
+     *
+     * @param p1 点1
+     * @param p2 点2
+     * @return 返回两点之间的中点
+     */
+    public static Point getMidPoint(Point p1, Point p2) {
+        return Point.fromLngLat((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
     }
 
 }

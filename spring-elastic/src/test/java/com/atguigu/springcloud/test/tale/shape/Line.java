@@ -1,5 +1,7 @@
 package com.atguigu.springcloud.test.tale.shape;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +17,26 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
     }
 
     public static Line fromLngLats(List<Point> points) {
+        if (points == null) {
+            throw new TaleException("points can not be null");
+        }
+        int len = points.size();
+        if (len < 2) {
+            throw new TaleException("points size at least 3");
+        }
+
         return new Line(points);
     }
 
     public static Line fromLngLatsShallowCopy(List<Point> points) {
+        if (points == null) {
+            throw new TaleException("points can not be null");
+        }
+        int len = points.size();
+        if (len < 2) {
+            throw new TaleException("points size at least 3");
+        }
+
         return new Line(new ArrayList<>(points));
     }
 
@@ -35,6 +53,14 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
     }
 
     public static Line fromLngLats(double[][] coordinates) {
+        if (coordinates == null) {
+            throw new TaleException("coordinates can not be null");
+        }
+        int len = coordinates.length;
+        if (len < 2) {
+            throw new TaleException("coordinates length at least 2");
+        }
+
         List<Point> points = new ArrayList<>(coordinates.length);
 
         for (double[] p : coordinates) {
@@ -42,6 +68,28 @@ public final class Line implements CoordinateContainer<List<Point>, Line> {
         }
 
         return fromLngLats(points);
+    }
+
+    public static Line fromLngLats(double[] coordinates) {
+        if (coordinates == null) {
+            throw new TaleException("coordinates can not be null");
+        }
+        int len = coordinates.length;
+        if (len < 4) {
+            throw new TaleException("coordinates length at least 4");
+        }
+
+        // 则必须为2个倍数
+        if (coordinates.length % 2 == 1) {
+            throw new TaleException("coordinates length must be a multiple of 2");
+        }
+
+        List<Point> points = new ArrayList<>(len / 2);
+        for (int i = 0; i < len; i = i + 2) {
+            points.add(Point.fromLngLat(coordinates[i], coordinates[i + 1]));
+        }
+
+        return new Line(points);
     }
 
     public static Line line(Geometry g) {

@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.Line;
+import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,18 +13,32 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{115, -35},
-                new double[]{125, -30},
-                new double[]{135, -30},
-                new double[]{145, -35},
-                new double[]{115, -35}});
+        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 2, 3, 1, 4});
+        Point point = Point.fromLngLat(1, 2);
+        Line line2 = Line.fromLngLats(new double[]{1, 1, 1, 4});
 
-        Line line2 = Line.fromLngLats(new double[][]{new double[]{115, -25},
-                new double[]{125, -30},
-                new double[]{135, -30},
-                new double[]{145, -25}});
+        System.out.println(TaleBooleans.booleanWithin(point, line));
+        System.out.println(TaleBooleans.booleanWithin(line2, line));
 
-        System.out.println(TaleMisc.lineOverlap(polygon, line2, null));
+//        Polygon poly1 = Polygon.fromLngLats(new double[]{0, 0, 0, 5, 5, 5, 5, 0, 0, 0});
+//        Polygon poly2 = Polygon.fromLngLats(new double[]{1, 1, 1, 6, 6, 6, 6, 1, 1, 1});
+//        Polygon poly3 = Polygon.fromLngLats(new double[]{10, 10, 10, 15, 15, 15, 15, 10, 10, 10});
+//
+//        System.out.println(TaleBooleans.booleanOverlap(poly1, poly2));
+//        System.out.println(TaleBooleans.booleanOverlap(poly2, poly3));
+
+//        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{115, -35},
+//                new double[]{125, -30},
+//                new double[]{135, -30},
+//                new double[]{145, -35},
+//                new double[]{115, -35}});
+//
+//        Line line2 = Line.fromLngLats(new double[][]{new double[]{115, -25},
+//                new double[]{125, -30},
+//                new double[]{135, -30},
+//                new double[]{145, -25}});
+//
+//        System.out.println(TaleMisc.lineOverlap(polygon, line2, null));
 
 //        MultiLine line = MultiLine.fromLngLats(new double[][]{new double[]{-77.031669, 38.878605},
 //                new double[]{-77.029609, 38.881946},

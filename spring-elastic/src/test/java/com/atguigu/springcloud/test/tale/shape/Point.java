@@ -26,6 +26,10 @@ public final class Point implements CoordinateContainer<Point, Point>, Comparabl
         return Point.fromLngLat(p.getLongitude(), p.getLatitude());
     }
 
+    public static Point point(Geometry geometry) {
+        return (Point)geometry;
+    }
+
     public double getLongitude() {
         return longitude;
     }

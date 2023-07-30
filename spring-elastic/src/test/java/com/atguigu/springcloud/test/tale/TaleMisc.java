@@ -333,6 +333,17 @@ public final class TaleMisc {
     }
 
     /**
+     * 计算两个图形之间重叠的线，默认容差距离为0公里
+     *
+     * @param geometry1 图形1，支持 Line、MultiLine、Polygon、MultiPolygon
+     * @param geometry2 图形1，支持 Line、MultiLine、Polygon、MultiPolygon
+     * @return 返回两个图形之间重叠的线段集合
+     */
+    public static List<Line> lineOverlap(Geometry geometry1, Geometry geometry2) {
+        return lineOverlap(geometry1, geometry2, 0);
+    }
+
+    /**
      * 计算两个图形之间重叠的线
      *
      * @param geometry1 图形1，支持 Line、MultiLine、Polygon、MultiPolygon

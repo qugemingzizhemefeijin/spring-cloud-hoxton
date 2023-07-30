@@ -46,6 +46,10 @@ public final class MultiPolygon implements CoordinateContainer<List<List<Point>>
         return new MultiPolygon(converted);
     }
 
+    public static MultiPolygon multiPolygon(Geometry geometry) {
+        return (MultiPolygon)geometry;
+    }
+
     public List<Polygon> polygons() {
         List<List<Point>> coordinates = coordinates();
         List<Polygon> polygons = new ArrayList<>(coordinates.size());
