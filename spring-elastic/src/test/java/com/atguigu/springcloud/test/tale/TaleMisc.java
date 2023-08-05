@@ -3,6 +3,7 @@ package com.atguigu.springcloud.test.tale;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.models.IntersectsResult;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.BooleanCrossesHelper;
 import com.atguigu.springcloud.test.tale.util.ObjectHolder;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
 import com.atguigu.springcloud.test.tale.util.Units;
@@ -232,7 +233,7 @@ public final class TaleMisc {
         if (t1 == GeometryType.LINE
                 && t2 == GeometryType.LINE
                 && geometry1.coordsSize() == 2
-                && geometry1.coordsSize() == 2) {
+                && geometry2.coordsSize() == 2) {
             Point intersect = intersects(Line.line(geometry1), Line.line(geometry2));
 
             return intersect != null ? Collections.singletonList(intersect) : null;
@@ -551,6 +552,60 @@ public final class TaleMisc {
         }));
 
         return closePt.value;
+    }
+
+    /**
+     * 判断是否交叉<br><br>
+     *
+     * 如果交集产生的几何图形的维数比两个源几何图形的最大维数小1，并且交集集位于两个源几何图形的内部，则返回True。
+     *
+     * @param geometry1 图形1，支持 MULTI_POINT、LINE、POLYGON
+     * @param geometry2 图形2，支持 MULTI_POINT、LINE、POLYGON
+     * @return 如果交叉则返回true
+     */
+    public static boolean booleanCrosses(Geometry geometry1, Geometry geometry2) {
+        if (geometry1 == null) {
+            throw new TaleException("geometry1 is required");
+        }
+        if (geometry2 == null) {
+            throw new TaleException("geometry2 is required");
+        }
+
+        GeometryType t1 = geometry1.type(), t2 = geometry2.type();
+
+        switch (t1) {
+            case MULTI_POINT:
+                switch (t2) {
+                    case LINE:
+                        return BooleanCrossesHelper.doMultiPointAndLineStringCross(MultiPoint.multiPoint(geometry1), Line.line(geometry2));
+                    case POLYGON:
+                        return BooleanCrossesHelper.doesMultiPointCrossPoly(MultiPoint.multiPoint(geometry1), Polygon.polygon(geometry2));
+                    default:
+                        throw new TaleException("geometry2 " + t2 + " not supported");
+                }
+            case LINE:
+                switch (t2) {
+                    case MULTI_POINT:
+                        return BooleanCrossesHelper.doMultiPointAndLineStringCross(MultiPoint.multiPoint(geometry2), Line.line(geometry1));
+                    case LINE:
+                        return BooleanCrossesHelper.doLineStringsCross(Line.line(geometry1), Line.line(geometry2));
+                    case POLYGON:
+                        return BooleanCrossesHelper.doLineStringAndPolygonCross(Line.line(geometry1), Polygon.polygon(geometry2));
+                    default:
+                        throw new TaleException("geometry1 " + t2 + " not supported");
+                }
+            case POLYGON:
+                switch (t2) {
+                    case MULTI_POINT:
+                        return BooleanCrossesHelper.doesMultiPointCrossPoly(MultiPoint.multiPoint(geometry2), Polygon.polygon(geometry1));
+                    case LINE:
+                        return BooleanCrossesHelper.doLineStringAndPolygonCross(Line.line(geometry2), Polygon.polygon(geometry1));
+                    default:
+                        throw new TaleException("geometry1 " + t2 + " not supported");
+                }
+            default:
+                throw new TaleException("geometry1 " + t1 + " not supported");
+        }
     }
 
 }

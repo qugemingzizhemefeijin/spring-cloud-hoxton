@@ -13,12 +13,19 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 2, 3, 1, 4});
-        Point point = Point.fromLngLat(1, 2);
-        Line line2 = Line.fromLngLats(new double[]{1, 1, 1, 4});
+        Line line1 = Line.fromLngLats(new double[]{-2, 2, 4, 2});
+        Line line2 = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
+        System.out.println(TaleMisc.booleanCrosses(line1, line2));
 
-        System.out.println(TaleBooleans.booleanWithin(point, line));
-        System.out.println(TaleBooleans.booleanWithin(line2, line));
+//        Polygon polygon = Polygon.fromLngLats(new double[]{125, -30, 145, -30, 145, -20, 125, -20, 125, -30});
+//        System.out.println(TaleFeatureConversion.polygonToLine(polygon));
+
+//        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 2, 3, 1, 4});
+//        Point point = Point.fromLngLat(1, 2);
+//        Line line2 = Line.fromLngLats(new double[]{1, 1, 1, 4});
+//
+//        System.out.println(TaleBooleans.booleanWithin(point, line));
+//        System.out.println(TaleBooleans.booleanWithin(line2, line));
 
 //        Polygon poly1 = Polygon.fromLngLats(new double[]{0, 0, 0, 5, 5, 5, 5, 0, 0, 0});
 //        Polygon poly2 = Polygon.fromLngLats(new double[]{1, 1, 1, 6, 6, 6, 6, 1, 1, 1});
