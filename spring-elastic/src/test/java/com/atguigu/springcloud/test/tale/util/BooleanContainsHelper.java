@@ -7,7 +7,7 @@ import com.atguigu.springcloud.test.tale.shape.*;
 /**
  * 判断是否包含辅助类
  */
-public class BooleanContainsHelper {
+public final class BooleanContainsHelper {
 
     public BooleanContainsHelper() {
         throw new AssertionError("No Instances.");

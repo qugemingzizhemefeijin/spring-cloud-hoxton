@@ -479,4 +479,14 @@ public final class TaleBooleans {
         return BooleanContainsHelper.booleanContains(geometry1, geometry2);
     }
 
+    /**
+     * 检查图形是否是有效的
+     *
+     * @param geometry 图形
+     * @return 如果图形有效则返回true
+     */
+    public static boolean booleanValid(Geometry geometry) {
+        return BooleanValidHelper.booleanValid(geometry);
+    }
+
 }

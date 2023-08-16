@@ -54,6 +54,10 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>, M
         return new MultiLine(multiLine);
     }
 
+    public static MultiLine multiLine(Geometry geometry) {
+        return (MultiLine) geometry;
+    }
+
     @Override
     public List<List<Point>> coordinates() {
         return coordinates;

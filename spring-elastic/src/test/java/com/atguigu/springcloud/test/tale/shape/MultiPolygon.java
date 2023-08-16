@@ -47,7 +47,7 @@ public final class MultiPolygon implements CoordinateContainer<List<List<Point>>
     }
 
     public static MultiPolygon multiPolygon(Geometry geometry) {
-        return (MultiPolygon)geometry;
+        return (MultiPolygon) geometry;
     }
 
     public List<Polygon> polygons() {

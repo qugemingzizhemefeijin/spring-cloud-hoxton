@@ -603,4 +603,63 @@ public final class TaleHelper {
         return false;
     }
 
+    /**
+     * 判断点集合是否是闭合的，常用于判断Polygon的点集合
+     *
+     * @param pointList 点集合
+     * @return 如果首尾两个点一致，则返回true
+     */
+    public static boolean checkRingsClose(List<Point> pointList) {
+        if (pointList == null || pointList.size() < 2) {
+            return false;
+        }
+
+        return equals(pointList.get(0), pointList.get(pointList.size() - 1));
+    }
+
+    /**
+     * 检查点集合是否有来回穿刺，常用于判断Polygon的点集合
+     *
+     * @param pointList 点集合
+     * @return 如果有穿刺，则返回true
+     */
+    public static boolean checkRingsForSpikesPunctures(List<Point> pointList) {
+        if (pointList == null || pointList.size() < 2) {
+            return false;
+        }
+
+        int size = pointList.size();
+        for (int i = 0; i < size - 1; i++) {
+            Point point = pointList.get(i);
+            for (int ii = i + 1; ii < size - 2; ii++) {
+                if (isPointOnLine(point, Line.fromLngLats(pointList.get(ii), pointList.get(ii + 1)))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 如果传入的点集合与另一个点组集合是否正常（不相交，但是又交叉）
+     *
+     * @param poly  要判断的点集合
+     * @param geom  点组集合
+     * @param index 从geom的哪个位置开始循环
+     * @return 如果正常则返回true
+     */
+    public static boolean checkPolygonAgainstOthers(List<Point> poly, List<List<Point>> geom, int index) {
+        Polygon polyToCheck = Polygon.fromLngLats(poly);
+        for (int i = index + 1, size = geom.size(); i < size; i++) {
+            // 判断是否不相交
+            if (!TaleBooleans.booleanDisjoint(polyToCheck, Polygon.fromLngLats(geom.get(i)))) {
+                // 判断是否交叉
+                if (TaleBooleans.booleanCrosses(polyToCheck, Line.fromLngLats(geom.get(i)))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

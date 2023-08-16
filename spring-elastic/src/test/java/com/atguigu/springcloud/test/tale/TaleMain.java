@@ -13,8 +13,11 @@ public class TaleMain {
         // [0, 1], [2, 1], [e, n], [x, n]
 
         Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
-        Point point = Point.fromLngLat(1, 2);
-        System.out.println(TaleBooleans.booleanContains(line, point));
+        System.out.println(TaleBooleans.booleanValid(line));
+
+//        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
+//        Point point = Point.fromLngLat(1, 2);
+//        System.out.println(TaleBooleans.booleanContains(line, point));
 
 //        Point point = Point.fromLngLat(2, 2);
 //        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
