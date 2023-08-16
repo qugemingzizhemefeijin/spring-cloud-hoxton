@@ -256,7 +256,7 @@ public final class TaleHelper {
     }
 
     /**
-     * 判断点是否在线中
+     * 判断点是否在线中（不忽略线段的两端）
      *
      * @param pt   要判断的点
      * @param line 线段
@@ -504,7 +504,7 @@ public final class TaleHelper {
     }
 
     /**
-     * 判断point是否位于start和end之间的线段上（不忽略线的两段）
+     * 判断point是否位于start和end之间的线段上（不忽略线的两端）
      *
      * @param start 开始的点
      * @param end   结束的点
@@ -512,23 +512,7 @@ public final class TaleHelper {
      * @return 在线段上则返回true
      */
     public static boolean isPointOnLineSegment(Point start, Point end, Point point) {
-        double x = point.getLongitude(), y = point.getLatitude();
-        double startX = start.getLongitude(), startY = start.getLatitude();
-        double endX = end.getLongitude(), endY = end.getLatitude();
-
-        double dxc = x - startX;
-        double dyc = y - startY;
-        double dxl = endX - startX;
-        double dyl = endY - startY;
-        double cross = dxc * dyl - dyc * dxl;
-
-        if (cross != 0) {
-            return false;
-        } else if (Math.abs(dxl) >= Math.abs(dyl)) {
-            return dxl > 0 ? startX <= x && x <= endX : endX <= x && x <= startX;
-        } else {
-            return dyl > 0 ? startY <= y && y <= endY : endY <= y && y <= startY;
-        }
+        return isPointOnLineSegment(start, end, point, true);
     }
 
     /**

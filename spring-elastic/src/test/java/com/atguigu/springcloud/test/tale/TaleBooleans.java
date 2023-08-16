@@ -464,4 +464,19 @@ public final class TaleBooleans {
         return bool.value;
     }
 
+    /**
+     * 判断是否包含<br><br>
+     * <p>
+     * 如果第二个几何图形完全包含在第一个几何图形中，则Boolean-contains返回True。
+     * 两个几何图形的内部必须相交，次要图形的内部和边界(几何图形b)不能与主要图形的外部(几何图形a)相交。
+     * Boolean-contains返回与@turf/boolean-within完全相反的结果。
+     *
+     * @param geometry1 图形1
+     * @param geometry2 图形2
+     * @return 如果图形1包含图形2则返回true
+     */
+    public static boolean booleanContains(Geometry geometry1, Geometry geometry2) {
+        return BooleanContainsHelper.booleanContains(geometry1, geometry2);
+    }
+
 }
