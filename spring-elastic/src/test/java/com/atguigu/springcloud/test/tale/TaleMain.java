@@ -1,8 +1,10 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.shape.Line;
+import com.atguigu.springcloud.test.tale.shape.BoundingBox;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 public class TaleMain {
@@ -12,9 +14,13 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point point = Point.fromLngLat(1, 2);
-        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
-        System.out.println(TaleBooleans.booleanIntersects(line, point));
+        List<Point> points = TaleRandom.randomPoint(100, BoundingBox.fromLngLats(new double[]{-80, 30, -60, 60}));
+        List<Point> sample = TaleData.sample(points, 5);
+        System.out.println(sample);
+
+//        Point point = Point.fromLngLat(1, 2);
+//        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
+//        System.out.println(TaleBooleans.booleanIntersects(line, point));
 
 //        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
 //        System.out.println(TaleBooleans.booleanValid(line));

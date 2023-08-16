@@ -6,6 +6,7 @@ import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -660,6 +661,35 @@ public final class TaleHelper {
             }
         }
         return true;
+    }
+
+    /**
+     * 深度克隆点集合
+     *
+     * @param pointList 要被克隆的点集合
+     * @return 新的点集合
+     */
+    public static List<Point> deepCloneList(List<Point> pointList) {
+        List<Point> list = new ArrayList<>(pointList.size());
+        for (Point point : pointList) {
+            list.add(point.deepClone());
+        }
+        return list;
+    }
+
+    /**
+     * 深度克隆点集合
+     *
+     * @param pointList 要被克隆的点集合
+     * @return 新的点集合
+     */
+    public static Point[] deepCloneArray(List<Point> pointList) {
+        int size = pointList.size();
+        Point[] array = new Point[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = pointList.get(i).deepClone();
+        }
+        return array;
     }
 
 }
