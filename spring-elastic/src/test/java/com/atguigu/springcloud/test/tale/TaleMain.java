@@ -2,7 +2,6 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
-import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -13,9 +12,14 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line1 = Line.fromLngLats(new double[]{-2, 2, 4, 2});
-        Line line2 = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
-        System.out.println(TaleMisc.booleanCrosses(line1, line2));
+        Point point = Point.fromLngLat(2, 2);
+        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
+
+        System.out.println(TaleBooleans.booleanDisjoint(point, line));
+
+//        Line line1 = Line.fromLngLats(new double[]{-2, 2, 4, 2});
+//        Line line2 = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
+//        System.out.println(TaleBooleans.booleanCrosses(line1, line2));
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{125, -30, 145, -30, 145, -20, 125, -20, 125, -30});
 //        System.out.println(TaleFeatureConversion.polygonToLine(polygon));

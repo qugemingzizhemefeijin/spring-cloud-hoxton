@@ -256,6 +256,23 @@ public final class TaleHelper {
     }
 
     /**
+     * 判断点是否在线中
+     *
+     * @param pt   要判断的点
+     * @param line 线段
+     * @return 如果pt在line中，则返回true
+     */
+    public static boolean isPointOnLine(Point pt, Line line) {
+        List<Point> points = line.coordinates();
+        for (int i = 0, size = points.size(); i < size - 1; i++) {
+            if (isPointOnLineSegment(points.get(i), points.get(i + 1), pt)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 判断点是否在点组合中
      *
      * @param pt 要判断的点

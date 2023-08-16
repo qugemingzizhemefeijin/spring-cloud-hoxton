@@ -2,9 +2,8 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
-import com.atguigu.springcloud.test.tale.util.Equality;
-import com.atguigu.springcloud.test.tale.util.TaleHelper;
-import com.atguigu.springcloud.test.tale.util.TalePointInPolygonHelper;
+import com.atguigu.springcloud.test.tale.util.*;
+import org.omg.CORBA.BooleanHolder;
 import org.omg.CORBA.IntHolder;
 
 import java.util.List;
@@ -383,6 +382,86 @@ public final class TaleBooleans {
             default:
                 throw new TaleException("geometry1 " + type1 + " geometry not supported");
         }
+    }
+
+    /**
+     * 判断是否交叉<br><br>
+     * <p>
+     * 如果交集产生的几何图形的维数比两个源几何图形的最大维数小1，并且交集集位于两个源几何图形的内部，则返回True。
+     *
+     * @param geometry1 图形1，支持 MULTI_POINT、LINE、POLYGON
+     * @param geometry2 图形2，支持 MULTI_POINT、LINE、POLYGON
+     * @return 如果交叉则返回true
+     */
+    public static boolean booleanCrosses(Geometry geometry1, Geometry geometry2) {
+        if (geometry1 == null) {
+            throw new TaleException("geometry1 is required");
+        }
+        if (geometry2 == null) {
+            throw new TaleException("geometry2 is required");
+        }
+
+        GeometryType t1 = geometry1.type(), t2 = geometry2.type();
+
+        switch (t1) {
+            case MULTI_POINT:
+                switch (t2) {
+                    case LINE:
+                        return BooleanCrossesHelper.doMultiPointAndLineStringCross(MultiPoint.multiPoint(geometry1), Line.line(geometry2));
+                    case POLYGON:
+                        return BooleanCrossesHelper.doesMultiPointCrossPoly(MultiPoint.multiPoint(geometry1), Polygon.polygon(geometry2));
+                    default:
+                        throw new TaleException("geometry2 " + t2 + " not supported");
+                }
+            case LINE:
+                switch (t2) {
+                    case MULTI_POINT:
+                        return BooleanCrossesHelper.doMultiPointAndLineStringCross(MultiPoint.multiPoint(geometry2), Line.line(geometry1));
+                    case LINE:
+                        return BooleanCrossesHelper.doLineStringsCross(Line.line(geometry1), Line.line(geometry2));
+                    case POLYGON:
+                        return BooleanCrossesHelper.doLineStringAndPolygonCross(Line.line(geometry1), Polygon.polygon(geometry2));
+                    default:
+                        throw new TaleException("geometry1 " + t2 + " not supported");
+                }
+            case POLYGON:
+                switch (t2) {
+                    case MULTI_POINT:
+                        return BooleanCrossesHelper.doesMultiPointCrossPoly(MultiPoint.multiPoint(geometry2), Polygon.polygon(geometry1));
+                    case LINE:
+                        return BooleanCrossesHelper.doLineStringAndPolygonCross(Line.line(geometry2), Polygon.polygon(geometry1));
+                    default:
+                        throw new TaleException("geometry1 " + t2 + " not supported");
+                }
+            default:
+                throw new TaleException("geometry1 " + t1 + " not supported");
+        }
+    }
+
+    /**
+     * 判断是否不相交 <br><br>
+     * <p>
+     * 如果两个几何图形的交集为空集，则返回(TRUE)。
+     *
+     * @param geometry1 图形1
+     * @param geometry2 图形2
+     * @return 如果图形不相交，则返回true
+     */
+    public static boolean booleanDisjoint(Geometry geometry1, Geometry geometry2) {
+        BooleanHolder bool = new BooleanHolder(true);
+        TaleMeta.flattenEach(geometry1, (g1, m1) -> {
+            TaleMeta.flattenEach(geometry2, (g2, m2) -> {
+                if (!bool.value) {
+                    return false;
+                }
+                bool.value = BooleanDisjointHelper.disjoint(g1, g2);
+                return true;
+            });
+
+            return true;
+        });
+
+        return bool.value;
     }
 
 }
