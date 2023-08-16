@@ -489,4 +489,30 @@ public final class TaleBooleans {
         return BooleanValidHelper.booleanValid(geometry);
     }
 
+    /**
+     * 判断两个图形是否有交集（就是循环迭代图形，并对 booleanDisjoint 取反）
+     *
+     * @param geometry1 图形1
+     * @param geometry2 图形2
+     * @return 如果两个图形有交集则返回true
+     */
+    public static boolean booleanIntersects(Geometry geometry1, Geometry geometry2) {
+        BooleanHolder bool = new BooleanHolder();
+
+        TaleMeta.flattenEach(geometry1, (g1, multiIndex1) -> {
+            TaleMeta.flattenEach(geometry2, (g2, multiIndex2) -> {
+                boolean b = !TaleBooleans.booleanDisjoint(g1, g2);
+                if (b) {
+                    bool.value = true;
+                    return false; // 只要有相交，则跳出循环
+                }
+                return true;
+            });
+
+            return !bool.value; // 只要有相交，则跳出循环
+        });
+
+        return bool.value;
+    }
+
 }

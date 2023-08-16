@@ -12,8 +12,12 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
+        Point point = Point.fromLngLat(1, 2);
         Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
-        System.out.println(TaleBooleans.booleanValid(line));
+        System.out.println(TaleBooleans.booleanIntersects(line, point));
+
+//        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
+//        System.out.println(TaleBooleans.booleanValid(line));
 
 //        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
 //        Point point = Point.fromLngLat(1, 2);
