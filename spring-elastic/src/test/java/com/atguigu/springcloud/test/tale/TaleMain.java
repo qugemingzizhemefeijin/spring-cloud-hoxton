@@ -1,10 +1,8 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.shape.BoundingBox;
 import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Slf4j
 public class TaleMain {
@@ -14,9 +12,23 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        List<Point> points = TaleRandom.randomPoint(100, BoundingBox.fromLngLats(new double[]{-80, 30, -60, 60}));
-        List<Point> sample = TaleData.sample(points, 5);
-        System.out.println(sample);
+        Polygon polygon = TaleRandom.randomPolygon(new double[]{116.293885D, 39.839408D, 116.464635D, 39.982417D});
+        System.out.println(polygon);
+
+        int i = 0;
+        for (Point p : polygon.coordinates()) {
+            if (i > 0) {
+                System.out.print(",");
+            }
+            System.out.print("new BMap.Point("+p.getX()+","+p.getY()+")");
+            i++;
+        }
+
+        //System.out.println(TaleRandom.randomLine());
+
+//        List<Point> points = TaleRandom.randomPoint(100, new double[]{-80, 30, -60, 60});
+//        List<Point> sample = TaleData.sample(points, 5);
+//        System.out.println(sample);
 
 //        Point point = Point.fromLngLat(1, 2);
 //        Line line = Line.fromLngLats(new double[]{1, 1, 1, 2, 1, 3, 1, 4});
