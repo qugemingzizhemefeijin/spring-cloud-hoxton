@@ -2,6 +2,7 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
+import com.atguigu.springcloud.test.tale.util.Units;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -11,18 +12,22 @@ public class TaleMain {
         // x, n, e, n
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
+        Point from = Point.fromLngLat(-75.343, 39.984);
+        Point to = Point.fromLngLat(-75.534, 39.123);
 
-        Polygon polygon = TaleRandom.randomPolygon(new double[]{116.293885D, 39.839408D, 116.464635D, 39.982417D});
-        System.out.println(polygon);
+        System.out.println(TaleMeasurement.rhumbDistance(from, to, Units.MILES));
 
-        int i = 0;
-        for (Point p : polygon.coordinates()) {
-            if (i > 0) {
-                System.out.print(",");
-            }
-            System.out.print("new BMap.Point("+p.getX()+","+p.getY()+")");
-            i++;
-        }
+//        Polygon polygon = TaleRandom.randomPolygon(new double[]{116.293885D, 39.839408D, 116.464635D, 39.982417D});
+//        System.out.println(polygon);
+//
+//        int i = 0;
+//        for (Point p : polygon.coordinates()) {
+//            if (i > 0) {
+//                System.out.print(",");
+//            }
+//            System.out.print("new BMap.Point("+p.getX()+","+p.getY()+")");
+//            i++;
+//        }
 
         //System.out.println(TaleRandom.randomLine());
 
