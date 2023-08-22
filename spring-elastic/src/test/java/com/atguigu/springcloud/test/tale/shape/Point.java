@@ -1,5 +1,7 @@
 package com.atguigu.springcloud.test.tale.shape;
 
+import com.atguigu.springcloud.test.tale.exception.TaleException;
+
 public final class Point implements CoordinateContainer<Point, Point>, Comparable<Point> {
 
     private double longitude;
@@ -19,7 +21,7 @@ public final class Point implements CoordinateContainer<Point, Point>, Comparabl
         if (coords.length == 2) {
             return Point.fromLngLat(coords[0], coords[1]);
         }
-        return null;
+        throw new TaleException("point must two number");
     }
 
     public static Point fromLngLat(Point p) {
@@ -76,6 +78,10 @@ public final class Point implements CoordinateContainer<Point, Point>, Comparabl
     @Override
     public int coordsSize() {
         return 1;
+    }
+
+    public double[] getCoord() {
+        return new double[]{longitude, latitude};
     }
 
     @Override

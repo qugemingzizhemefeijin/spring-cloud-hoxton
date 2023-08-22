@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.GreatCircle;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
 import com.atguigu.springcloud.test.tale.util.Units;
 
@@ -616,6 +617,39 @@ public final class TaleMeasurement {
         }
 
         return coords.get(coords.size() - 1);
+    }
+
+    /**
+     * 计算两点间的弧线<br>
+     * 将大圆路径计算为 Line，默认返回100个点
+     *
+     * @param start   起始点
+     * @param end     目标点
+     * @return 返回弧线，可能为空，Line 或 MultiLine
+     */
+    public static Geometry greatCircle(Point start, Point end) {
+        return greatCircle(start, end, 100, 0);
+    }
+
+    /**
+     * 计算两点间的弧线<br>
+     * 将大圆路径计算为 Line
+     *
+     * @param start   起始点
+     * @param end     目标点
+     * @param npoints 点的数量，如果小于等于0则默认为100
+     * @param offset  偏移量控制了跨越日期线的线条被分割的概率。数值越高，可能性越大。如果小于等于0则默认为10
+     * @return 返回弧线，可能为空，Line 或 MultiLine
+     */
+    public static Geometry greatCircle(Point start, Point end, int npoints, int offset) {
+        if (npoints <= 0) {
+            npoints = 100;
+        }
+        if (offset <= 0) {
+            offset = 10;
+        }
+
+        return GreatCircle.arc(start, end, npoints, offset);
     }
 
 }
