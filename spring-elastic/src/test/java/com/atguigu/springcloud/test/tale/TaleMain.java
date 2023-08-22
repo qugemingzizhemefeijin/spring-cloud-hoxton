@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import com.atguigu.springcloud.test.tale.util.Units;
@@ -12,10 +13,21 @@ public class TaleMain {
         // x, n, e, n
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
-        Point from = Point.fromLngLat(-75.343, 39.984);
-        Point to = Point.fromLngLat(-75.534, 39.123);
 
-        System.out.println(TaleMeasurement.rhumbDistance(from, to, Units.MILES));
+        Polygon polygon = Polygon.fromLngLats(new double[]{116.363162,39.952888,116.439913,39.955543,116.44365,39.908183,116.451124,39.904862,116.451412,39.876961,116.357126,39.87386,116.355401,39.903755,116.364312,39.905526,116.363162,39.952888,116.388387,39.928824,116.412533,39.930318,116.413324,39.907353,116.390543,39.906689,116.388387,39.928824});
+        System.out.println(TaleMeasurement.centroid(polygon));
+
+        Point centroid = Point.fromLngLat(116.39637320000001D, 39.9192908);
+        Point rightPoint = TaleMeasurement.destination(centroid, 5, -90);
+        System.out.println(rightPoint);
+
+        Line line = Line.fromLngLats(Point.fromLngLat(116.337743482095, 39.9192760365798), Point.fromLngLat(116.45500291790505, 39.9192760365798));
+        
+
+//        Point from = Point.fromLngLat(-75.343, 39.984);
+//        Point to = Point.fromLngLat(-75.534, 39.123);
+//
+//        System.out.println(TaleMeasurement.rhumbDistance(from, to, Units.MILES));
 
 //        Polygon polygon = TaleRandom.randomPolygon(new double[]{116.293885D, 39.839408D, 116.464635D, 39.982417D});
 //        System.out.println(polygon);
