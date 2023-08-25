@@ -1,10 +1,12 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.enums.Orientation;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.BezierSpline;
 import com.atguigu.springcloud.test.tale.util.TailClipHelper;
-import com.atguigu.springcloud.test.tale.util.Units;
+import com.atguigu.springcloud.test.tale.enums.Units;
+import com.atguigu.springcloud.test.tale.util.TransformScaleHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +160,85 @@ public final class TaleTransformation {
             return null;
         }
         return Line.fromLngLats(coords);
+    }
+
+    /**
+     * 缩放
+     * <p>
+     * 将GeoJSON从质心缩放一个因子（例如：factor=2会使GeoJSON大200%）。
+     *
+     * @param geometry    要缩放的组件
+     * @param factor      缩放比
+     * @return 返回缩放后的图形组件
+     */
+    public static <T extends Geometry> T transformScale(T geometry, double factor) {
+        Point origin = TransformScaleHelper.defineOrigin(geometry, null);
+
+        return transformScale(geometry, factor, origin, false);
+    }
+
+    /**
+     * 缩放
+     * <p>
+     * 将GeoJSON从给定点缩放一个因子（例如：factor=2会使GeoJSON大200%）。
+     *
+     * @param geometry    要缩放的组件
+     * @param factor      缩放比
+     * @param orientation 缩放开始的点位，默认为质心
+     * @return 返回缩放后的图形组件
+     */
+    public static <T extends Geometry> T transformScale(T geometry, double factor, Orientation orientation) {
+        Point origin = TransformScaleHelper.defineOrigin(geometry, orientation);
+
+        return transformScale(geometry, factor, origin, false);
+    }
+
+    /**
+     * 缩放
+     * <p>
+     * 将GeoJSON从给定点缩放一个因子（例如：factor=2会使GeoJSON大200%）。
+     *
+     * @param geometry    要缩放的组件
+     * @param factor      缩放比
+     * @param orientation 缩放开始的点位，默认为质心
+     * @param mutate      是否影响原图形坐标（如果为真，性能将显著提高）
+     * @return 返回缩放后的图形组件
+     */
+    public static <T extends Geometry> T transformScale(T geometry, double factor, Orientation orientation, boolean mutate) {
+        Point origin = TransformScaleHelper.defineOrigin(geometry, orientation);
+
+        return transformScale(geometry, factor, origin, mutate);
+    }
+
+    /**
+     * 缩放
+     * <p>
+     * 将GeoJSON从给定点缩放一个因子（例如：factor=2会使GeoJSON大200%）。
+     *
+     * @param geometry 要缩放的组件
+     * @param factor   缩放比
+     * @param origin   缩放开始的点
+     * @return 返回缩放后的图形组件
+     */
+    public static <T extends Geometry> T transformScale(T geometry, double factor, Point origin) {
+        return transformScale(geometry, factor, origin, false);
+    }
+
+    /**
+     * 缩放
+     * <p>
+     * 将GeoJSON从给定点缩放一个因子（例如：factor=2会使GeoJSON大200%）。
+     *
+     * @param geometry 要缩放的组件
+     * @param factor   缩放比
+     * @param origin   缩放开始的点
+     * @param mutate   是否影响原图形坐标（如果为真，性能将显著提高）
+     * @return 返回缩放后的图形组件
+     */
+    public static <T extends Geometry> T transformScale(T geometry, double factor, Point origin, boolean mutate) {
+        T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
+
+        return TransformScaleHelper.scale(newGeometry, factor, origin);
     }
 
 }

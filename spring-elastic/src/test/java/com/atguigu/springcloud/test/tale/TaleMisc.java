@@ -5,7 +5,7 @@ import com.atguigu.springcloud.test.tale.models.IntersectsResult;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.ObjectHolder;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
-import com.atguigu.springcloud.test.tale.util.Units;
+import com.atguigu.springcloud.test.tale.enums.Units;
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;

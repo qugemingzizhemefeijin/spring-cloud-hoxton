@@ -2,6 +2,7 @@ package com.atguigu.springcloud.test.tale.util;
 
 import com.atguigu.springcloud.test.tale.TaleBooleans;
 import com.atguigu.springcloud.test.tale.TaleMeasurement;
+import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.google.common.collect.Maps;
@@ -130,6 +131,26 @@ public final class TaleHelper {
      */
     public static double lengthToDegrees(double distance, Units units) {
         return radiansToDegrees(lengthToRadians(distance, units));
+    }
+
+    /**
+     * 将长度转换为指定的单位。
+     * 有效单位：MILES, NAUTICAL_MILES, INCHES, YARDS, METERS, METRES, KILOMETERS, CENTIMETERS, FEET
+     *
+     * @param distance     要转换的长度
+     * @param originalUnit 原始单位
+     * @param finalUnit    转换为的指定单位
+     * @return 返回转换之后的长度
+     */
+    public static double convertLength(double distance, Units originalUnit, Units finalUnit) {
+        if (distance < 0) {
+            throw new TaleException("length must be a positive number");
+        }
+        if (originalUnit == finalUnit) {
+            return distance;
+        }
+
+        return radiansToLength(lengthToRadians(distance, originalUnit), finalUnit);
     }
 
     /**

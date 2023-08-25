@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.test.tale.util;
+package com.atguigu.springcloud.test.tale.enums;
 
 public enum Units {
 

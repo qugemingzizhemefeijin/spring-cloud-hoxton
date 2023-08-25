@@ -1,7 +1,7 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
-import com.atguigu.springcloud.test.tale.util.Units;
+import com.atguigu.springcloud.test.tale.enums.Units;
 
 public final class TaleUnitConversion {
 

@@ -3,6 +3,7 @@ package com.atguigu.springcloud.test.tale;
 import com.atguigu.springcloud.test.tale.shape.Geometry;
 import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -13,13 +14,18 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point start = Point.fromLngLat(-122, 48);
-        Point end = Point.fromLngLat(-77, 39);
+        Polygon polygon = Polygon.fromLngLats(new double[]{0, 29, 3.5, 29, 2.5, 32, 0, 29});
+        System.out.println(TaleMeasurement.centroid(polygon));
+        System.out.println(TaleTransformation.transformScale(polygon, 3));
 
-        Geometry g = TaleMeasurement.greatCircle(start, end);
-        for (Point p : Line.line(g).coordinates()) {
-            System.out.println(p.getX()+","+p.getY());
-        }
+
+//        Point start = Point.fromLngLat(-122, 48);
+//        Point end = Point.fromLngLat(-77, 39);
+//
+//        Geometry g = TaleMeasurement.greatCircle(start, end);
+//        for (Point p : Line.line(g).coordinates()) {
+//            System.out.println(p.getX()+","+p.getY());
+//        }
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{116.363162,39.952888,116.439913,39.955543,116.44365,39.908183,116.451124,39.904862,116.451412,39.876961,116.357126,39.87386,116.355401,39.903755,116.364312,39.905526,116.363162,39.952888,116.388387,39.928824,116.412533,39.930318,116.413324,39.907353,116.390543,39.906689,116.388387,39.928824});
 //        System.out.println(TaleMeasurement.centroid(polygon));
