@@ -5,6 +5,7 @@ import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.BezierSpline;
+import com.atguigu.springcloud.test.tale.util.LineOffsetHelper;
 import com.atguigu.springcloud.test.tale.util.TailClipHelper;
 import com.atguigu.springcloud.test.tale.util.TransformScaleHelper;
 
@@ -378,6 +379,44 @@ public final class TaleTransformation {
         });
 
         return newGeometry;
+    }
+
+    /**
+     * 多线段偏移
+     * <p>
+     * 获取一条线并返回具有指定距离偏移量的线。
+     *
+     * @param geometry 偏移的线段，仅支持 Line、MultiLine
+     * @param distance 偏移线的距离（可以是负值），默认单位公里
+     * @return 返回偏移后的线
+     */
+    public static <T extends Geometry> T lineOffset(T geometry, double distance) {
+        return lineOffset(geometry, distance, null);
+    }
+
+    /**
+     * 多线段偏移
+     * <p>
+     * 获取一条线并返回具有指定距离偏移量的线。
+     *
+     * @param geometry 偏移的线段，仅支持 Line、MultiLine
+     * @param distance 偏移线的距离（可以是负值）
+     * @param units    距离单位，支持 DEGREES，RADIANS，MILES，KILOMETERS，INCHES，YARDS，METERS，不填写则默认为 KILOMETERS
+     * @return 返回偏移后的线
+     */
+    public static <T extends Geometry> T lineOffset(T geometry, double distance, Units units) {
+        if (geometry == null) {
+            throw new TaleException("geometry is required");
+        }
+
+        if (distance == 0) {
+            return geometry;
+        }
+        if (units == null) {
+            units = Units.KILOMETERS;
+        }
+
+        return LineOffsetHelper.lineOffset(geometry, distance, units);
     }
 
 }
