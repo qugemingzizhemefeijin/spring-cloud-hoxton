@@ -1,12 +1,13 @@
 package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.enums.Orientation;
+import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.BezierSpline;
 import com.atguigu.springcloud.test.tale.util.TailClipHelper;
-import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.util.TransformScaleHelper;
+import com.atguigu.springcloud.test.tale.util.TransformTranslateHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -239,6 +240,73 @@ public final class TaleTransformation {
         T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
 
         return TransformScaleHelper.scale(newGeometry, factor, origin);
+    }
+
+    /**
+     * 平移
+     * <p>
+     * 在给定的方向角上沿恒向线移动指定距离（单位公里）。
+     *
+     * @param geometry  要平移的组件
+     * @param distance  运动的长度;负值决定相反方向的运动
+     * @param direction 向北的角度，顺时针正
+     * @param mutate    是否影响原图形坐标（如果为真，性能将显著提高）
+     * @return 返回平移后的图形组件
+     */
+    public static <T extends Geometry> T transformTranslate(T geometry, double distance, double direction, boolean mutate) {
+        return transformTranslate(geometry, distance, direction, null, mutate);
+    }
+
+    /**
+     * 平移
+     * <p>
+     * 在给定的方向角上沿恒向线移动指定距离（单位公里）。
+     *
+     * @param geometry  要平移的组件
+     * @param distance  运动的长度;负值决定相反方向的运动
+     * @param direction 向北的角度，顺时针正
+     * @return 返回平移后的图形组件
+     */
+    public static <T extends Geometry> T transformTranslate(T geometry, double distance, double direction) {
+        return transformTranslate(geometry, distance, direction, null, false);
+    }
+
+    /**
+     * 平移
+     * <p>
+     * 在给定的方向角上沿恒向线移动指定距离。
+     *
+     * @param geometry  要平移的组件
+     * @param distance  运动的长度;负值决定相反方向的运动
+     * @param direction 向北的角度，顺时针正
+     * @param units     距离单位，为空默认为公里，支持 MILES、 KILOMETERS、 DEGREES OR RADIANS
+     * @return 返回平移后的图形组件
+     */
+    public static <T extends Geometry> T transformTranslate(T geometry, double distance, double direction, Units units) {
+        return transformTranslate(geometry, distance, direction, units, false);
+    }
+
+    /**
+     * 平移
+     * <p>
+     * 在给定的方向角上沿恒向线移动指定距离。
+     *
+     * @param geometry  要平移的组件
+     * @param distance  运动的长度;负值决定相反方向的运动
+     * @param direction 向北的角度，顺时针正
+     * @param units     距离单位，为空默认为公里，支持 MILES、 KILOMETERS、 DEGREES OR RADIANS
+     * @param mutate    是否影响原图形坐标（如果为真，性能将显著提高）
+     * @return 返回平移后的图形组件
+     */
+    public static <T extends Geometry> T transformTranslate(T geometry, double distance, double direction, Units units, boolean mutate) {
+        T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
+
+        // 没有产生任何位移，则直接返回
+        if (distance == 0) {
+            return newGeometry;
+        }
+
+        return TransformTranslateHelper.transformTranslate(newGeometry, distance, direction, units);
     }
 
 }
