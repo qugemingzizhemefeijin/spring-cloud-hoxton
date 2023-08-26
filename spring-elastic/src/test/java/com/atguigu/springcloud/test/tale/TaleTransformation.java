@@ -7,7 +7,6 @@ import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.BezierSpline;
 import com.atguigu.springcloud.test.tale.util.TailClipHelper;
 import com.atguigu.springcloud.test.tale.util.TransformScaleHelper;
-import com.atguigu.springcloud.test.tale.util.TransformTranslateHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -299,14 +298,86 @@ public final class TaleTransformation {
      * @return 返回平移后的图形组件
      */
     public static <T extends Geometry> T transformTranslate(T geometry, double distance, double direction, Units units, boolean mutate) {
-        T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
-
         // 没有产生任何位移，则直接返回
         if (distance == 0) {
-            return newGeometry;
+            return geometry;
         }
 
-        return TransformTranslateHelper.transformTranslate(newGeometry, distance, direction, units);
+        T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
+
+        double d = distance < 0 ? -distance : distance;
+        double bearing = distance < 0 ? direction + 180 : direction;
+
+        TaleMeta.coordEach(newGeometry, (g, p, index, multiIndex, geomIndex) -> {
+            p.setCoordinates(TaleMeasurement.rhumbDestination(p, d, bearing, units));
+
+            return true;
+        });
+
+        return newGeometry;
+    }
+
+    /**
+     * 旋转（围绕质心）
+     * <p>
+     * 旋转任何组件，围绕其质心或一个给定的枢轴点;所有的旋转都遵循右手规则:https://en.wikipedia.org/wiki/righthand_rule
+     *
+     * @param geometry 要旋转的组件
+     * @param angle    旋转角度，顺时针方向
+     * @return 返回旋转后的图形组件
+     */
+    public static <T extends Geometry> T transformRotate(T geometry, double angle) {
+        return transformRotate(geometry, angle, null, false);
+    }
+
+    /**
+     * 旋转
+     * <p>
+     * 旋转任何组件，围绕其质心或一个给定的枢轴点;所有的旋转都遵循右手规则:https://en.wikipedia.org/wiki/righthand_rule
+     *
+     * @param geometry 要旋转的组件
+     * @param angle    旋转角度，顺时针方向
+     * @param pivot    围绕其执行旋转的点，为空默认为质心
+     * @return 返回旋转后的图形组件
+     */
+    public static <T extends Geometry> T transformRotate(T geometry, double angle, Point pivot) {
+        return transformRotate(geometry, angle, pivot, false);
+    }
+
+    /**
+     * 旋转
+     * <p>
+     * 旋转任何组件，围绕其质心或一个给定的枢轴点;所有的旋转都遵循右手规则:https://en.wikipedia.org/wiki/righthand_rule
+     *
+     * @param geometry 要旋转的组件
+     * @param angle    旋转角度，顺时针方向
+     * @param pivot    围绕其执行旋转的点，为空默认为质心
+     * @param mutate   是否影响原图形坐标（如果为真，性能将显著提高）
+     * @return 返回旋转后的图形组件
+     */
+    public static <T extends Geometry> T transformRotate(T geometry, double angle, Point pivot, boolean mutate) {
+        if (angle == 0) {
+            return geometry;
+        }
+
+        Point rotatePoint = pivot == null ? TaleMeasurement.centroid(geometry) : pivot;
+        T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
+
+        // Rotate each coordinate
+        TaleMeta.coordEach(newGeometry, (g, p, index, multiIndex, geomIndex) -> {
+            double initialAngle = TaleMeasurement.rhumbBearing(rotatePoint, p);
+            double finalAngle = initialAngle + angle;
+            double distance = TaleMeasurement.rhumbDistance(pivot, p);
+
+            // 计算新的点位
+            Point newCoords = TaleMeasurement.rhumbDestination(pivot, distance, finalAngle);
+            // 更新点坐标
+            p.setCoordinates(newCoords);
+
+            return true;
+        });
+
+        return newGeometry;
     }
 
 }

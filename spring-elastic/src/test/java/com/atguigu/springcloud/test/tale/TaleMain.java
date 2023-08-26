@@ -1,7 +1,5 @@
 package com.atguigu.springcloud.test.tale;
 
-import com.atguigu.springcloud.test.tale.shape.Geometry;
-import com.atguigu.springcloud.test.tale.shape.Line;
 import com.atguigu.springcloud.test.tale.shape.Point;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +12,8 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Polygon polygon = Polygon.fromLngLats(new double[]{0,29,3.5,29,2.5,32,0,29});
-        System.out.println(TaleTransformation.transformTranslate(polygon, 100, 35));;
+        Polygon polygon = Polygon.fromLngLats(new double[]{0, 29, 3.5, 29, 2.5, 32, 0, 29});
+        System.out.println(TaleTransformation.transformRotate(polygon, 10, Point.fromLngLat(0, 25)));;
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{0, 29, 3.5, 29, 2.5, 32, 0, 29});
 //        System.out.println(TaleMeasurement.centroid(polygon));

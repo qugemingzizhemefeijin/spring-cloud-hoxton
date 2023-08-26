@@ -76,8 +76,7 @@ public final class TransformScaleHelper {
             Point newCoord = TaleMeasurement.rhumbDestination(origin, newDistance, bearing);
 
             // 修改原坐标点
-            coord.setLongitude(newCoord.getLongitude());
-            coord.setLatitude(newCoord.getLatitude());
+            coord.setCoordinates(newCoord);
 
             return true;
         });
