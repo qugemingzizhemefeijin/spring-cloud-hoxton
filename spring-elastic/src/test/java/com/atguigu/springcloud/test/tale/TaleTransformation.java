@@ -4,10 +4,7 @@ import com.atguigu.springcloud.test.tale.enums.Orientation;
 import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
-import com.atguigu.springcloud.test.tale.util.BezierSpline;
-import com.atguigu.springcloud.test.tale.util.LineOffsetHelper;
-import com.atguigu.springcloud.test.tale.util.TailClipHelper;
-import com.atguigu.springcloud.test.tale.util.TransformScaleHelper;
+import com.atguigu.springcloud.test.tale.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -417,6 +414,21 @@ public final class TaleTransformation {
         }
 
         return LineOffsetHelper.lineOffset(geometry, distance, units);
+    }
+
+    /**
+     * 多边形划分三角形<br>
+     * 使用 earcut 算法将 Polygon、MultiPolygon 细分为多个三角形。
+     *
+     * @param geometry 仅支持Polygon、MultiPolygon
+     * @return 三角形Polygon集合
+     */
+    public static List<Polygon> tesselate(Geometry geometry) {
+        if (geometry == null) {
+            throw new TaleException("geometry is required");
+        }
+
+        return TesselateHelper.tesselate(geometry);
     }
 
 }

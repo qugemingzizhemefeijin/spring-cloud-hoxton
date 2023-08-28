@@ -2,7 +2,11 @@ package com.atguigu.springcloud.test.tale;
 
 import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.shape.Line;
+import com.atguigu.springcloud.test.tale.shape.Point;
+import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 public class TaleMain {
@@ -12,8 +16,18 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[]{-83, 30, -84, 36, -78, 41});
-        System.out.println(TaleTransformation.lineOffset(line, 2, Units.MILES));
+        Polygon polygon = Polygon.fromLngLats(new double[]{11, 0, 22, 4, 31, 0, 31, 11, 21, 15, 11, 11, 11, 0});
+        List<Polygon> ss = TaleTransformation.tesselate(polygon);
+        System.out.println("ss == " + ss.size());
+        for (Polygon s : ss) {
+            for (Point p : s.coordinates()) {
+                System.out.println("[" + p.getX()+","+p.getY() + "]");
+            }
+            System.out.println();
+        }
+//
+//        Line line = Line.fromLngLats(new double[]{-83, 30, -84, 36, -78, 41});
+//        System.out.println(TaleTransformation.lineOffset(line, 2, Units.MILES));
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{0, 29, 3.5, 29, 2.5, 32, 0, 29});
 //        System.out.println(TaleTransformation.transformRotate(polygon, 10, Point.fromLngLat(0, 25)));;
