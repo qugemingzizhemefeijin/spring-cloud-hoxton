@@ -23,7 +23,7 @@ public final class SimplifyHelper {
      * @param highQuality 是否花更多时间使用不同的算法创建更高质量的简化
      * @return 返回简化后的图形
      */
-    public static <T extends Geometry> T simplify(T geometry, int tolerance, boolean highQuality) {
+    public static <T extends Geometry> T simplify(T geometry, double tolerance, boolean highQuality) {
         TaleMeta.geomEach(geometry, (geom, parent, geomIndex) -> {
             simplifyGeom(geom, tolerance, highQuality);
             return true;
@@ -39,7 +39,7 @@ public final class SimplifyHelper {
      * @param tolerance   简化公差，不能为负数
      * @param highQuality 是否花更多时间使用不同的算法创建更高质量的简化
      */
-    private static <T extends Geometry> void simplifyGeom(T geometry, int tolerance, boolean highQuality) {
+    private static <T extends Geometry> void simplifyGeom(T geometry, double tolerance, boolean highQuality) {
         GeometryType type = geometry.type();
         if (type == GeometryType.POINT || type == GeometryType.MULTI_POINT) {
             return;
@@ -88,7 +88,7 @@ public final class SimplifyHelper {
      * @param highQuality 是否花更多时间使用不同的算法创建更高质量的简化
      * @return 返回处理后的坐标
      */
-    private static List<Point> simplifyLine(List<Point> pointList, int tolerance, boolean highQuality) {
+    private static List<Point> simplifyLine(List<Point> pointList, double tolerance, boolean highQuality) {
         return Simplify.simplify(pointList, tolerance, highQuality);
     }
 
@@ -100,7 +100,7 @@ public final class SimplifyHelper {
      * @param highQuality 是否花更多时间使用不同的算法创建更高质量的简化
      * @return 返回处理后的坐标
      */
-    private static List<Point> simplifyPolygon(List<Point> pointList, int tolerance, boolean highQuality) {
+    private static List<Point> simplifyPolygon(List<Point> pointList, double tolerance, boolean highQuality) {
         if (pointList.size() < 4) {
             throw new TaleException("invalid polygon");
         }

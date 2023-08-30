@@ -2,6 +2,7 @@ package com.atguigu.springcloud.test.tale.shape;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.util.TaleHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,6 +112,18 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
     @Override
     public int coordsSize() {
         return coordinates != null ? coordinates.size() : 0;
+    }
+
+    @Override
+    public String toViewCoordsString() {
+        if (coordinates != null) {
+            StringBuilder buf = new StringBuilder();
+            for (Point p : coordinates) {
+                buf.append("[").append(p.getX()).append(",").append(p.getY()).append("]").append(StringUtils.LF);
+            }
+            return buf.toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     @Override

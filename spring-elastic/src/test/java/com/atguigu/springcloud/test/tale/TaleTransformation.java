@@ -436,12 +436,48 @@ public final class TaleTransformation {
      * 获取对象并返回简化版本。内部使用 simplify-js 使用 Ramer–Douglas–Peucker 算法执行简化。
      *
      * @param geometry    要处理的图形组件
+     * @return 返回简化后的图形
+     */
+    public static <T extends Geometry> T simplify(T geometry) {
+        return simplify(geometry, 1, false, false);
+    }
+
+    /**
+     * 简化多边形<br>
+     * 获取对象并返回简化版本。内部使用 simplify-js 使用 Ramer–Douglas–Peucker 算法执行简化。
+     *
+     * @param geometry    要处理的图形组件
+     * @param tolerance   简化公差，不能为负数
+     * @return 返回简化后的图形
+     */
+    public static <T extends Geometry> T simplify(T geometry, double tolerance) {
+        return simplify(geometry, tolerance, false, false);
+    }
+
+    /**
+     * 简化多边形<br>
+     * 获取对象并返回简化版本。内部使用 simplify-js 使用 Ramer–Douglas–Peucker 算法执行简化。
+     *
+     * @param geometry    要处理的图形组件
+     * @param tolerance   简化公差，不能为负数
+     * @param highQuality 是否花更多时间使用不同的算法创建更高质量的简化
+     * @return 返回简化后的图形
+     */
+    public static <T extends Geometry> T simplify(T geometry, double tolerance, boolean highQuality) {
+        return simplify(geometry, tolerance, highQuality, false);
+    }
+
+    /**
+     * 简化多边形<br>
+     * 获取对象并返回简化版本。内部使用 simplify-js 使用 Ramer–Douglas–Peucker 算法执行简化。
+     *
+     * @param geometry    要处理的图形组件
      * @param tolerance   简化公差，不能为负数
      * @param highQuality 是否花更多时间使用不同的算法创建更高质量的简化
      * @param mutate      是否影响原图形坐标（如果为真，性能将显著提高）
      * @return 返回简化后的图形
      */
-    public static <T extends Geometry> T simplify(T geometry, int tolerance, boolean highQuality, boolean mutate) {
+    public static <T extends Geometry> T simplify(T geometry, double tolerance, boolean highQuality, boolean mutate) {
         if (geometry == null) {
             throw new TaleException("geometry is required");
         }

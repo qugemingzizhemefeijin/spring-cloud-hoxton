@@ -1,6 +1,7 @@
 package com.atguigu.springcloud.test.tale.shape;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
+import org.apache.commons.lang3.StringUtils;
 
 public final class Point implements CoordinateContainer<Point, Point>, Comparable<Point> {
 
@@ -78,6 +79,11 @@ public final class Point implements CoordinateContainer<Point, Point>, Comparabl
     @Override
     public int coordsSize() {
         return 1;
+    }
+
+    @Override
+    public String toViewCoordsString() {
+        return "[" + this.longitude + "," + this.latitude + "]" + StringUtils.LF;
     }
 
     public double[] getCoord() {

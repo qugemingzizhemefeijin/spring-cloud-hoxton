@@ -1,5 +1,7 @@
 package com.atguigu.springcloud.test.tale.shape;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,6 +86,22 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>, M
     @Override
     public GeometryType type() {
         return GeometryType.MULTI_LINE;
+    }
+
+    @Override
+    public String toViewCoordsString() {
+        if (coordinates != null) {
+            StringBuilder buf = new StringBuilder();
+            for (List<Point> pointList : coordinates) {
+                buf.append("[");
+                for (Point point : pointList) {
+                    buf.append("[").append(point.getX()).append(",").append(point.getY()).append("]").append(StringUtils.LF);
+                }
+                buf.append("]");
+            }
+            return buf.toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     @Override

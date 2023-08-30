@@ -15,4 +15,11 @@ public interface Geometry {
         throw new TaleException("geometry not support coordsSize");
     }
 
+    /**
+     * 输出被读取的点阵字符
+     *
+     * @return String
+     */
+    String toViewCoordsString();
+
 }

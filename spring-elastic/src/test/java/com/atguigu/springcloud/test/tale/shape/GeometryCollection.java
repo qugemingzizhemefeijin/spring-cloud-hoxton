@@ -1,7 +1,10 @@
 package com.atguigu.springcloud.test.tale.shape;
 
 import com.atguigu.springcloud.test.tale.exception.TaleException;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +52,15 @@ public final class GeometryCollection implements CollectionContainer {
     @Override
     public GeometryType type() {
         return GeometryType.GEOMETRY_COLLECTION;
+    }
+
+    @Override
+    public String toViewCoordsString() {
+        StringBuilder buf = new StringBuilder();
+        for (Geometry geometry : geometries) {
+            buf.append(geometry.toViewCoordsString()).append(StringUtils.LF);
+        }
+        return buf.toString();
     }
 
     @Override

@@ -20,8 +20,17 @@ public final class Simplify {
         throw new AssertionError("No Instances.");
     }
 
-    public static List<Point> simplify(List<Point> points, int tolerance, boolean highestQuality) {
-        return null;
+    public static List<Point> simplify(List<Point> points, double tolerance, boolean highestQuality) {
+        if (points.size() <= 2) {
+            return points;
+        }
+
+        double sqTolerance = tolerance * tolerance;
+
+        points = highestQuality ? points : simplifyRadialDist(points, sqTolerance);
+        points = simplifyDouglasPeucker(points, sqTolerance);
+
+        return points;
     }
 
     // square distance between 2 points
@@ -54,7 +63,7 @@ public final class Simplify {
     }
 
     // basic distance-based simplification
-    private static List<Point> simplifyRadialDist(List<Point> points, int sqTolerance) {
+    private static List<Point> simplifyRadialDist(List<Point> points, double sqTolerance) {
         Point prevPoint = points.get(0), point = null;
         List<Point> newPoints = new ArrayList<>(points.size());
         newPoints.add(prevPoint);
@@ -75,7 +84,7 @@ public final class Simplify {
         return newPoints;
     }
 
-    private static void simplifyDPStep(List<Point> points, int first, int last, int sqTolerance, List<Point> simplified) {
+    private static void simplifyDPStep(List<Point> points, int first, int last, double sqTolerance, List<Point> simplified) {
         int index = 0;
         double maxSqDist = sqTolerance;
 
@@ -95,6 +104,19 @@ public final class Simplify {
             if (last - index > 1)
                 simplifyDPStep(points, index, last, sqTolerance, simplified);
         }
+    }
+
+    // simplification using Ramer-Douglas-Peucker algorithm
+    private static List<Point> simplifyDouglasPeucker(List<Point> points, double sqTolerance) {
+        int last = points.size() - 1;
+
+        List<Point> simplified = new ArrayList<>();
+        simplified.add(points.get(0));
+
+        simplifyDPStep(points, 0, last, sqTolerance, simplified);
+        simplified.add(points.get(last));
+
+        return simplified;
     }
 
 }
