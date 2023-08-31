@@ -5,9 +5,11 @@ import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
 import com.atguigu.springcloud.test.tale.util.*;
+import com.atguigu.springcloud.test.tale.util.polygonclipping.PolygonClipping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public final class TaleTransformation {
@@ -128,6 +130,7 @@ public final class TaleTransformation {
 
     /**
      * 获取一条直线应用 贝塞尔算法 (opens new window)返回一个贝塞尔曲线。duration默认为 {@link BezierSpline#DURATION}，sharpness 默认为 {@link BezierSpline#SHARPNESS}
+     *
      * @param line 线条组件
      * @return 返回线条组件
      */
@@ -137,6 +140,7 @@ public final class TaleTransformation {
 
     /**
      * 获取一条直线应用 贝塞尔算法 (opens new window)返回一个贝塞尔曲线。sharpness 默认为 {@link BezierSpline#SHARPNESS}
+     *
      * @param line     线条组件
      * @param duration 相邻两个点之间的时间间隔（以毫秒为单位）
      * @return 返回线条组件
@@ -147,6 +151,7 @@ public final class TaleTransformation {
 
     /**
      * 获取一条直线应用 贝塞尔算法 (opens new window)返回一个贝塞尔曲线。
+     *
      * @param line      线条组件
      * @param duration  相邻两个点之间的时间间隔（以毫秒为单位）
      * @param sharpness 样条线之间路径的弯曲值
@@ -165,8 +170,8 @@ public final class TaleTransformation {
      * <p>
      * 将GeoJSON从质心缩放一个因子（例如：factor=2会使GeoJSON大200%）。
      *
-     * @param geometry    要缩放的组件
-     * @param factor      缩放比
+     * @param geometry 要缩放的组件
+     * @param factor   缩放比
      * @return 返回缩放后的图形组件
      */
     public static <T extends Geometry> T transformScale(T geometry, double factor) {
@@ -435,7 +440,7 @@ public final class TaleTransformation {
      * 简化多边形<br>
      * 获取对象并返回简化版本。内部使用 simplify-js 使用 Ramer–Douglas–Peucker 算法执行简化。
      *
-     * @param geometry    要处理的图形组件
+     * @param geometry 要处理的图形组件
      * @return 返回简化后的图形
      */
     public static <T extends Geometry> T simplify(T geometry) {
@@ -446,8 +451,8 @@ public final class TaleTransformation {
      * 简化多边形<br>
      * 获取对象并返回简化版本。内部使用 simplify-js 使用 Ramer–Douglas–Peucker 算法执行简化。
      *
-     * @param geometry    要处理的图形组件
-     * @param tolerance   简化公差，不能为负数
+     * @param geometry  要处理的图形组件
+     * @param tolerance 简化公差，不能为负数
      * @return 返回简化后的图形
      */
     public static <T extends Geometry> T simplify(T geometry, double tolerance) {
@@ -487,6 +492,82 @@ public final class TaleTransformation {
         T newGeometry = mutate ? geometry : TaleTransformation.clone(geometry);
 
         return SimplifyHelper.simplify(newGeometry, tolerance, highQuality);
+    }
+
+    /**
+     * 联合<br>
+     * 获取两个或多个多边形，并返回一个组合多边形。如果输入的多边形不是连续的，这个函数将返回一个MultiPolygon。
+     *
+     * @param geometry1 仅支持 Polygon和MultiPolygon
+     * @param geometry2 仅支持 Polygon和MultiPolygon
+     * @return 返回组合后的图形，如果输入为空，则为 null
+     */
+    public static Geometry union(Geometry geometry1, Geometry geometry2) {
+        return polygonClipping(geometry1, geometry2, PolygonClipping::union);
+    }
+
+    /**
+     * 计算交集<br>
+     * 取两个多边形并找到它们的交点。如果它们共享一个边界，返回边界;如果它们不相交，返回
+     *
+     * @param geometry1 仅支持 Polygon和MultiPolygon
+     * @param geometry2 仅支持 Polygon和MultiPolygon
+     * @return 返回交集图形，如果输入为空，则为 null。如果它们不共享任何区域，则返回null
+     */
+    public static Geometry intersect(Geometry geometry1, Geometry geometry2) {
+        return polygonClipping(geometry1, geometry2, PolygonClipping::intersection);
+    }
+
+    /**
+     * 计算差异<br>
+     * 通过裁剪第二个多边形来找到两个多边形之间的差异。
+     *
+     * @param geometry1 仅支持 Polygon和MultiPolygon
+     * @param geometry2 仅支持 Polygon和MultiPolygon
+     * @return 返回差异图形，如果输入为空，则为 null。如果它们有交集，则去除交集，保留差异部分。
+     */
+    public static Geometry difference(Geometry geometry1, Geometry geometry2) {
+        return polygonClipping(geometry1, geometry2, PolygonClipping::difference);
+    }
+
+    /**
+     * 调用 PolygonClipping 工具类，计算对应的多边形交集、差集、并集以及补集。
+     *
+     * @param geometry1        仅支持 Polygon和MultiPolygon
+     * @param geometry2        仅支持 Polygon和MultiPolygon
+     * @param clippingFunction 执行 PolygonClipping 的工具方法
+     * @return 返回 Polygon、MultiPolygon、null
+     */
+    private static Geometry polygonClipping(Geometry geometry1, Geometry geometry2, BiFunction<List<List<Point>>, List<List<Point>>, List<List<Point>>> clippingFunction) {
+        if (geometry1 == null && geometry2 == null) {
+            return null;
+        } else if (geometry1 == null) {
+            return geometry2;
+        } else if (geometry2 == null) {
+            return geometry1;
+        }
+
+        GeometryType t1 = geometry1.type(), t2 = geometry2.type();
+        if (t1 != GeometryType.POLYGON && t1 != GeometryType.MULTI_POLYGON) {
+            throw new TaleException("geometry1 " + t1 + " not supported");
+        }
+        if (t2 != GeometryType.POLYGON && t2 != GeometryType.MULTI_POLYGON) {
+            throw new TaleException("geometry2 " + t2 + " not supported");
+        }
+
+        // 转换成集合，交给 PolygonClipping 工具
+        List<List<Point>> points1 = t1 == GeometryType.POLYGON ? Polygon.polygon(geometry1).multiCoordinates() : MultiPolygon.multiPolygon(geometry1).coordinates();
+        List<List<Point>> points2 = t2 == GeometryType.POLYGON ? Polygon.polygon(geometry2).multiCoordinates() : MultiPolygon.multiPolygon(geometry2).coordinates();
+
+        List<List<Point>> retPoints = clippingFunction.apply(points1, points2);
+
+        if (retPoints == null || retPoints.isEmpty()) {
+            return null;
+        } else if (retPoints.size() == 1) {
+            return Polygon.fromLngLats(retPoints.get(0));
+        } else {
+            return MultiPolygon.fromLngLats(retPoints);
+        }
     }
 
 }

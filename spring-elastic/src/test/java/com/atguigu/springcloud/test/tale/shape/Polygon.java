@@ -104,6 +104,13 @@ public final class Polygon implements CoordinateContainer<List<Point>, Polygon> 
         return coordinates;
     }
 
+    public List<List<Point>> multiCoordinates() {
+        List<List<Point>> m = new ArrayList<>(1);
+        m.add(coordinates);
+
+        return m;
+    }
+
     @Override
     public void setCoordinates(List<Point> coordinates) {
         this.coordinates = coordinates;
