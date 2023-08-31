@@ -531,6 +531,18 @@ public final class TaleTransformation {
     }
 
     /**
+     * 计算补集<br>
+     * 通过计算获取第二个图形相对第一个图形的补集。
+     *
+     * @param geometry1 仅支持 Polygon和MultiPolygon
+     * @param geometry2 仅支持 Polygon和MultiPolygon
+     * @return 返回补集图形，如果输入为空，则为 null。
+     */
+    public static Geometry xor(Geometry geometry1, Geometry geometry2) {
+        return polygonClipping(geometry1, geometry2, PolygonClipping::xor);
+    }
+
+    /**
      * 调用 PolygonClipping 工具类，计算对应的多边形交集、差集、并集以及补集。
      *
      * @param geometry1        仅支持 Polygon和MultiPolygon
