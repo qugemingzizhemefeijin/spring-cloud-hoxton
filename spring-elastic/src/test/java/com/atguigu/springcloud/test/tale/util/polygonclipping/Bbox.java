@@ -11,7 +11,7 @@ public class Bbox {
         this.ur = ur;
     }
 
-    public boolean isInBbox(Bbox bbox, Location point) {
+    public static boolean isInBbox(Bbox bbox, Location point) {
         return bbox.ll.x <= point.x
                 && point.x <= bbox.ur.x
                 && bbox.ll.y <= point.y

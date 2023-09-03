@@ -2,11 +2,16 @@ package com.atguigu.springcloud.test.tale.util.polygonclipping;
 
 import com.atguigu.springcloud.test.tale.shape.Point;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Location {
 
-    private double x;
+    double x;
 
-    private double y;
+    double y;
+
+    private List<SweepEvent> events;
 
     public Location(double x, double y) {
         this.x = x;
@@ -25,19 +30,26 @@ public final class Location {
         return new Location(p);
     }
 
-    public double getX() {
-        return x;
+    public void addEvent(SweepEvent event) {
+        if (events == null) {
+            events = new ArrayList<>();
+        }
+        events.add(event);
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public void clearEvent() {
+        events = null;
     }
 
-    public double getY() {
-        return y;
+    public List<SweepEvent> getEvents() {
+        return events;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public int eventSize() {
+        if (events == null) {
+            return 0;
+        } else {
+            return events.size();
+        }
     }
 }

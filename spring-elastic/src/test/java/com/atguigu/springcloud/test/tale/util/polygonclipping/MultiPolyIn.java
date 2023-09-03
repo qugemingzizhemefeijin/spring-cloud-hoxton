@@ -8,11 +8,11 @@ import java.util.List;
 
 public class MultiPolyIn {
 
-    private List<PolyIn> polys;
-    private Bbox bbox;
-    private boolean isSubject;
+    private final List<PolyIn> polys;
+    private final Bbox bbox;
+    private final boolean isSubject;
 
-    public MultiPolyIn(List<List<Point>> geom, boolean isSubject) {
+    public MultiPolyIn(List<List<Point>> geom, boolean isSubject, PtRounder rounder, Operation operation) {
         if (geom == null || geom.isEmpty()) {
             throw new TaleException("Input geometry is not a valid Polygon or MultiPolygon");
         }
@@ -23,18 +23,18 @@ public class MultiPolyIn {
                 Location.location(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
         );
 
-        PolyIn poly = new PolyIn(geom, this);
-        if (poly.getBbox().ll.getX() < this.bbox.ll.getX()) {
-            this.bbox.ll.setX(poly.getBbox().ll.getX());
+        PolyIn poly = new PolyIn(geom, this, rounder, operation);
+        if (poly.getBbox().ll.x < this.bbox.ll.x) {
+            this.bbox.ll.x = poly.getBbox().ll.x;
         }
-        if (poly.getBbox().ll.getY() < this.bbox.ll.getY()) {
-            this.bbox.ll.setY(poly.getBbox().ll.getY());
+        if (poly.getBbox().ll.y < this.bbox.ll.y) {
+            this.bbox.ll.y = poly.getBbox().ll.y;
         }
-        if (poly.getBbox().ur.getX() > this.bbox.ur.getX()) {
-            this.bbox.ur.setX(poly.getBbox().ur.getX());
+        if (poly.getBbox().ur.x > this.bbox.ur.x) {
+            this.bbox.ur.x = poly.getBbox().ur.x;
         }
-        if (poly.getBbox().ur.getY() > this.bbox.ur.getY()) {
-            this.bbox.ur.setY(poly.getBbox().ur.getY());
+        if (poly.getBbox().ur.y > this.bbox.ur.y) {
+            this.bbox.ur.y = poly.getBbox().ur.y;
         }
         this.polys.add(poly);
 
@@ -49,4 +49,11 @@ public class MultiPolyIn {
         return sweepEvents;
     }
 
+    public boolean isSubject() {
+        return isSubject;
+    }
+
+    public Bbox getBbox() {
+        return bbox;
+    }
 }

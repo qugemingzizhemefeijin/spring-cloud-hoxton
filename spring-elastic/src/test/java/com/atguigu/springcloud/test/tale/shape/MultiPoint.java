@@ -51,8 +51,9 @@ public final class MultiPoint implements CoordinateContainer<List<Point>, MultiP
 
     @Override
     public String toViewCoordsString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("├───── ").append(type()).append("─────┤").append(StringUtils.LF);
         if (coordinates != null) {
-            StringBuilder buf = new StringBuilder();
             for (Point p : coordinates) {
                 buf.append("[").append(p.getX()).append(",").append(p.getY()).append("]").append(StringUtils.LF);
             }

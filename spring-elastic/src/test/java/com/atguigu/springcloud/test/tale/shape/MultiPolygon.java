@@ -91,8 +91,9 @@ public final class MultiPolygon implements CoordinateContainer<List<List<Point>>
 
     @Override
     public String toViewCoordsString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("├───── ").append(type()).append("─────┤").append(StringUtils.LF);
         if (coordinates != null) {
-            StringBuilder buf = new StringBuilder();
             for (List<Point> pointList : coordinates) {
                 buf.append("[");
                 for (Point point : pointList) {

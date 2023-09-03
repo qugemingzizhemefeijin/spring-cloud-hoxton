@@ -90,8 +90,9 @@ public final class MultiLine implements CoordinateContainer<List<List<Point>>, M
 
     @Override
     public String toViewCoordsString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("├───── ").append(type()).append("─────┤").append(StringUtils.LF);
         if (coordinates != null) {
-            StringBuilder buf = new StringBuilder();
             for (List<Point> pointList : coordinates) {
                 buf.append("[");
                 for (Point point : pointList) {

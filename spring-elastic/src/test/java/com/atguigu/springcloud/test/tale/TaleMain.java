@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.shape.Geometry;
 import com.atguigu.springcloud.test.tale.shape.Polygon;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,9 +12,25 @@ public class TaleMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Polygon polygon = Polygon.fromLngLats(new double[]{-70.603637, -33.399918,-70.614624, -33.395332,-70.639343, -33.392466,-70.659942, -33.394759,-70.683975, -33.404504,-70.697021, -33.419406,-70.701141, -33.434306,-70.700454, -33.446339,-70.694274, -33.458369,-70.682601, -33.465816,-70.668869, -33.472117,-70.646209, -33.473835,-70.624923, -33.472117,-70.609817, -33.468107,-70.595397, -33.458369,-70.587158, -33.442901,-70.587158, -33.426283,-70.590591, -33.414248,-70.594711, -33.406224,-70.603637, -33.399918});
-        Polygon newPolygon = TaleTransformation.simplify(polygon, 0.01);
-        System.out.println(newPolygon.toViewCoordsString());
+        Polygon poly1 = Polygon.fromLngLats(new double[]{-122.801742, 45.48565, -122.801742, 45.60491, -122.584762, 45.60491, -122.584762, 45.48565, -122.801742, 45.48565});
+        Polygon poly2 = Polygon.fromLngLats(new double[]{-122.520217, 45.535693, -122.64038, 45.553967, -122.720031, 45.526554, -122.669906, 45.507309, -122.723464, 45.446643, -122.532577, 45.408574, -122.487258, 45.477466, -122.520217, 45.535693});
+        Geometry intersect = TaleTransformation.intersect(poly1, poly2);
+        System.out.println(intersect.toViewCoordsString());
+
+//        Polygon poly1 = Polygon.fromLngLats(new double[]{128, -26,141, -26,141, -21,128, -21,128, -26});
+//        Polygon poly2 = Polygon.fromLngLats(new double[]{126, -28,140, -28,140, -20,126, -20,126, -28});
+//        Geometry difference = TaleTransformation.difference(poly1, poly2);
+//        System.out.println(difference.toViewCoordsString());
+
+//        Polygon poly1 = Polygon.fromLngLats(new double[]{-82.574787, 35.594087,-82.574787, 35.615581,-82.545261, 35.615581,-82.545261, 35.594087,-82.574787, 35.594087});
+//        Polygon poly2 = Polygon.fromLngLats(new double[]{-82.560024, 35.585153,-82.560024, 35.602602,-82.52964, 35.602602,-82.52964, 35.585153,-82.560024, 35.585153});
+//
+//        Geometry union = TaleTransformation.union(poly1, poly2);
+//        System.out.println(union.toViewCoordsString());
+
+//        Polygon polygon = Polygon.fromLngLats(new double[]{-70.603637, -33.399918,-70.614624, -33.395332,-70.639343, -33.392466,-70.659942, -33.394759,-70.683975, -33.404504,-70.697021, -33.419406,-70.701141, -33.434306,-70.700454, -33.446339,-70.694274, -33.458369,-70.682601, -33.465816,-70.668869, -33.472117,-70.646209, -33.473835,-70.624923, -33.472117,-70.609817, -33.468107,-70.595397, -33.458369,-70.587158, -33.442901,-70.587158, -33.426283,-70.590591, -33.414248,-70.594711, -33.406224,-70.603637, -33.399918});
+//        Polygon newPolygon = TaleTransformation.simplify(polygon, 0.01);
+//        System.out.println(newPolygon.toViewCoordsString());
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{11, 0, 22, 4, 31, 0, 31, 11, 21, 15, 11, 11, 11, 0});
 //        List<Polygon> ss = TaleTransformation.tesselate(polygon);

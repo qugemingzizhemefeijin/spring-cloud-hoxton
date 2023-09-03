@@ -8,14 +8,13 @@ import java.util.List;
 
 public class RingIn {
 
-    private PolyIn poly;
-    private boolean isExterior;
-    private List<Segment> segments;
+    private final PolyIn poly;
+    private final boolean isExterior;
+    private final List<Segment> segments;
 
-    private PtRounder rounder;
-    private Bbox bbox;
+    private final Bbox bbox;
 
-    public RingIn(List<Point> geomRing, PolyIn poly, boolean isExterior) {
+    public RingIn(List<Point> geomRing, PolyIn poly, boolean isExterior, PtRounder rounder, Operation operation) {
         if (geomRing == null || geomRing.isEmpty()) {
             throw new TaleException("Input geometry is not a valid Polygon or MultiPolygon");
         }
@@ -24,45 +23,42 @@ public class RingIn {
         this.isExterior = isExterior;
         this.segments = new ArrayList<>();
 
-        this.rounder = new PtRounder();
-
         Location firstPoint = rounder.round(geomRing.get(0).getX(), geomRing.get(0).getY());
-        this.bbox = new Bbox(Location.location(firstPoint.getX(), firstPoint.getY()), Location.location(firstPoint.getX(), firstPoint.getY()));
+        this.bbox = new Bbox(Location.location(firstPoint.x, firstPoint.y), Location.location(firstPoint.x, firstPoint.y));
 
         Location prevPoint = firstPoint;
         for (int i = 1, iMax = geomRing.size(); i < iMax; i++) {
             Location point = rounder.round(geomRing.get(i).getX(), geomRing.get(i).getY());
             // skip repeated points
-            if (point.getX() == prevPoint.getX() && point.getY() == prevPoint.getY()) {
+            if (point.x == prevPoint.x && point.y == prevPoint.y) {
                 continue;
             }
-            this.segments.add(Segment.fromRing(prevPoint, point, this));
-            if (point.getX() < this.bbox.ll.getX()) {
-                this.bbox.ll.setX(point.getX());
+            this.segments.add(Segment.fromRing(prevPoint, point, this, operation));
+            if (point.x < this.bbox.ll.x) {
+                this.bbox.ll.x = point.x;
             }
-            if (point.getY() < this.bbox.ll.getY()) {
-                this.bbox.ll.setY(point.getY());
+            if (point.y < this.bbox.ll.y) {
+                this.bbox.ll.y = point.y;
             }
-            if (point.getX() > this.bbox.ur.getX()) {
-                this.bbox.ur.setX(point.getX());
+            if (point.x > this.bbox.ur.x) {
+                this.bbox.ur.x = point.x;
             }
-            if (point.getY() > this.bbox.ur.getY()) {
-                this.bbox.ur.setY(point.getY());
+            if (point.y > this.bbox.ur.y) {
+                this.bbox.ur.y = point.y;
             }
             prevPoint = point;
         }
 
         // add segment from last to first if last is not the same as first
-        if (firstPoint.getX() != prevPoint.getX() || firstPoint.getY() != prevPoint.getY()) {
-            this.segments.add(Segment.fromRing(prevPoint, firstPoint, this));
+        if (firstPoint.x != prevPoint.x || firstPoint.y != prevPoint.y) {
+            this.segments.add(Segment.fromRing(prevPoint, firstPoint, this, operation));
         }
     }
 
     public List<SweepEvent> getSweepEvents() {
         int iMax = this.segments.size();
         List<SweepEvent> sweepEvents = new ArrayList<>(iMax);
-        for (int i = 0; i < iMax; i++) {
-            Segment segment = this.segments.get(i);
+        for (Segment segment : this.segments) {
             sweepEvents.add(segment.leftSE);
             sweepEvents.add(segment.rightSE);
         }

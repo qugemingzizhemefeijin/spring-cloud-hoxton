@@ -164,6 +164,13 @@ public class SplayTree<K extends Comparable<K>, V> {
     /**
      * Inserts a key, allows duplicates
      */
+    public Node<K, V> insert(K key) {
+        return this.insert(key, null);
+    }
+
+    /**
+     * Inserts a key, allows duplicates
+     */
     public Node<K, V> insert(K key, V data) {
         this._size++;
         return this._root = insert(key, data, this._root);

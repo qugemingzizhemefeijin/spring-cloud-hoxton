@@ -57,6 +57,7 @@ public final class GeometryCollection implements CollectionContainer {
     @Override
     public String toViewCoordsString() {
         StringBuilder buf = new StringBuilder();
+        buf.append("├───── ").append(type()).append("─────┤").append(StringUtils.LF);
         for (Geometry geometry : geometries) {
             buf.append(geometry.toViewCoordsString()).append(StringUtils.LF);
         }
