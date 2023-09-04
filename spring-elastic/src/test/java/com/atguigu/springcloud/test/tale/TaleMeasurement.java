@@ -469,22 +469,25 @@ public final class TaleMeasurement {
      * @return minX, minY, maxX, maxY
      */
     public static BoundingBox bbox(Geometry geometry) {
-        switch (geometry.type()) {
-            case LINE:
-                return bboxCalculator(TaleMeta.coordAll((Line) geometry));
-            case POLYGON:
-                return bboxCalculator(TaleMeta.coordAll((Polygon) geometry, false));
-            case MULTI_LINE:
-                return bboxCalculator(TaleMeta.coordAll((MultiLine) geometry));
-            case MULTI_POLYGON:
-                return bboxCalculator(TaleMeta.coordAll((MultiPolygon) geometry, false));
-            case MULTI_POINT:
-                return bboxCalculator(TaleMeta.coordAll((MultiPoint) geometry));
-            case GEOMETRY_COLLECTION:
-                return bboxCalculator(TaleMeta.coordAll((GeometryCollection) geometry, false));
-            default:
-                throw new RuntimeException(("Unknown geometry class: " + geometry.getClass()));
-        }
+        double[] bbox = new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
+
+        TaleMeta.coordEach(geometry, (g, point, index, multiIndex, geomIndex) -> {
+            if (bbox[0] > point.getLongitude()) { // minX
+                bbox[0] = point.getLongitude();
+            }
+            if (bbox[1] > point.getLatitude()) { // minY
+                bbox[1] = point.getLatitude();
+            }
+            if (bbox[2] < point.getLongitude()) { // maxX
+                bbox[2] = point.getLongitude();
+            }
+            if (bbox[3] < point.getLatitude()) { // maxY
+                bbox[3] = point.getLatitude();
+            }
+            return true;
+        });
+
+        return BoundingBox.fromLngLats(bbox);
     }
 
     /**
@@ -500,33 +503,6 @@ public final class TaleMeasurement {
                 bbox.getNortheast(), // 东北点
                 bbox.getNorthwest(), // 西北点
                 bbox.getSouthwest())); // 需要闭合
-    }
-
-    /**
-     * 根据传入的点集合计算组合成最大坐标点和最小坐标点
-     *
-     * @param resultCoords 点集合
-     * @return BoundingBox
-     */
-    private static BoundingBox bboxCalculator(List<Point> resultCoords) {
-        // [minX, minY, maxX, maxY]
-        double[] bbox = new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
-
-        for (Point point : resultCoords) {
-            if (bbox[0] > point.getLongitude()) { // minX
-                bbox[0] = point.getLongitude();
-            }
-            if (bbox[1] > point.getLatitude()) { // minY
-                bbox[1] = point.getLatitude();
-            }
-            if (bbox[2] < point.getLongitude()) { // maxX
-                bbox[2] = point.getLongitude();
-            }
-            if (bbox[3] < point.getLatitude()) { // maxY
-                bbox[3] = point.getLatitude();
-            }
-        }
-        return BoundingBox.fromLngLats(bbox);
     }
 
     /**
