@@ -108,6 +108,7 @@
         <alibaba.bytekit.version>0.0.8</alibaba.bytekit.version>
         <alibaba.taobao.arthas>3.6.9</alibaba.taobao.arthas>
         <bytebuddy.version>1.12.21</bytebuddy.version>
+        <jts.version>1.13</jts.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -286,6 +287,11 @@
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
                 <version>${bytebuddy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vividsolutions</groupId>
+                <artifactId>jts</artifactId>
+                <version>${jts.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
