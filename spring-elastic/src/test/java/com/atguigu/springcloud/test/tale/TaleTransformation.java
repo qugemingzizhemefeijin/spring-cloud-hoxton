@@ -582,4 +582,73 @@ public final class TaleTransformation {
         }
     }
 
+    /**
+     * 计算缓冲区（辐射区），距离单位默认为KILOMETERS，steps默认为8。<br>
+     * 计算组件在给定半径的缓冲区。支持的单位有英里、公里和度数。<br>
+     * 使用负半径时，生成的几何图形可能无效，如果与半径大小相比，它太小了。如果是集合类组件，输出集合的成员可能少于输入，甚至为空。
+     *
+     * @param geometry 要计算的组件
+     * @param radius   绘制缓冲区的距离（允许负值）
+     * @return 缓冲区的图形组件
+     */
+    public static Geometry buffer(Geometry geometry, int radius) {
+        return buffer(geometry, radius, null, null);
+    }
+
+    /**
+     * 计算缓冲区（辐射区），steps默认为8。<br>
+     * 计算组件在给定半径的缓冲区。支持的单位有英里、公里和度数。<br>
+     * 使用负半径时，生成的几何图形可能无效，如果与半径大小相比，它太小了。如果是集合类组件，输出集合的成员可能少于输入，甚至为空。
+     *
+     * @param geometry 要计算的组件
+     * @param radius   绘制缓冲区的距离（允许负值）
+     * @param units    距离单位，默认 KILOMETERS
+     * @return 缓冲区的图形组件
+     */
+    public static Geometry buffer(Geometry geometry, int radius, Units units) {
+        return buffer(geometry, radius, units, null);
+    }
+
+    /**
+     * 计算缓冲区（辐射区）<br>
+     * 计算组件在给定半径的缓冲区。支持的单位有英里、公里和度数。<br>
+     * 使用负半径时，生成的几何图形可能无效，如果与半径大小相比，它太小了。如果是集合类组件，输出集合的成员可能少于输入，甚至为空。
+     *
+     * @param geometry 要计算的组件
+     * @param radius   绘制缓冲区的距离（允许负值）
+     * @param units    距离单位，默认 KILOMETERS
+     * @param steps    频数，默认为 8
+     * @return 缓冲区的图形组件
+     */
+    public static Geometry buffer(Geometry geometry, int radius, Units units, Integer steps) {
+        if (geometry == null) {
+            throw new TaleException("geometry is required");
+        }
+        if (units == null) {
+            units = Units.KILOMETERS;
+        }
+        if (steps == null) {
+            steps = 8;
+        }
+
+        GeometryType type = geometry.type();
+        if (type == GeometryType.GEOMETRY_COLLECTION) {
+            List<Geometry> geometryList = new ArrayList<>();
+            Units finalUnits = units;
+            Integer finalSteps = steps;
+
+            TaleMeta.geomEach(geometry, (g, parent, geomIndex) -> {
+                Geometry buffered = BufferHelper.buffer(g, radius, finalUnits, finalSteps);
+                if (buffered != null) {
+                    geometryList.add(buffered);
+                }
+                return true;
+            });
+
+            return geometryList.isEmpty() ? null : GeometryCollection.fromGeometries(geometryList);
+        } else {
+            return BufferHelper.buffer(geometry, radius, units, steps);
+        }
+    }
+
 }
