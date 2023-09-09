@@ -5,14 +5,18 @@ import com.atguigu.springcloud.test.tale.TaleMeta;
 import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.exception.TaleException;
 import com.atguigu.springcloud.test.tale.shape.*;
+import com.atguigu.springcloud.test.tale.util.d3geo.projection.AzimuthalEqualArea;
+import com.atguigu.springcloud.test.tale.util.d3geo.projection.Projection;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.operation.buffer.BufferOp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class BufferHelper {
 
@@ -44,12 +48,13 @@ public final class BufferHelper {
         }
 
         // Project GeoJSON to Azimuthal Equidistant projection (convert to Meters)
+        Projection projection = defineProjection(geometry);
 
         // JSTS buffer operation
         double distance = TaleHelper.radiansToLength(TaleHelper.lengthToRadians(radius, units), Units.METERS);
 
         // 这里可以直接做一层中转，以后可以实现GeoJSON，就不需要这么麻烦咯。。。
-        com.vividsolutions.jts.geom.Geometry buffered = BufferOp.bufferOp(transformation(geometry), distance, steps);
+        com.vividsolutions.jts.geom.Geometry buffered = BufferOp.bufferOp(transformation(geometry, projection), distance, steps);
 
         // Detect if empty geometries
         if (coordsIsNaN(buffered.getCoordinates())) {
@@ -57,55 +62,95 @@ public final class BufferHelper {
         }
 
         // Unproject coordinates (convert to Degrees)
-        return unTransformation(buffered);
+        return unTransformation(buffered, projection);
     }
 
-    private static Geometry unTransformation(com.vividsolutions.jts.geom.Geometry geometry) {
-        return null;
+    /**
+     * 将 JST的Geometry 转成对应的 Geometry
+     *
+     * @param geometry 要转换的JST组件
+     * @param proj     坐标转换
+     * @return Geometry组建
+     */
+    private static Geometry unTransformation(com.vividsolutions.jts.geom.Geometry geometry, Projection proj) {
+        String type = geometry.getGeometryType();
+        switch (type) {
+            case "Point": {
+                return Point.fromLngLat(unprojectCoords(geometry.getCoordinate(), proj));
+            }
+            case "MultiPoint": {
+                return MultiPoint.fromLngLats(unprojectCoords(geometry.getCoordinates(), proj));
+            }
+            case "LineString": {
+                return Line.fromLngLats(unprojectCoords(geometry.getCoordinates(), proj));
+            }
+            case "MultiLineString": {
+                int size = geometry.getNumGeometries();
+                List<List<Point>> allPointList = new ArrayList<>(size);
+                for (int i = 0; i < size; i++) {
+                    allPointList.add(unprojectCoords(geometry.getGeometryN(i).getCoordinates(), proj));
+                }
+                return MultiLine.fromLngLats(allPointList);
+            }
+            case "Polygon": {
+                return Polygon.fromLngLats(unprojectCoords(geometry.getCoordinates(), proj));
+            }
+            case "MultiPolygon": {
+                int size = geometry.getNumGeometries();
+                List<List<Point>> allPointList = new ArrayList<>(size);
+                for (int i = 0; i < size; i++) {
+                    allPointList.add(unprojectCoords(geometry.getGeometryN(i).getCoordinates(), proj));
+                }
+                return MultiPolygon.fromLngLats(allPointList);
+            }
+            default:
+                throw new TaleException("JST " + type + " geometry not supported");
+        }
     }
 
     /**
      * 将 Geometry 转成对应的 JTS的Geometry
      *
      * @param geometry 要转换的组件
+     * @param proj     坐标转换
      * @return JTS Geometry 组件
      */
-    private static com.vividsolutions.jts.geom.Geometry transformation(Geometry geometry) {
+    private static com.vividsolutions.jts.geom.Geometry transformation(Geometry geometry, Projection proj) {
         GeometryFactory geometryFactory = new GeometryFactory();
 
         GeometryType type = geometry.type();
         switch (type) {
             case POINT: {
                 Point p = Point.point(geometry);
-                return geometryFactory.createPoint(new Coordinate(p.getX(), p.getY()));
+                return geometryFactory.createPoint(projectCoords(p, proj));
             }
             case MULTI_POINT: {
                 MultiPoint multiPoint = MultiPoint.multiPoint(geometry);
-                return geometryFactory.createMultiPoint(multiPoint.coordinates().stream().map(p -> new Coordinate(p.getX(), p.getY())).toArray(Coordinate[]::new));
+                return geometryFactory.createMultiPoint(projectCoords(multiPoint.coordinates(), proj));
             }
             case LINE: {
                 Line line = Line.line(geometry);
-                return geometryFactory.createLineString(line.coordinates().stream().map(p -> new Coordinate(p.getX(), p.getY())).toArray(Coordinate[]::new));
+                return geometryFactory.createLineString(projectCoords(line.coordinates(), proj));
             }
             case MULTI_LINE: {
                 MultiLine multiLine = MultiLine.multiLine(geometry);
                 return geometryFactory.createMultiLineString(
                         multiLine.coordinates()
                                 .stream()
-                                .map(pointList -> geometryFactory.createLineString(pointList.stream().map(p -> new Coordinate(p.getX(), p.getY())).toArray(Coordinate[]::new)))
+                                .map(pointList -> geometryFactory.createLineString(projectCoords(pointList, proj)))
                                 .toArray(LineString[]::new)
                 );
             }
             case POLYGON: {
                 Polygon polygon = Polygon.polygon(geometry);
-                return geometryFactory.createPolygon(polygon.coordinates().stream().map(p -> new Coordinate(p.getX(), p.getY())).toArray(Coordinate[]::new));
+                return geometryFactory.createPolygon(projectCoords(polygon.coordinates(), proj));
             }
             case MULTI_POLYGON: {
                 MultiPolygon multiPolygon = MultiPolygon.multiPolygon(geometry);
                 return geometryFactory.createMultiPolygon(
                         multiPolygon.coordinates()
                                 .stream()
-                                .map(pointList -> geometryFactory.createPolygon(pointList.stream().map(p -> new Coordinate(p.getX(), p.getY())).toArray(Coordinate[]::new)))
+                                .map(pointList -> geometryFactory.createPolygon(projectCoords(pointList, proj)))
                                 .toArray(com.vividsolutions.jts.geom.Polygon[]::new)
                 );
             }
@@ -115,13 +160,17 @@ public final class BufferHelper {
     }
 
     public static void main(String[] args) {
-        Point p = Point.fromLngLat(1, 2);
-        double distance = TaleHelper.radiansToLength(TaleHelper.lengthToRadians(500, Units.KILOMETERS), Units.METERS);
+        Point point = Point.fromLngLat(-90.548630, 14.616599);
+        Projection projection = BufferHelper.defineProjection(point);
+
+        System.out.println(Arrays.toString(projection.projection(new double[]{-90.54863, 14.616599})));
+        System.out.println(Arrays.toString(projection.invert(new double[]{480.0, 250.0})));
 
         GeometryFactory geometryFactory = new GeometryFactory();
-        com.vividsolutions.jts.geom.Point v = geometryFactory.createPoint(new Coordinate(1, 2));
-        com.vividsolutions.jts.geom.Geometry vv = BufferOp.bufferOp(v, distance, 8);
-        System.out.println(vv.toText());
+        com.vividsolutions.jts.geom.Geometry buffered = BufferOp.bufferOp(geometryFactory.createPoint(new Coordinate(480, 250)), 804672, 8);
+        System.out.println(buffered);
+
+        System.out.println(Arrays.toString(projection.invert(new double[]{805152, 250})));
     }
 
     /**
@@ -149,8 +198,9 @@ public final class BufferHelper {
      * @param proj   D3地理投影
      * @return 投影后的坐标
      */
-    private static double[] projectCoords(Point coords, String proj) {
-        return null;//proj(coords);
+    private static Coordinate projectCoords(Point coords, Projection proj) {
+        double[] p = proj.projection(new double[]{coords.getX(), coords.getY()});
+        return new Coordinate(p[0], p[1]);
     }
 
     /**
@@ -160,19 +210,8 @@ public final class BufferHelper {
      * @param proj   D3地理投影
      * @return 投影后的坐标集合
      */
-    private static List<double[]> projectCoords(List<Point> coords, String proj) {
-        return coords.stream().map(p -> projectCoords(p, proj)).collect(Collectors.toList());
-    }
-
-    /**
-     * 投影坐标
-     *
-     * @param coords 要计算的坐标集合
-     * @param proj   D3地理投影
-     * @return 投影后的坐标集合
-     */
-    private static List<List<double[]>> projectMultiCoords(List<List<Point>> coords, String proj) {
-        return coords.stream().map(plist -> projectCoords(plist, proj)).collect(Collectors.toList());
+    private static Coordinate[] projectCoords(List<Point> coords, Projection proj) {
+        return coords.stream().map(p -> projectCoords(p, proj)).toArray(Coordinate[]::new);
     }
 
     /**
@@ -182,8 +221,9 @@ public final class BufferHelper {
      * @param proj   D3地理投影
      * @return 取消后的坐标
      */
-    private static double[] unprojectCoords(Point coords, String proj) {
-        return null;//proj.invert(coords);
+    private static Point unprojectCoords(Coordinate coords, Projection proj) {
+        double[] p = proj.invert(new double[]{coords.x, coords.y});
+        return Point.fromLngLat(p);
     }
 
     /**
@@ -193,19 +233,8 @@ public final class BufferHelper {
      * @param proj   D3地理投影
      * @return 取消后的坐标集合
      */
-    private static List<double[]> unprojectCoords(List<Point> coords, String proj) {
-        return coords.stream().map(p -> unprojectCoords(p, proj)).collect(Collectors.toList());
-    }
-
-    /**
-     * 将坐标取消投影
-     *
-     * @param coords 要取消的坐标集合
-     * @param proj   D3地理投影
-     * @return 取消后的坐标集合
-     */
-    private static List<List<double[]>> unprojectMultiCoords(List<List<Point>> coords, String proj) {
-        return coords.stream().map(plist -> unprojectCoords(plist, proj)).collect(Collectors.toList());
+    private static List<Point> unprojectCoords(Coordinate[] coords, Projection proj) {
+        return Stream.of(coords).map(p -> unprojectCoords(p, proj)).collect(Collectors.toList());
     }
 
     /**
@@ -214,11 +243,11 @@ public final class BufferHelper {
      * @param geometry 图形组件
      * @return D3 地理方位等距投影
      */
-    private static double defineProjection(Geometry geometry) {
+    private static Projection defineProjection(Geometry geometry) {
         Point coords = TaleMeasurement.center(geometry);
         double[] rotation = new double[]{-coords.getX(), -coords.getY()};
 
-        return 0;//geoAzimuthalEquidistant().rotate(rotation).scale(TaleHelper.EARTH_RADIUS);
+        return AzimuthalEqualArea.geoAzimuthalEqualArea().rotate(rotation).scale(TaleHelper.EARTH_RADIUS);
     }
 
 }

@@ -88,6 +88,10 @@ elasticsearch-setup-passwords interactive
 
 [d3-geo](https://github.com/d3/d3-geo/blob/v1.7.1/index.js)
 
+[d3-geo javascript](https://cdn.skypack.dev/-/d3-geo@v3.1.0-6gCuCN3p6hXOeZDWcbjw/dist=es2020,mode=imports/optimized/d3-geo.js)
+
+[d3-array javascript](https://cdn.skypack.dev/-/d3-geo@v3.1.0-6gCuCN3p6hXOeZDWcbjw/dist=es2020,mode=imports/optimized/d3-geo.js)
+
 #### jts
 
 常用可以用于`GIS`数据处理和空间计算的`java`包有`geotool`和`jts`。相对来说，`geotool`功能更全面，还可以用于数据转换、瓦片地图发布、栅格影像分析等，`jts`只能进行基本的数据处理和空间计算。但大多数情况下`jts`就完全够用了。
@@ -97,3 +101,7 @@ elasticsearch-setup-passwords interactive
 [浅谈浏览器端 WebGIS 开发可能会用到的、提升效率的 js 库](https://www.w3xue.com/exp/article/20232/81557.html)
 
 [geotool的官网](https://www.geotools.org/)
+
+### js模块化
+
+[完全弄懂JavaScript模块化(导出和导入)](https://zhuanlan.zhihu.com/p/82481219)

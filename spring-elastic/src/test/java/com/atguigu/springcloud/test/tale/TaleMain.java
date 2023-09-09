@@ -1,5 +1,6 @@
 package com.atguigu.springcloud.test.tale;
 
+import com.atguigu.springcloud.test.tale.enums.Units;
 import com.atguigu.springcloud.test.tale.shape.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,6 +11,10 @@ public class TaleMain {
         // x, n, e, n
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
+
+        Point point = Point.fromLngLat(-90.548630, 14.616599);
+        Geometry g = TaleTransformation.buffer(point, 500, Units.MILES);
+        System.out.println(g.toViewCoordsString());
 
 //        Polygon poly1 = Polygon.fromLngLats(new double[]{-122.801742, 45.48565, -122.801742, 45.60491, -122.584762, 45.60491, -122.584762, 45.48565, -122.801742, 45.48565});
 //        Polygon poly2 = Polygon.fromLngLats(new double[]{-122.520217, 45.535693, -122.64038, 45.553967, -122.720031, 45.526554, -122.669906, 45.507309, -122.723464, 45.446643, -122.532577, 45.408574, -122.487258, 45.477466, -122.520217, 45.535693});
@@ -306,17 +311,17 @@ public class TaleMain {
 //        log.info("正方形：{}", newBbox);
 
 
-        Line line = Line.fromLngLats(new double[]{-74, 40, -78, 42, -82, 35});
-        BoundingBox bbox = TaleMeasurement.bbox(line);
-        System.out.println(bbox.west());
-        System.out.println(bbox.south());
-        System.out.println(bbox.east());
-        System.out.println(bbox.north());
-        Polygon bboxPolygon = TaleMeasurement.bboxPolygon(bbox);
-        log.info("多边形：{}", bboxPolygon.coordinates());
-
-        Point p = Point.fromLngLat(1,2);
-        System.out.println(TaleMeasurement.bbox(p));
+//        Line line = Line.fromLngLats(new double[]{-74, 40, -78, 42, -82, 35});
+//        BoundingBox bbox = TaleMeasurement.bbox(line);
+//        System.out.println(bbox.west());
+//        System.out.println(bbox.south());
+//        System.out.println(bbox.east());
+//        System.out.println(bbox.north());
+//        Polygon bboxPolygon = TaleMeasurement.bboxPolygon(bbox);
+//        log.info("多边形：{}", bboxPolygon.coordinates());
+//
+//        Point p = Point.fromLngLat(1,2);
+//        System.out.println(TaleMeasurement.bbox(p));
 
 //        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{-97.522259, 35.4691},new double[]{-97.502754, 35.463455}, new double[]{-97.508269, 35.463245}});
 //        Point center = TaleMeasurement.center(polygon);
