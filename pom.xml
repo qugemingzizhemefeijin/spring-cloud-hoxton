@@ -72,6 +72,7 @@
 		<module>spring-remote-client</module>
 		<module>spring-hello</module>
 		<module>spring-java-agent</module>
+		<module>spring-encrypt</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -109,6 +110,7 @@
         <alibaba.taobao.arthas>3.6.9</alibaba.taobao.arthas>
         <bytebuddy.version>1.12.21</bytebuddy.version>
         <jts.version>1.13</jts.version>
+        <pdfbox.version>2.0.32</pdfbox.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -292,6 +294,11 @@
                 <groupId>com.vividsolutions</groupId>
                 <artifactId>jts</artifactId>
                 <version>${jts.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
