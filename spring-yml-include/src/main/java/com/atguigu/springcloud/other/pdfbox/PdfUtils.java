@@ -1,6 +1,5 @@
 package com.atguigu.springcloud.other.pdfbox;
 
-import com.atguigu.springcloud.other.bufferedimage.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -34,7 +33,7 @@ public final class PdfUtils {
                 try (ByteArrayOutputStream temp = outputStreamList.get(i);) {
                     String writePath = outPath;
                     if (maxPage == 1) {
-                        writePath = ImageUtils.getImagePath(outPath, String.valueOf(i));
+                        writePath = outPath;
                     }
 
                     FileUtils.writeByteArrayToFile(new File(writePath), temp.toByteArray());
@@ -62,7 +61,7 @@ public final class PdfUtils {
             }
 
             List<ByteArrayOutputStream> outputStreamList = new ArrayList<>(pages);
-            for (int i = 0; i < pages && i <= maxPage; i++) {
+            for (int i = 0; i < pages && i < maxPage; i++) {
                 BufferedImage image = renderer.renderImage(i, scale);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
