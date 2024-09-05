@@ -111,6 +111,7 @@
         <bytebuddy.version>1.12.21</bytebuddy.version>
         <jts.version>1.13</jts.version>
         <pdfbox.version>2.0.32</pdfbox.version>
+        <commonmark.version>0.18.2</commonmark.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -299,6 +300,11 @@
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark</artifactId>
+                <version>${commonmark.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
