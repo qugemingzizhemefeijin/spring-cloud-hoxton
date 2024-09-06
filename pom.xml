@@ -112,6 +112,9 @@
         <jts.version>1.13</jts.version>
         <pdfbox.version>2.0.32</pdfbox.version>
         <commonmark.version>0.18.2</commonmark.version>
+        <itextpdf.version>7.2.2</itextpdf.version>
+        <xhtmlrenderer.version>9.1.22</xhtmlrenderer.version>
+        <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -305,6 +308,21 @@
                 <groupId>org.commonmark</groupId>
                 <artifactId>commonmark</artifactId>
                 <version>${commonmark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext7-core</artifactId>
+                <version>${itextpdf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xhtmlrenderer</groupId>
+                <artifactId>flying-saucer-pdf</artifactId>
+                <version>${xhtmlrenderer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openhtmltopdf</groupId>
+                <artifactId>openhtmltopdf-pdfbox</artifactId>
+                <version>${openhtmltopdf.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -11,6 +11,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// PDFBox是一个开源的Java库，‌用于处理PDF文档。‌它支持创建、‌读取和修改PDF文件。
+// ‌在Spring Boot应用程序中，‌可以通过PDFBox库来生成PDF文件。
+// ‌具体实现包括创建一个PDDocument对象，‌添加页面，‌设置页面内容流，‌设置字体和大小，‌显示文本，‌最后保存并关闭文档。‌
+// 开源且功能强大，适合处理 PDF 文档的各种操作。
 @Slf4j
 public final class PdfUtils {
 
