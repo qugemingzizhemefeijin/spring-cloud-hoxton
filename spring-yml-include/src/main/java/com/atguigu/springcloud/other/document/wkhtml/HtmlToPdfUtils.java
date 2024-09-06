@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.wkhtml;
+package com.atguigu.springcloud.other.document.wkhtml;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class HtmlToPdfUtils {
 
-    private static final String BASE_PATH = "E:\\mygithub\\spring-cloud-hoxton\\spring-yml-include\\src\\main\\java\\com\\atguigu\\springcloud\\other\\wkhtml\\";
+    private static final String BASE_PATH = "E:\\mygithub\\spring-cloud-hoxton\\spring-yml-include\\src\\main\\java\\com\\atguigu\\springcloud\\other\\wkhtml\\document\\";
 
     /**
      * wkhtmltopdf在 Windows、Linux系统中的安装路径

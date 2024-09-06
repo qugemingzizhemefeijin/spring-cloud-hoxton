@@ -1,6 +1,6 @@
-package com.atguigu.springcloud.other.commonmark;
+package com.atguigu.springcloud.other.document.commonmark;
 
-import com.atguigu.springcloud.other.wkhtml.HtmlToPdfUtils;
+import com.atguigu.springcloud.other.document.wkhtml.HtmlToPdfUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -21,7 +21,7 @@ public class MarkdownToPdf {
 
     public static void main(String[] args) {
         try {
-            String bashPath = "E:\\mygithub\\spring-cloud-hoxton\\spring-yml-include\\src\\main\\java\\com\\atguigu\\springcloud\\other\\commonmark";
+            String bashPath = "E:\\mygithub\\spring-cloud-hoxton\\spring-yml-include\\src\\main\\java\\com\\atguigu\\springcloud\\other\\commonmark\\document";
             String testFilePath = bashPath + "\\test.md";
 
             String destFileName = WINDOWS_FILE_URL + "\\output.pdf";

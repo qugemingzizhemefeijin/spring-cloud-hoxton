@@ -1,6 +1,6 @@
-package com.atguigu.springcloud.other.commonmark;
+package com.atguigu.springcloud.other.document.commonmark;
 
-import com.atguigu.springcloud.other.wkhtml.HtmlToPdfUtils;
+import com.atguigu.springcloud.other.document.wkhtml.HtmlToPdfUtils;
 import com.atguigu.springcloud.utils.http.HttpUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpException;

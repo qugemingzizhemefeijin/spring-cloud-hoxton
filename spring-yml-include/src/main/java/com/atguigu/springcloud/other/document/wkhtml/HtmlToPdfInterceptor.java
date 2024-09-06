@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.wkhtml;
+package com.atguigu.springcloud.other.document.wkhtml;
 
 import lombok.extern.slf4j.Slf4j;
 
