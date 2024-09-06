@@ -164,6 +164,7 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>

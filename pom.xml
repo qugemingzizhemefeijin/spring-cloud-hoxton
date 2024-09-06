@@ -73,6 +73,7 @@
 		<module>spring-hello</module>
 		<module>spring-java-agent</module>
 		<module>spring-encrypt</module>
+		<module>spring-script</module>
     </modules>
 
     <!-- 统一管理jar包版本 -->
@@ -313,6 +314,7 @@
                 <groupId>com.itextpdf</groupId>
                 <artifactId>itext7-core</artifactId>
                 <version>${itextpdf.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.xhtmlrenderer</groupId>
