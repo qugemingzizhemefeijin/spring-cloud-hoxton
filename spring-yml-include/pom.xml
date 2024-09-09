@@ -175,6 +175,15 @@
             <artifactId>openhtmltopdf-pdfbox</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.12.1</version> <!-- 使用最新稳定版本 -->
+        </dependency>
+        <dependency>
             <groupId>pl.pragmatists</groupId>
             <artifactId>JUnitParams</artifactId>
             <scope>test</scope>

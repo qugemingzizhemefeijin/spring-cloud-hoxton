@@ -118,6 +118,7 @@
         <xhtmlrenderer.version>9.1.22</xhtmlrenderer.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <opencv.version>4.10.0</opencv.version>
+        <tess4j.version>5.9.0</tess4j.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -327,6 +328,11 @@
                 <groupId>com.openhtmltopdf</groupId>
                 <artifactId>openhtmltopdf-pdfbox</artifactId>
                 <version>${openhtmltopdf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.tess4j</groupId>
+                <artifactId>tess4j</artifactId>
+                <version>${tess4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
