@@ -21,9 +21,9 @@ public class DiffListParseFunction implements IParseFunction {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String apply(String value) {
+    public String apply(Object value) {
         if (StringUtils.isEmpty(value)) {
-            return value;
+            return null;
         }
         List<String> oldList = (List<String>) LogRecordContext.getVariable("oldList");
         List<String> newList = (List<String>) LogRecordContext.getVariable("newList");

@@ -43,12 +43,12 @@ public class LogRecordConfiguration {
             }
 
             @Override
-            public List<LogRecord> queryLog(String bizKey) {
+            public List<LogRecord> queryLog(String bizNo, String type) {
                 return Lists.newArrayList();
             }
 
             @Override
-            public List<LogRecord> queryLogByBizNo(String bizNo) {
+            public List<LogRecord> queryLogByBizNo(String bizNo, String type, String subType) {
                 return Lists.newArrayList();
             }
         };
@@ -65,11 +65,11 @@ public class LogRecordConfiguration {
             }
 
             @Override
-            public String apply(String value) {
+            public String apply(Object value) {
                 if (StringUtils.isEmpty(value)) {
-                    return value;
+                    return null;
                 }
-                List<String> userIds = Lists.newArrayList(splitter.split(value));
+                List<String> userIds = Lists.newArrayList(splitter.split(value.toString()));
 
                 Map<String, String> userMap = ImmutableMap.of("1", "小橙子", "2", "小橘子", "3", "小芒果");
 

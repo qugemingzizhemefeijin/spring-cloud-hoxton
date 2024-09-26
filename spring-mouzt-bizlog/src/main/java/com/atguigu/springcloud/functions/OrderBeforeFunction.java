@@ -18,9 +18,9 @@ public class OrderBeforeFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(String value) {
+    public String apply(Object value) {
         if(StringUtils.isEmpty(value)){
-            return value;
+            return null;
         }
         return "我记录的是原始值：" + value;
     }

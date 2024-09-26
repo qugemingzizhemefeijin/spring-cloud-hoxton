@@ -20,9 +20,9 @@ public class OrderParseFunction implements IParseFunction {
 
     @Override
     //这里的 value 可以吧 Order 的JSON对象的传递过来，然后反解析拼接一个定制的操作日志内容
-    public String apply(String value) {
+    public String apply(Object value) {
         if(StringUtils.isEmpty(value)){
-            return value;
+            return null;
         }
         //Order order = orderQueryService.queryOrder(Long.parseLong(value));
         Order order = new Order();
@@ -31,7 +31,7 @@ public class OrderParseFunction implements IParseFunction {
         order.setOrderNo("9527");
 
         //把订单产品名称加上便于理解，加上 ID 便于查问题
-        return order.getProductName().concat("(").concat(value).concat(")");
+        return order.getProductName().concat("(").concat(value.toString()).concat(")");
     }
 
 }

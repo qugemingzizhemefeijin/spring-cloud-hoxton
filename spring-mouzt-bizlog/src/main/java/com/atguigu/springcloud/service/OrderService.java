@@ -5,7 +5,7 @@ import com.atguigu.springcloud.easyexcel.domain.CustomAttributeVO;
 import com.atguigu.springcloud.easyexcel.domain.Order;
 import com.google.common.collect.Lists;
 import com.mzt.logapi.context.LogRecordContext;
-import com.mzt.logapi.starter.annotation.LogRecordAnnotation;
+import com.mzt.logapi.starter.annotation.LogRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +23,8 @@ public class OrderService {
      * SpEL 表达式：其中用双大括号包围起来的（例如：{{#order.purchaseName}}）#order.purchaseName 是 SpEL 表达式。Spring 中支持的它都支持的。
      * 比如调用静态方法，三目表达式。SpEL 可以使用方法中的任何参数
      */
-    @LogRecordAnnotation(success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+    @LogRecord(success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}",
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean createSuccessOrder(Order order) {
         log.info("【创建订单成功】orderNo={}", order.getOrderNo());
         // db insert order
@@ -34,10 +34,10 @@ public class OrderService {
     /*
      * 期望记录失败的日志, 如果抛出异常则记录 fail 的日志，没有抛出记录 success 的日志
      */
-    @LogRecordAnnotation(
+    @LogRecord(
             fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
             success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean createFailureOrder(Order order) {
         log.info("【创建订单失败】orderNo={}", order.getOrderNo());
         // db insert order
@@ -51,11 +51,11 @@ public class OrderService {
      * 比如一个订单的操作日志，有些操作日志是用户自己操作的，有些操作是系统运营人员做了修改产生的操作日志，我们系统不希望把运营的操作日志暴露给用户看到，
      * 但是运营期望可以看到用户的日志以及运营自己操作的日志，这些操作日志的 bizNo 都是订单号，所以为了扩展添加了类型字段, 主要是为了对日志做分类，查询方便，支持更多的业务
      */
-    @LogRecordAnnotation(
+    @LogRecord(
             fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
-            category = "MANAGER",
+            subType = "MANAGER",
             success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean createAddCategoryOrder(Order order) {
         log.info("【创建订单】orderNo={}", order.getOrderNo());
         // db insert order
@@ -67,12 +67,12 @@ public class OrderService {
      * detail 是一个 String ，需要自己序列化。这里的 #order.toString() 是调用了 Order 的 toString() 方法。
      * 如果保存 JSON，自己重写一下 Order 的 toString() 方法就可以。
      */
-    @LogRecordAnnotation(
+    @LogRecord(
             fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
-            category = "MANAGER_VIEW",
-            detail = "{{#order.toString()}}",
+            subType = "MANAGER_VIEW",
+            extra = "{{#order.toString()}}",
             success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean createOrderAndDetail(Order order) {
         log.info("【创建订单】orderNo={}", order.getOrderNo());
         // db insert order
@@ -90,13 +90,13 @@ public class OrderService {
      * 然后把这个 Service 作为一个单例放到 Spring 的上下文中。使用 Spring Mvc 的就需要自己手工装配这些 bean 了。
      *
      */
-    @LogRecordAnnotation(
+    @LogRecord(
             fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
-            category = "MANAGER_VIEW",
-            detail = "{{#order.toString()}}",
+            subType = "MANAGER_VIEW",
+            extra = "{{#order.toString()}}",
             operator = "{{#currentUser}}",
             success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean createOrderAndOperator(Order order, String currentUser) {
         log.info("【创建订单】orderNo={}", order.getOrderNo());
         // db insert order
@@ -118,23 +118,23 @@ public class OrderService {
      */
 
     // 没有使用自定义函数
-    @LogRecordAnnotation(success = "更新了订单{{#orderId}},更新内容为....",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
-            detail = "{{#order.toString()}}")
+    @LogRecord(success = "更新了订单{{#orderId}},更新内容为....",
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
+            extra = "{{#order.toString()}}")
     public boolean updateNoCustomFunction(Long orderId, Order order) {
         return false;
     }
 
     //使用了自定义函数，主要是在 {{#orderId}} 的大括号中间加了 functionName
-    @LogRecordAnnotation(success = "更新了订单{ORDER{#orderId}},更新内容为...",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
-            detail = "{{#order.toString()}}")
+    @LogRecord(success = "更新了订单{ORDER{#orderId}},更新内容为...",
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
+            extra = "{{#order.toString()}}")
     public boolean updateCustomFunction(Long orderId, Order order) {
         return false;
     }
 
     //日志文案调整 使用 SpEL 三目表达式
-    @LogRecordAnnotation(prefix = LogRecordType.CUSTOM_ATTRIBUTE, bizNo = "{{#businessLineId}}",
+    @LogRecord(type = LogRecordType.CUSTOM_ATTRIBUTE, bizNo = "{{#businessLineId}}",
             success = "{{#disable ? '停用' : '启用'}}了自定义属性{ATTRIBUTE{#attributeId}}")
     public CustomAttributeVO disableAttribute(Long businessLineId, Long attributeId, boolean disable) {
         return new CustomAttributeVO(businessLineId, attributeId);
@@ -146,9 +146,9 @@ public class OrderService {
      * 然后我们就可以使用 SpEL 使用这个变量了，例如：例子中的 {{#innerOrder.productName}} 是在方法中设置的变量
      *
      */
-    @LogRecordAnnotation(
+    @LogRecord(
             success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,测试变量「{{#innerOrder.productName}}」,下单结果:{{#_ret}}",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean createContextVariableOrder(Order order) {
         log.info("【创建订单】orderNo={}", order.getOrderNo());
         // db insert order
@@ -163,7 +163,7 @@ public class OrderService {
      * 使用 LogRecordContext.putVariable(variableName, Object) 添加的变量除了可以在注解的 SpEL 表达式上使用，还可以在自定义函数中使用, 这种方式比较复杂，
      * 下面例子中示意了列表的变化，比如从 [A,B,C] 改到 [B,D] 那么日志显示：「删除了 A，增加了 D」
      */
-    @LogRecordAnnotation(success = "{DIFF_LIST{'文档地址'}}", bizNo = "{{#id}}", prefix = LogRecordType.REQUIREMENT)
+    @LogRecord(success = "{DIFF_LIST{'文档地址'}}", bizNo = "{{#id}}", type = LogRecordType.REQUIREMENT)
     public void updateRequirementDocLink(String currentMisId, Long id, List<String> docLinks) {
         List<String> oldList = Lists.newArrayList("1", "2", "3");
         LogRecordContext.putVariable("oldList", oldList);
@@ -171,14 +171,14 @@ public class OrderService {
     }
 
     //使用了自定义函数，主要是在 {{#orderId}} 的大括号中间加了 functionName
-    @LogRecordAnnotation(success = "{USER{#userId}}操作了订单{{#order.orderNo}}...",
-            prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
-            detail = "{{#order.toString()}}")
+    @LogRecord(success = "{USER{#userId}}操作了订单{{#order.orderNo}}...",
+            type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}",
+            extra = "{{#order.toString()}}")
     public boolean userOperatorOrder(String userId, Order order) {
         return false;
     }
 
-    @LogRecordAnnotation(success = "更新了订单：{ORDER{#order.orderNo}},{B_ORDER{#order.productName}}，{ORDER{#order.productName}}", prefix = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
+    @LogRecord(success = "更新了订单：{ORDER{#order.orderNo}},{B_ORDER{#order.productName}}，{ORDER{#order.productName}}", type = LogRecordType.ORDER, bizNo = "{{#order.orderNo}}")
     public boolean changeOrderValue(Order order) {
         order.setProductName("内部变量测试");
 
