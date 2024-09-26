@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "com.atguigu.springcloud.other.proto";
+option java_outer_classname = "UbixUserModel";
+
+message UbixUser {
+
+    string uid = 1;
+    int32 gender = 2;
+    int32 age = 3;
+    repeated string keywords = 4;
+    string ext = 5;
+    repeated string tags = 6;
+    repeated string category = 7;
+    repeated string installed_apps = 8;
+
+}

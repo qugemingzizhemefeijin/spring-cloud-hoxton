@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.atguigu.springcloud.other.proto";
+option java_outer_classname = "UbixBidRequestModel";
+
+import "proto/UbixUser.proto";
+
+message UbixBidRequest {
+
+    string request_id = 1;
+    string api_version = 2;
+    UbixUser user = 4;
+
+}
