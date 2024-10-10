@@ -127,6 +127,7 @@
         <zendesk.version>0.29.2</zendesk.version>
         <reflections.version>0.10.2</reflections.version>
         <liteflow.version>2.12.3</liteflow.version>
+        <javafaker.version>1.0.2</javafaker.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -386,6 +387,11 @@
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-spring-boot-starter</artifactId>
                 <version>${liteflow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.javafaker</groupId>
+                <artifactId>javafaker</artifactId>
+                <version>${javafaker.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
