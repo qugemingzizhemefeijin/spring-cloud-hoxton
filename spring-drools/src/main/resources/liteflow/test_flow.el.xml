@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 主要使用电商场景的应用，订单完成后，进行积分的发放，消息发送，同时并行发送短信和邮件。 -->
+<flow>
+    <chain name="test_flow">
+        THEN(
+        prepareTrade, grantScore, sendMq, WHEN(sendEmail, sendPhone)
+        );
+    </chain>
+</flow>

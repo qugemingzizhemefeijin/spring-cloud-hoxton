@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @Slf4j
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class, scanBasePackages = {"com.atguigu"})
 public class DroolsMain8080 implements CommandLineRunner {
 
 	@Value("${spring.profiles.active}")
@@ -20,7 +20,7 @@ public class DroolsMain8080 implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		log.info("yml include 启动完毕，当前环境：{}", profileActive);
+		log.info("Drools Main 启动完毕，当前环境：{}", profileActive);
 	}
 
 }

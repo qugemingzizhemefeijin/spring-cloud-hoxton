@@ -126,6 +126,7 @@
         <gson.version>2.8.9</gson.version>
         <zendesk.version>0.29.2</zendesk.version>
         <reflections.version>0.10.2</reflections.version>
+        <liteflow.version>2.12.3</liteflow.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -380,6 +381,11 @@
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <version>${reflections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-spring-boot-starter</artifactId>
+                <version>${liteflow.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
