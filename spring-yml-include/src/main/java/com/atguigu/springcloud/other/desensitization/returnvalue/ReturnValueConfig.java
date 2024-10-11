@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.config.desensitized;
+package com.atguigu.springcloud.other.desensitization.returnvalue;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;

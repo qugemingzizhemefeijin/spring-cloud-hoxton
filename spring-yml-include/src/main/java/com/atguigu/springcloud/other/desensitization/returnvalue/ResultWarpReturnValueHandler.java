@@ -1,8 +1,7 @@
-package com.atguigu.springcloud.config.desensitized;
+package com.atguigu.springcloud.other.desensitization.returnvalue;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.DES;
-import com.atguigu.springcloud.other.desensitized.JsonEncrypt;
 import com.atguigu.springcloud.util.EncryptViewUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;

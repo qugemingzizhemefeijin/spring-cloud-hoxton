@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.desensitized;
+package com.atguigu.springcloud.other.desensitization.returnvalue;
 
 import java.lang.annotation.*;
 

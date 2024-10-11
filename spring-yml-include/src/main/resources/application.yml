@@ -12,3 +12,11 @@ task:
     maxPoolSize: 40
     keepAliveSeconds: 300
     queueCapacity: 50
+log:
+  mask:
+    enable: true
+    path: com.atguigu.springcloud.web.DesensitizedController
+    keyword: true
+    regrex: false
+    keywordMap: "{ \"name\": \"username,realname,nickname\", \"email\": \"email\", \"idCard\": \"idCard,cardNo\", \"address\": \"address\", \"phone\": \"phone,cellphone,mobile\", \"bank\": \"bank,bankcard\" }"
+    regexMap: "{{ \"name\": \"1\", \"email\": \"1\", \"idCard\": \"1\", \"address\": \"1\", \"phone\": \"1\", \"bank\": \"1\" }}"
