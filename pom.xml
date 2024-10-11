@@ -129,6 +129,7 @@
         <liteflow.version>2.12.3</liteflow.version>
         <javafaker.version>1.0.2</javafaker.version>
         <jsch.version>0.1.55</jsch.version>
+        <bcprov.version>1.69</bcprov.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -398,6 +399,11 @@
                 <groupId>com.jcraft</groupId>
                 <artifactId>jsch</artifactId>
                 <version>${jsch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15to18</artifactId>
+                <version>${bcprov.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
