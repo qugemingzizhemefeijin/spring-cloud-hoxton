@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.bufferedimage;
+package com.atguigu.springcloud.other.pictures.bufferedimage;
 
 import lombok.extern.slf4j.Slf4j;
 

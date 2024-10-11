@@ -130,6 +130,7 @@
         <javafaker.version>1.0.2</javafaker.version>
         <jsch.version>0.1.55</jsch.version>
         <bcprov.version>1.69</bcprov.version>
+        <thumbnailator.version>0.4.20</thumbnailator.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -404,6 +405,11 @@
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15to18</artifactId>
                 <version>${bcprov.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>${thumbnailator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
