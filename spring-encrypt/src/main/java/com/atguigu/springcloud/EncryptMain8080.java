@@ -1,5 +1,6 @@
 package com.atguigu.springcloud;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Slf4j
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableAsync
+@EnableEncryptableProperties
 public class EncryptMain8080 implements CommandLineRunner {
 
     @Value("${spring.profiles.active}")

@@ -12,5 +12,16 @@ task:
     maxPoolSize: 40
     keepAliveSeconds: 300
     queueCapacity: 50
-logging:
-  level: info
+jasypt:
+  encryptor:
+    # 指定解密算法，需要和加密时使用的算法一致
+    algorithm: PBEWithMD5AndDES
+    # 指定加密密钥，生产环境请放到启动参数里面
+    password: 0f7b0a5d-46bc-40fd-b8ed-3181d21d644f
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    # 算法识别的前后缀
+    property:
+      prefix: ENC@(
+      suffix: )
+ceshi:
+  name: ENC@(oDw5OP0+AEuRIqNxhsHAOg==)
