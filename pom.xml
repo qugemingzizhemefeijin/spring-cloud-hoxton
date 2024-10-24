@@ -132,6 +132,8 @@
         <bcprov.version>1.69</bcprov.version>
         <thumbnailator.version>0.4.20</thumbnailator.version>
         <jasypt.version>3.0.5</jasypt.version>
+        <retrofit.version>2.11.0</retrofit.version>
+        <okhttp.version>3.14.4</okhttp.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -416,6 +418,31 @@
                 <groupId>com.github.ulisesbocchio</groupId>
                 <artifactId>jasypt-spring-boot</artifactId>
                 <version>${jasypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>retrofit</artifactId>
+                <version>${retrofit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>converter-jackson</artifactId>
+                <version>${retrofit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>converter-gson</artifactId>
+                <version>${retrofit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>${okhttp.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

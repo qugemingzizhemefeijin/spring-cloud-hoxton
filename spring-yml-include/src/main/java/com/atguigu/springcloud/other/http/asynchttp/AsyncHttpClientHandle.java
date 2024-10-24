@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.asynchttp;
+package com.atguigu.springcloud.other.http.asynchttp;
 
 import io.netty.handler.codec.http.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
