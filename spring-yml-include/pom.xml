@@ -264,6 +264,10 @@
             <artifactId>javase</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.burukeyou</groupId>
+            <artifactId>jdframe</artifactId>
+        </dependency>
+        <dependency>
             <groupId>pl.pragmatists</groupId>
             <artifactId>JUnitParams</artifactId>
             <scope>test</scope>
