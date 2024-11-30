@@ -12,7 +12,7 @@
     <artifactId>spring-talk-robot</artifactId>
 
     <properties>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <lombok.version>1.18.16</lombok.version>
     </properties>
 
