@@ -16,7 +16,7 @@
         <spatial4j.version>0.8</spatial4j.version>
         <mapbox.sdk.turf.version>5.8.0</mapbox.sdk.turf.version>
         <jst.version>1.18.1</jst.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
     </properties>
 
     <dependencies>
