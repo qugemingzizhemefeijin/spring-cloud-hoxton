@@ -90,7 +90,7 @@
         <druid.version>1.1.16</druid.version>
 		<guava.version>31.0.1-jre</guava.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
-        <commons.io.version>2.11.0</commons.io.version>
+        <commons.io.version>2.18.0</commons.io.version>
         <fastjson.version>1.2.83</fastjson.version>
         <alibaba.transmittable.version>2.14.0</alibaba.transmittable.version>
         <hutool.version>5.7.21</hutool.version>
@@ -139,6 +139,7 @@
         <jdframe.version>0.1.7</jdframe.version>
         <nmap4j.version>1.0.4</nmap4j.version>
         <dom4j.version>2.1.1</dom4j.version>
+        <tika.version>2.9.2</tika.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -473,6 +474,41 @@
                 <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-core</artifactId>
+                <version>${tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parser-digest-commons</artifactId>
+                <version>${tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-serialization</artifactId>
+                <version>${tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parser-html-commons</artifactId>
+                <version>${tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parser-html-module</artifactId>
+                <version>${tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parser-miscoffice-module</artifactId>
+                <version>${tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parser-microsoft-module</artifactId>
+                <version>${tika.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
