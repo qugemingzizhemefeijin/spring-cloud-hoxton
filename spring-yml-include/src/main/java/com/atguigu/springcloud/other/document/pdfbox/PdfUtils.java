@@ -2,12 +2,16 @@ package com.atguigu.springcloud.other.document.pdfbox;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,35 +32,31 @@ public final class PdfUtils {
 
     public static void pdf2Images(String pdfPath, String outPath, int maxPage) {
         List<ByteArrayOutputStream> outputStreamList;
-        try {
-            outputStreamList = pdf2Images(new FileInputStream(pdfPath), 3.0f, maxPage);
-            if (outputStreamList == null) {
-                return;
-            }
-            for (int i = 0, size = outputStreamList.size(); i < size; i++) {
-                try (ByteArrayOutputStream temp = outputStreamList.get(i);) {
-                    String writePath = outPath;
-                    if (maxPage == 1) {
-                        writePath = outPath;
-                    }
-
-                    FileUtils.writeByteArrayToFile(new File(writePath), temp.toByteArray());
-                } catch (Throwable e) {
-                    e.printStackTrace();
+        outputStreamList = pdf2Images(pdfPath, 3.0f, maxPage);
+        if (outputStreamList == null) {
+            return;
+        }
+        for (int i = 0, size = outputStreamList.size(); i < size; i++) {
+            try (ByteArrayOutputStream temp = outputStreamList.get(i);) {
+                String writePath = outPath;
+                if (maxPage == 1) {
+                    writePath = outPath;
                 }
+
+                FileUtils.writeByteArrayToFile(new File(writePath), temp.toByteArray());
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
-    public static List<ByteArrayOutputStream> pdf2Images(InputStream is, float scale, int maxPage) {
+    public static List<ByteArrayOutputStream> pdf2Images(String fileName, float scale, int maxPage) {
         if (maxPage <= 0) {
             maxPage = Integer.MAX_VALUE;
         }
 
         try {
-            PDDocument document = PDDocument.load(is);
+            PDDocument document = Loader.loadPDF(new File(fileName));
             PDFRenderer renderer = new PDFRenderer(document);
 
             int pages = document.getNumberOfPages();

@@ -113,7 +113,7 @@
         <alibaba.taobao.arthas>3.6.9</alibaba.taobao.arthas>
         <bytebuddy.version>1.12.21</bytebuddy.version>
         <jts.version>1.13</jts.version>
-        <pdfbox.version>2.0.32</pdfbox.version>
+        <pdfbox.version>3.0.0</pdfbox.version>
         <commonmark.version>0.18.2</commonmark.version>
         <itextpdf.version>7.2.2</itextpdf.version>
         <xhtmlrenderer.version>9.1.22</xhtmlrenderer.version>
