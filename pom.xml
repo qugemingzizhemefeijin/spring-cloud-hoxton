@@ -515,6 +515,11 @@
                 <artifactId>tika-parser-microsoft-module</artifactId>
                 <version>${tika.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.olivergondza</groupId>
+                <artifactId>maven-jdk-tools-wrapper</artifactId>
+                <version>0.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
