@@ -12,7 +12,7 @@ public class JavaAttachTest {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             System.out.println(descriptor.id() + "\t" + descriptor.displayName());
-            if ("com.cg.common.agent.example.Startup".equalsIgnoreCase(descriptor.displayName())) {
+            if ("com.aaa.common.agent.example.Startup".equalsIgnoreCase(descriptor.displayName())) {
                 virtualMachineDescriptor = descriptor;
                 break;
             }
