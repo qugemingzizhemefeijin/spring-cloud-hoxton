@@ -8,6 +8,7 @@ import cn.smartjavaai.face.model.facerec.FaceModel;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
+// git@gitee.com:dengwenjie/SmartJavaAI.git
 @Slf4j
 public class SeetaFace6Demo {
 
