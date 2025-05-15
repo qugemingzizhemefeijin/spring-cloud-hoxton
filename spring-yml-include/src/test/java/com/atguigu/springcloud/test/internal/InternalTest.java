@@ -1,6 +1,6 @@
 package com.atguigu.springcloud.test.internal;
 
-import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
+//import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
 import org.openjdk.jol.info.ClassLayout;
 import org.openjdk.jol.info.GraphLayout;
 
@@ -15,8 +15,8 @@ public class InternalTest {
         System.out.println(s);
 
         // 判断对象大小
-        long cc = ObjectSizeCalculator.getObjectSize(new HashMap<>());
-        System.out.println(cc);
+        //long cc = ObjectSizeCalculator.getObjectSize(new HashMap<>());
+        //System.out.println(cc);
 
         //
         s = GraphLayout.parseInstance(obj).toPrintable();

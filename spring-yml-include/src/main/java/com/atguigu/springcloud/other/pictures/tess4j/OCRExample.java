@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.tess4j;
+package com.atguigu.springcloud.other.pictures.tess4j;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
@@ -6,7 +6,7 @@ import net.sourceforge.tess4j.TesseractException;
 
 import java.io.File;
 
-public class OCRChsExample {
+public class OCRExample {
 
     public static void main(String[] args) {
         // 创建 Tesseract 实例
@@ -16,10 +16,10 @@ public class OCRChsExample {
         tesseract.setDatapath("D:\\Program Files\\Tesseract-OCR\\tessdata"); // Tesseract 数据目录的实际路径
 
         // 设置语言（例如英文），可以指定多个语言，用 "+" 连接（例如 "eng+chi_sim"）
-        tesseract.setLanguage("chi_sim+eng"); // 也可以使用其他语言代码
+        tesseract.setLanguage("eng"); // 也可以使用其他语言代码
 
         // 指定要识别的图像文件
-        File imageFile = new File("C:\\Users\\a\\Desktop\\chs_simple.png"); // 替换为你要识别的图像文件路径
+        File imageFile = new File("C:\\Users\\a\\Desktop\\eng.png"); // 替换为你要识别的图像文件路径
 
         try {
             // 执行 OCR 识别

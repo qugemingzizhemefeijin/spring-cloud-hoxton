@@ -142,6 +142,7 @@
         <tika.version>2.9.2</tika.version>
         <cfr.version>0.152</cfr.version>
         <javacv.platform.version>1.5.11</javacv.platform.version>
+        <smartjavaai.version>1.0.12</smartjavaai.version>
     </properties>
 
     <!-- 子模块继承之后，提供作用：锁定版本+子modlue不用写groupId和version  -->
@@ -531,6 +532,11 @@
                 <groupId>org.bytedeco</groupId>
                 <artifactId>javacv-platform</artifactId>
                 <version>${javacv.platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.smartjavaai</groupId>
+                <artifactId>smartjavaai-all</artifactId>
+                <version>${smartjavaai.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
