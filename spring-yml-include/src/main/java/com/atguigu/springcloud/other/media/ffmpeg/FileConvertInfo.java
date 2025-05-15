@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.ffmpeg;
+package com.atguigu.springcloud.other.media.ffmpeg;
 
 import lombok.Data;
 

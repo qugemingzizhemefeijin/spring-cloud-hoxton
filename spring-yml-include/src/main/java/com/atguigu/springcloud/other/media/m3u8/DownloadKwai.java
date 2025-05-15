@@ -1,4 +1,4 @@
-package com.atguigu.springcloud.other.m3u8;
+package com.atguigu.springcloud.other.media.m3u8;
 
 import com.atguigu.springcloud.utils.http.HttpUtils;
 
