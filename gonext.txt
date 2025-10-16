@@ -1,3 +1,15 @@
+只要运动，你就一定会受伤
+只要做事，你就一定会犯错
+只要推动事，你就一定会得罪人
+只要有观点，你就一定会被人骂
+只要你不世故，就一定有人来教育你
+只要你有成绩，就一定有人说长道短
+这个世界从来不缺阻止你的人
+所以，你一定不要害怕和畏缩
+唯有更多更果敢的行动和坚持
+才有更灿烂的突破与绽放
+                            by 左耳朵耗子
+
 https://developer.aliyun.com/article/724720?spm=a2c6h.13262185.profile.102.5596501cvZUxAW#slide-10
 
 带你读《Java图像处理：基于OpenCV与JVM》之一：基于JavaVM的OpenCV
@@ -9,3 +21,4 @@ https://developer.aliyun.com/article/724619?spm=a2c6h.13262185.profile.71.296b4e
 https://blog.csdn.net/qq_31865983/article/details/102919445
 
 Hotspot 方法调用之HandleMark 源码解析
+

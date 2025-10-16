@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
 // git@gitee.com:dengwenjie/SmartJavaAI.git
+// https://blog.csdn.net/deng775747758/article/details/147859883 Java 实现静默活体检测完整教程
+// https://juejin.cn/post/7502773930349117481 用 Java 搞定人脸属性检测：年龄、性别、口罩，眼睛，姿态
 @Slf4j
 public class SeetaFace6Demo {
 
