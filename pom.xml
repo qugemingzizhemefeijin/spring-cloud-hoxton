@@ -88,7 +88,7 @@
         <junit.params.version>1.1.1</junit.params.version>
         <mysql.version>8.0.29</mysql.version>
         <druid.version>1.1.16</druid.version>
-		<guava.version>31.0.1-jre</guava.version>
+		<guava.version>32.0.0-jre</guava.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.io.version>2.18.0</commons.io.version>
         <fastjson.version>1.2.83</fastjson.version>
